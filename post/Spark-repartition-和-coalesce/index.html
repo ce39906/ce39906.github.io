@@ -6,7 +6,7 @@
 
 <title>Spark repartition 和 coalesce | Ce39906&#39;s Blog</title>
 
-<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611748236925">
+<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611754037346">
 
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://ce39906.github.io//styles/main.css">
@@ -179,7 +179,7 @@
             
         </div>
         <div style="text-align: center">
-            <form id="gridea-search-form" style="position: relative" data-update="1611748236925"
+            <form id="gridea-search-form" style="position: relative" data-update="1611754037346"
                 action="/search/index.html">
                 <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
                 <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
@@ -215,7 +215,9 @@
                     
                 </div>
                 <div class="post-content">
-                    <h2 id="repartition">repartition</h2>
+                    <p>Spark 的两个常用操作</p>
+<!-- more -->
+<h2 id="repartition">repartition</h2>
 <p>repartition 将全局数据进行shuffle为指定分区大小。spark 可以根据用户指定的列或者特定的分区数目以及指定的hash函数进行数据分区。</p>
 <h2 id="coalesce">coalesce</h2>
 <p>coalesce 通过分区数据移动的方式达到降低数据分区的效果，不会增加数据分区。相比repartition 而言，coalesce发生的数据混洗更小，是一个更高效的操作。</p>

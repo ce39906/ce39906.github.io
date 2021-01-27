@@ -6,7 +6,7 @@
 
 <title>LRU Cache 解析及实现 | Ce39906&#39;s Blog</title>
 
-<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611748236925">
+<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611754037346">
 
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://ce39906.github.io//styles/main.css">
@@ -179,7 +179,7 @@
             
         </div>
         <div style="text-align: center">
-            <form id="gridea-search-form" style="position: relative" data-update="1611748236925"
+            <form id="gridea-search-form" style="position: relative" data-update="1611754037346"
                 action="/search/index.html">
                 <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
                 <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
@@ -215,7 +215,9 @@
                     
                 </div>
                 <div class="post-content">
-                    <h2 id="lru-cache-原理">LRU Cache 原理</h2>
+                    <p>听说今日头条面试很喜欢问这个</p>
+<!-- more -->
+<h2 id="lru-cache-原理">LRU Cache 原理</h2>
 <p>LRU是Least Recently Used 的缩写，是一种缓存替换算法，当系统中的缓存满时，通过删除最近最少使用的元素来填充新的内容。LRU 算法在操作系统中有广泛应用，如CPU与物理内存之间的Cache替换算法， 物理内存与硬盘之间Cache替换算法。</p>
 <h2 id="lru-cache-实现">LRU Cache 实现</h2>
 <p>我们可以使用一个双向链表和hash map 实现LRU Cache，其中hash map 存储缓存的内容，hash map 的value 存储指向双向链表节点的指针，双向链表存储缓存的内容，当有节点被加入时，该节点放到双向列表的头部，当访问已经存在的节点时，把该节点移动到双向链表头部，当双向链表满时，删除双向链表最后一个元素。简单的讲，双向链表的作用是记录缓存内容的使用顺序。</p>

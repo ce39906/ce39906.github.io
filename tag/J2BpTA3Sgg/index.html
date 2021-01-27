@@ -6,7 +6,7 @@
 
 <title>Tensorflow | Ce39906&#39;s Blog</title>
 
-<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611748236925">
+<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611754037346">
 
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://ce39906.github.io//styles/main.css">
@@ -179,7 +179,7 @@
             
         </div>
         <div style="text-align: center">
-            <form id="gridea-search-form" style="position: relative" data-update="1611748236925"
+            <form id="gridea-search-form" style="position: relative" data-update="1611754037346"
                 action="/search/index.html">
                 <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
                 <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
@@ -215,48 +215,12 @@
                         </a>
                     </div>
                     <div class="gt-post-content post-abstract gt-c-content-color-second">
-                        <h2 id="背景">背景</h2>
-<p>路况在地图渲染时候，会针对不同的拥堵情况选择不同颜色。一般来讲，道路拥堵情况分为三个状态，<strong>畅通，拥堵，缓行</strong>，分别用<strong>绿色，黄色，红色</strong>来渲染。<br>
-我们面临的问题是，已知道路属性以及通行速度，需要对路况状态进行分类。解决方案是依据第三方路况提供的路况状态以及抓取的高德路况状态来训练一个三分类模型。</p>
-<h2 id="特征处理">特征处理</h2>
-<p>应用的特征如下</p>
-<table>
-<thead>
-<tr>
-<th>feature</th>
-<th style="text-align:center">description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>speed</td>
-<td style="text-align:center">路况速度</td>
-</tr>
-<tr>
-<td>maxspeed</td>
-<td style="text-align:center">道路最大速度</td>
-</tr>
-<tr>
-<td>highway_level</td>
-<td style="text-align:center">道路等级,共有17种可能，使用one-hot-encoding</td>
-</tr>
-<tr>
-<td>lanes</td>
-<td style="text-align:center">车道数</td>
-</tr>
-<tr>
-<td>oneway</td>
-<td style="text-align:center">是否是单向路，使用one-hot-encoding</td>
-</tr>
-</tbody>
-</table>
-<p>路况状态使用 <strong>0-1-2</strong> 分别表示<strong>缓行-拥堵-畅通</strong><br>
-处理好的特征使用**\t**分割的文本处理，最后一列代表路况状态。</p>
+                        <p>初试Tensorflow</p>
 
                     </div>
                     <div class="post-info">
                         <time class="post-time gt-c-content-color-first">
-                            发布于 · 2021-01-27 ·
+                            发布于 · 2019-01-15 ·
                         </time>
                         
                             <a href="https://ce39906.github.io//tag/J2BpTA3Sgg" class="post-tag">
@@ -281,12 +245,7 @@
                         </a>
                     </div>
                     <div class="gt-post-content post-abstract gt-c-content-color-second">
-                        <p>本文介绍使用TensorFlow构建卷积神经网络解决kaggle上的<a href="https://www.kaggle.com/c/digit-recognizer">digit-recognizer</a>问题。</p>
-<h2 id="数据规格">数据规格</h2>
-<p>kaggle提供的数据集来自<a href="http://yann.lecun.com/exdb/mnist/">MNIST</a>上的60000条手写数字数据。数据中每个手写数字图像使用28 * 28 的灰度图表示 。</p>
-<h2 id="模型结构">模型结构</h2>
-<p>本文展示的CNN模型包括1个输入层，2个卷积层，2个池化层，1个全连接层以及1个大小为10的输出层。卷积层使用<a href="https://en.wikipedia.org/wiki/Rectifier_%28neural_networks%29">Relu activation function</a>引入非线性特性。池化层使用max-pooling，大小为2 * 2, 步长设置为2。输出层使用<a href="https://en.wikipedia.org/wiki/Softmax_function">softmax activation function</a> 输出0到1的浮点数(最后一层所有node结果相加结果为1)。<br>
-模型构建过程参照<a href="https://www.tensorflow.org/tutorials/estimators/cnn">Tensorflow Tutorials</a></p>
+                        <p>Tensorflow 手写数字识别</p>
 
                     </div>
                     <div class="post-info">
@@ -316,56 +275,7 @@
                         </a>
                     </div>
                     <div class="gt-post-content post-abstract gt-c-content-color-second">
-                        <h2 id="背景">背景</h2>
-<p>目前对Tensorflow的主流应用模式是使用python训练模型，使用c++或者java应用训练好的模型。上篇博客介绍了如何在工程中应用Tensorflow 动态库，本博客介绍如何在工程中应用Tensorflow静态库</p>
-<h2 id="编译静态链接库">编译静态链接库</h2>
-<p>clone tensorflow git 仓库</p>
-<pre><code class="language-bash">git clone https://github.com/tensorflow/tensorflow.git
-cd tensorflow
-</code></pre>
-<p>进入 tensorflow 工程下contrib/makefile路径</p>
-<pre><code class="language-bash">tensorflow/contrib/makefile
-</code></pre>
-<p>运行编译脚本</p>
-<pre><code># MacOS 以及Linux 使用此脚本
-./build_all_linux.sh
-</code></pre>
-<p>脚本执行完成后我们得到tensorflow静态库以及相应头文件。<br>
-下一步我们将Tensorflow静态库头文件及Tensorflow依赖的静态库头文件整理到统一路径下，其他c++ 工程就可以应用这些库文件及头文件。</p>
-<pre><code class="language-bash"># 将tensorflow 头文件以及库文件收集到此路径
-mkdir -p ~/tensorflow_libs/tensorflow
-# include 路径存放tensorflow主要头文件
-mkdir -p ~/tensorflow_libs/tensorflow/include/tensorflow
-# lib 路径存放编译好的静态库
-mkdir -p ~/tensorflow_libs/tensorflow/lib
-# 拷贝tensorflow 主要头文件
-cp -r tensorflow/core ~/tensorflow_libs/tensorflow/include
-# 拷贝tensoflow 静态库
-cp tensorflow/contrib/makefile/gen/lib/libtensorflow-core.a ~/tensorflow_libs/tensorflow/lib
-# 拷贝tensorflow 第三方头文件
-mkdir -p ~/tensorflow_libs/tensorflow/tensorflow_third_party
-cp -r third_party ~/tensorflow_libs/tensorflow/tensorflow_third_party
-# 拷贝gen目录下文件
-cp -r tensorflow/contrib/makefile/gen/host_obj ~/tensorflow_libs/tensorflow/
-cp -r tensorflow/contrib/makefile/gen/proto ~/tensorflow_libs/tensorflow/
-cp -r tensorflow/contrib/makefile/gen/protobuf ~/tensorflow_libs/tensorflow/
-cp -r tensorflow/contrib/makefile/gen/proto_text ~/tensorflow_libs/tensorflow/
-
-# 拷贝downloads下文件
-# eigen3
-mkdir -p ~/tensorflow_libs/tensorflow/eigen3
-cp -r tensorflow/contrib/makefile/downloads/eigen/Eigen ~/tensorflow_libs/tensorflow/eigen3
-cp -r tensorflow/contrib/makefile/downloads/eigen/unsupported ~/tensorflow_libs/tensorflow/eigen3
-# absl
-cp -r tensorflow/contrib/makefile/downloads/absl ~/tensorflow_libs/tensorflow/
-# nsyc
-mkdir -p ~/tensorflow_libs/tensorflow/nsyc/include
-mkdir -p ~/tensorflow_libs/tensorflow/nsyc/lib
-# 拷贝nsyc 头文件
-cp -r tensorflow/contrib/makefile/downloads/nsync/* ~/tensorflow_libs/tensorflow/nsyc/include
-# 拷贝nsyc 库文件
-cp tensorflow/contrib/makefile/downloads/nsync/builds/default.macos.c++11/libnsync.a ~/tensorflow_libs/tensorflow/nsyc/lib
-</code></pre>
+                        <p>RT</p>
 
                     </div>
                     <div class="post-info">
@@ -391,44 +301,7 @@ cp tensorflow/contrib/makefile/downloads/nsync/builds/default.macos.c++11/libnsy
                         </a>
                     </div>
                     <div class="gt-post-content post-abstract gt-c-content-color-second">
-                        <h2 id="背景">背景</h2>
-<p>Tensorflow 是google开源的目前最流行的深度学习框架。<br>
-TensorFlow 源码基于c++ 开发，提供了java, c, c++, python等主流编程语言支持。目前业界主流的应用方式是使用Tensorflow python构建以及训练模型，模型训练完成后使用c++ 或者java将模型应用到生产环境。<br>
-本文主要介绍如何将Tensorflow编译成动态库以便于其他工程使用头文件以及动态库的方式引入Tensorflow进行<strong>模型训练</strong>或者<strong>应用训练好的模型</strong>。<br>
-本文的测试环境基于MacOS，Linux环境也可以按照相同步骤安装依赖，编译TensorFlow 动态库。</p>
-<h2 id="依赖">依赖</h2>
-<h3 id="java">java</h3>
-<pre><code>java --vesrion
-java 9.0.1
-</code></pre>
-<h3 id="bazel">bazel</h3>
-<p><a href="https://www.bazel.build/">bazel</a> 是google 开源的工程构建工具。</p>
-<pre><code>brew install bazel
-</code></pre>
-<h3 id="eigen">eigen</h3>
-<p>eigen 是一个C++矩阵运算库</p>
-<pre><code>brew install eigen
-</code></pre>
-<h3 id="automake">automake</h3>
-<pre><code>brew install automake
-</code></pre>
-<h3 id="libtool">libtool</h3>
-<pre><code>brew install libtool
-</code></pre>
-<h3 id="protobuf">protobuf</h3>
-<pre><code>brew install protobuf
-</code></pre>
-<h2 id="编译">编译</h2>
-<p>首先我们将整个Tensorflow clone到本地</p>
-<pre><code>git clone https://github.com/tensorflow/tensorflow
-cd tensorflow
-</code></pre>
-<p>编译tensorflow 动态链接库</p>
-<pre><code>bazel build //tensorflow:libtensorflow_cc.so
-bazel build //tensorflow:libtensorflow_framework.so
-</code></pre>
-<p>编译的过程耗时约30mins<br>
-编译完成后，可以看到tensorflow路径下多了<strong>bazel-out</strong>, <strong>bazel-tensorflow</strong>,<strong>bazel-bin</strong>, <strong>bazel-testlogs</strong>,<strong>bazel-genfiles</strong> 这几个路径</p>
+                        <p>RT</p>
 
                     </div>
                     <div class="post-info">

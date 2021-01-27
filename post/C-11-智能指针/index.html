@@ -6,7 +6,7 @@
 
 <title>C++11 智能指针 | Ce39906&#39;s Blog</title>
 
-<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611748236925">
+<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611754037346">
 
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://ce39906.github.io//styles/main.css">
@@ -179,7 +179,7 @@
             
         </div>
         <div style="text-align: center">
-            <form id="gridea-search-form" style="position: relative" data-update="1611748236925"
+            <form id="gridea-search-form" style="position: relative" data-update="1611754037346"
                 action="/search/index.html">
                 <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
                 <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
@@ -215,7 +215,9 @@
                     
                 </div>
                 <div class="post-content">
-                    <h2 id="智能指针的思想">智能指针的思想</h2>
+                    <p>三大智能指针</p>
+<!-- more -->
+<h2 id="智能指针的思想">智能指针的思想</h2>
 <p>c++ 要求程序员自己管理内存，为程序员提供了更高自由度，但更高的自由度同时意味着更多责任。为了减少c++程序员在使用裸指针时可能带来的内存泄露，c++11 引入智能指针帮助程序员管理内存。智能指针背后的设计思想是<a href="https://zh.cppreference.com/w/cpp/language/raii">RAII</a></p>
 <h2 id="unique_ptr">unique_ptr</h2>
 <p>unique_ptr 设计的目的是保证指针变量只指向一个实体，避免出现有其他指针变量指向相同实体，或者此指针变量指向同类型的其他实体。可以理解为指针变量与实体之间是一对一的关系。<br>

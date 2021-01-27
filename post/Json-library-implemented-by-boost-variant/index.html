@@ -6,7 +6,7 @@
 
 <title>Json library implemented by boost variant | Ce39906&#39;s Blog</title>
 
-<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611748236925">
+<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611754037346">
 
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://ce39906.github.io//styles/main.css">
@@ -179,7 +179,7 @@
             
         </div>
         <div style="text-align: center">
-            <form id="gridea-search-form" style="position: relative" data-update="1611748236925"
+            <form id="gridea-search-form" style="position: relative" data-update="1611754037346"
                 action="/search/index.html">
                 <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
                 <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
@@ -215,7 +215,9 @@
                     
                 </div>
                 <div class="post-content">
-                    <h2 id="boost-variant-介绍">boost variant 介绍</h2>
+                    <p>强大的boost</p>
+<!-- more -->
+<h2 id="boost-variant-介绍">boost variant 介绍</h2>
 <p>boost variant 是一个不同union的泛型类，它用于存储和操作不同类型但在使用时存在&lt;相同泛型&gt;的对象。variant 在实现不同类型的泛型的同时，提供对其包含的具体类型的安全访问。<br>
 基于此性质，boost variant 可以应用于创建json 这种数据结构，我们把json 中的Object, Array, String, Number, True, False, Null 统一当做同一种variant 类型。需要注意的是，json 中的Object 和 Array 类型是递归的variant 类型，在声明时需要使用 <strong>boost::recursive_wrapper</strong> 修饰。<strong>boost::recursivee_wrapper</strong>用于创建包含创建的variant类型的表达式。<br>
 在访问varint 类型时，可以使用<strong>boost::get<T></strong> 以及 <strong>boost::apply_visitor</strong> 的形式。<br>

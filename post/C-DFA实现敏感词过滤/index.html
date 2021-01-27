@@ -6,7 +6,7 @@
 
 <title>C++ DFA实现敏感词过滤 | Ce39906&#39;s Blog</title>
 
-<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611748236925">
+<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611754037346">
 
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://ce39906.github.io//styles/main.css">
@@ -179,7 +179,7 @@
             
         </div>
         <div style="text-align: center">
-            <form id="gridea-search-form" style="position: relative" data-update="1611748236925"
+            <form id="gridea-search-form" style="position: relative" data-update="1611754037346"
                 action="/search/index.html">
                 <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
                 <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
@@ -215,7 +215,9 @@
                     
                 </div>
                 <div class="post-content">
-                    <h2 id="dfa-算法简介">DFA 算法简介</h2>
+                    <p>我也是一个懂状态机的男人了</p>
+<!-- more -->
+<h2 id="dfa-算法简介">DFA 算法简介</h2>
 <p>DFA算法全称是<a href="https://en.wikipedia.org/wiki/Deterministic_finite_automaton">Deterministic finite automaton</a>，翻译为中文是”确定有限状态机“。<br>
 此算法可以用于敏感字符的模式匹配，敏感词集合可以确定有限个状态，每个敏感词中的一个字符代表状态机中的一个状态。敏感词中的相邻字符代表相邻状态，前一个字符对应的状态可以转移到后一个字符对应的状态。除此之外，敏感词的最后一个字符对应的状态还需一个结束标识。<br>
 在进行匹配时顺序遍历文本，在状态机中查找相应状态，遇到结束标识时表示匹配到一个敏感词，记录匹配的长度，文本偏移相应的长度继续查找直到遍历到文本结尾。</p>

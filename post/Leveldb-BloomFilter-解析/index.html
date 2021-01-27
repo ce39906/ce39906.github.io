@@ -6,7 +6,7 @@
 
 <title>Leveldb BloomFilter 解析 | Ce39906&#39;s Blog</title>
 
-<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611748236925">
+<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611754037346">
 
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://ce39906.github.io//styles/main.css">
@@ -179,7 +179,7 @@
             
         </div>
         <div style="text-align: center">
-            <form id="gridea-search-form" style="position: relative" data-update="1611748236925"
+            <form id="gridea-search-form" style="position: relative" data-update="1611754037346"
                 action="/search/index.html">
                 <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
                 <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
@@ -215,7 +215,9 @@
                     
                 </div>
                 <div class="post-content">
-                    <h2 id="bloomfilter-原理">BloomFilter 原理</h2>
+                    <p>一个设计的非常巧妙的数据结构</p>
+<!-- more -->
+<h2 id="bloomfilter-原理">BloomFilter 原理</h2>
 <p>布隆过滤器由巴顿布隆于1970年提出，由一个很长的bit数组以及一系列hash函数组成。bloomfilter可以用于检索一个元素是否出现在一个集合中，bloomfilter的优点是相比hash表拥有极大的空间效率，缺点是会出现一定的错误概率(False positive,一个不在集合中的元素被误认为处于集合中）。<br>
 bloomfilter 的原理是，当一个元素在加入集合时，通过k个hash 函数映射到bit数组的k个位置，并将相应的位置置1。在查找一个元素是否存在于集合中时，使用相同的k个hash 函数查看bit数组中的位置是否为全为1，如果出现一个0，则该key 一定不存在集合中，否则有可能出现在集合中。</p>
 <h3 id="优点">优点</h3>

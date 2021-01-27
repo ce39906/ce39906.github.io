@@ -6,7 +6,7 @@
 
 <title>Memcached hashtable解析 | Ce39906&#39;s Blog</title>
 
-<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611748236925">
+<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611754037346">
 
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://ce39906.github.io//styles/main.css">
@@ -179,7 +179,7 @@
             
         </div>
         <div style="text-align: center">
-            <form id="gridea-search-form" style="position: relative" data-update="1611748236925"
+            <form id="gridea-search-form" style="position: relative" data-update="1611754037346"
                 action="/search/index.html">
                 <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
                 <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
@@ -215,7 +215,9 @@
                     
                 </div>
                 <div class="post-content">
-                    <h1 id="介绍">介绍</h1>
+                    <p>一问看懂hash表的原理</p>
+<!-- more -->
+<h1 id="介绍">介绍</h1>
 <p>Memcached中实现了高性能的hashtable。其解决hash冲突的方法采用拉链法。当hashtable 中存储的item个数大于容器大小的1.5倍的时候通知线程进行hashtable 扩容，为了保证在扩容期间的读写性能，扩容线程默认每次只迁移一个bucket。设置一个变量标识当前的迁移进度，在进行读写操作时根据此变量确定是去 <strong>old_hashtable</strong> 还是 <strong>primary_hashtable</strong> 进行操作。</p>
 <h1 id="代码解析">代码解析</h1>
 <h2 id="主要接口">主要接口</h2>

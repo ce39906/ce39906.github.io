@@ -6,7 +6,7 @@
 
 <title>Lightgbm | Ce39906&#39;s Blog</title>
 
-<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611748236925">
+<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611754037346">
 
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://ce39906.github.io//styles/main.css">
@@ -179,7 +179,7 @@
             
         </div>
         <div style="text-align: center">
-            <form id="gridea-search-form" style="position: relative" data-update="1611748236925"
+            <form id="gridea-search-form" style="position: relative" data-update="1611754037346"
                 action="/search/index.html">
                 <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
                 <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
@@ -215,62 +215,7 @@
                         </a>
                     </div>
                     <div class="gt-post-content post-abstract gt-c-content-color-second">
-                        <h2 id="介绍">介绍</h2>
-<p>LightGBM 是微软提供的GBDT模型的一种高效实现。使用LightGBM解决问题的通用方式是首先使用python进行模型训练，完成训练后构建C++工程加载模型，实现回归分类或排序。<br>
-但目前微软开源的LightGBM实现中开放的Predict接口只支持从文件读取样本并把结果输出到文件的形式。这种形式直接部署到线上服务时需要将样本写入文件，开启LightGBM子进程，读取结果文件这三个流程。<br>
-为了解决以上问题，我对LightGBM的文件结构进行了调整，提供了直接接收一个样本或批量样本进行预测的接口。并把整个工程编译为静态库，线上服务只需要引入静态库以及头文件就可以将LightGBM集成。</p>
-<h2 id="代码调整及接口">代码调整及接口</h2>
-<p>代码主要调整包括将<strong>predictor.hpp</strong>移动到<strong>include/LightGBM</strong>下，在<strong>application.h</strong>中提供以下预测接口</p>
-<pre><code>
-std::string Predict(const char* sample, const char sep);
-
-std::string Predict(const std::vector&lt;std::pair&lt;int, double&gt;&gt;&amp; indexed_features);
-
-std::string Predict(const std::vector&lt;double&gt;&amp; features);
-
-std::vector&lt;std::string&gt; BatchPredict(const std::vector&lt;std::vector&lt;double&gt;&gt;&amp; batch_features);
-</code></pre>
-<p>在配置中新增<strong>online_predict</strong>任务类型。<br>
-具体实现见https://github.com/ce39906/LightGBM</p>
-<h2 id="应用示例">应用示例</h2>
-<h3 id="获取代码以及编译">获取代码以及编译</h3>
-<pre><code>
-git clone https://github.com/ce39906/LightGBM.git
-cd LightGBM
-mkdir -p build &amp;&amp; cd build
-cmake ..
-make
-</code></pre>
-<h3 id="应用静态库及头文件">应用静态库及头文件</h3>
-<p>我们以https://github.com/ce39906/LightGBM/tree/master/examples/regression 提供的回归问题为例，说明如何使用编译好的静态库进行预测。<br>
-首先我们在工程目录下新建<strong>third_party/lightgbm/bin</strong>以及<strong>third_party/lightgbm/include</strong>目录分别存放静态库文件以及头文件。<br>
-将编译好的<strong>liblgbm.a</strong> 拷贝到<strong>third_party/lightgbm/bin</strong>下，将源代码<strong>include</strong>目录下的<strong>LightGBM</strong>目录拷贝到<strong>third_party/lightgbm/bin</strong> 下。<br>
-编写<strong>test.cpp</strong> 测试预测接口，测试代码如下</p>
-<pre><code>
-/*************************************************************************
-    &gt; File Name: test.cpp
-    &gt; Author: ce39906
-    &gt; Mail: ce39906@163.com
-    &gt; Created Time: 2018-12-25 10:42:45
- ************************************************************************/
-#include &lt;iostream&gt;
-#include &lt;LightGBM/application.h&gt;
-
-int main(int argc, char** argv)
-{
-    LightGBM::Application app(argc, argv);
-    app.InitPredict();
-    const char* sample = &quot;0.644,0.247,-0.447,0.862,0.374,0.854,-1.126,-0.790,&quot;
-                         &quot;2.173,1.015,-0.201,1.400,0.000,1.575,1.807,1.607,&quot;
-                         &quot;0.000,1.585,-0.190,-0.744,3.102,0.958,1.061,0.980,&quot;
-                         &quot;0.875,0.581,0.905,0.796&quot;;
-    std::string result;
-    result = app.Predict(sample, ',');
-    std::cout &lt;&lt; result &lt;&lt; std::endl;
-
-    return 0;
-}
-</code></pre>
+                        <p>在工程上应用LightGBM</p>
 
                     </div>
                     <div class="post-info">

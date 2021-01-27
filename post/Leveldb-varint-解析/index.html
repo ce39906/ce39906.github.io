@@ -6,7 +6,7 @@
 
 <title>Leveldb varint 解析 | Ce39906&#39;s Blog</title>
 
-<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611748236925">
+<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611754037346">
 
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://ce39906.github.io//styles/main.css">
@@ -179,7 +179,7 @@
             
         </div>
         <div style="text-align: center">
-            <form id="gridea-search-form" style="position: relative" data-update="1611748236925"
+            <form id="gridea-search-form" style="position: relative" data-update="1611754037346"
                 action="/search/index.html">
                 <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
                 <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
@@ -215,7 +215,9 @@
                     
                 </div>
                 <div class="post-content">
-                    <h1 id="varint-介绍">varint 介绍</h1>
+                    <p>内存那么大，不用就是浪费？</p>
+<!-- more -->
+<h1 id="varint-介绍">varint 介绍</h1>
 <p>我们知道 uint32_t 类型占用4个byte，uint64_t 占用8个byte, 但是对于比较小的数字来说，使用uint32_t 或者uint64_t 存储会比较浪费，varint 的思想是根据数字所需大小使用unsigned char* 指针存储数据，节约内存。</p>
 <h1 id="leveldb-实现">leveldb 实现</h1>
 <p>leveldb 中的varint实现原理简单，每个byte 使用最高bit的 0/1值代表此整数值是否结束，用剩下的7个bit 存储实际的数值。知道最后一个byte 的最高bit 是0 表示整数结束。因此小于128的数据都可以用一个byte 来表示，大于128的，比如说300，使用varint 编码的话需要两个字节<strong>10101100 0000 0010</strong></p>

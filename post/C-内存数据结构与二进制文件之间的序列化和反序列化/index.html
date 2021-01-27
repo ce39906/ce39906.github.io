@@ -6,7 +6,7 @@
 
 <title>C++ 内存数据结构与二进制文件之间的序列化和反序列化 | Ce39906&#39;s Blog</title>
 
-<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611748236925">
+<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611754037346">
 
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://ce39906.github.io//styles/main.css">
@@ -179,7 +179,7 @@
             
         </div>
         <div style="text-align: center">
-            <form id="gridea-search-form" style="position: relative" data-update="1611748236925"
+            <form id="gridea-search-form" style="position: relative" data-update="1611754037346"
                 action="/search/index.html">
                 <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
                 <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
@@ -215,7 +215,9 @@
                     
                 </div>
                 <div class="post-content">
-                    <h1 id="应用场景">应用场景</h1>
+                    <p>二进制读写效率高</p>
+<!-- more -->
+<h1 id="应用场景">应用场景</h1>
 <p>许多后端检索server启动时候需要从文件加载到内存中构建索引，这个过程往往会消耗比较多的时间，这样会造成sever启动消耗比较多的时间，在存在多台服务器的时候会更加明显。<br>
 我们可以将够构建索引的过程独立成一个单独的进程，此进程实现的功能是根据原始文件构建索引结构，并将索引结构序列化到本地二进制文件，Server在启动的时候只需要读取二进制文件就可以构造出索引结构，可以大大提高启动速度。</p>
 <h1 id="示例代码">示例代码</h1>

@@ -6,7 +6,7 @@
 
 <title>Ce39906&#39;s Blog</title>
 
-<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611748236925">
+<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611754037346">
 
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://ce39906.github.io//styles/main.css">
@@ -179,7 +179,7 @@
             
         </div>
         <div style="text-align: center">
-            <form id="gridea-search-form" style="position: relative" data-update="1611748236925"
+            <form id="gridea-search-form" style="position: relative" data-update="1611754037346"
                 action="/search/index.html">
                 <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
                 <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
@@ -211,7 +211,8 @@
                         </a>
                     </div>
                     <div class="gt-post-content post-abstract gt-c-content-color-second">
-                        
+                        <p>继《今日简史》后又一巨著</p>
+
                     </div>
                     <div class="post-info">
                         <time class="post-time gt-c-content-color-first">
@@ -236,7 +237,8 @@
                         </a>
                     </div>
                     <div class="gt-post-content post-abstract gt-c-content-color-second">
-                        
+                        <p>编译代码要追求no warning, no error</p>
+
                     </div>
                     <div class="post-info">
                         <time class="post-time gt-c-content-color-first">
@@ -261,7 +263,8 @@
                         </a>
                     </div>
                     <div class="gt-post-content post-abstract gt-c-content-color-second">
-                        
+                        <p>三大智能指针</p>
+
                     </div>
                     <div class="post-info">
                         <time class="post-time gt-c-content-color-first">
@@ -286,165 +289,7 @@
                         </a>
                     </div>
                     <div class="gt-post-content post-abstract gt-c-content-color-second">
-                        <h2 id="boost-variant-介绍">boost variant 介绍</h2>
-<p>boost variant 是一个不同union的泛型类，它用于存储和操作不同类型但在使用时存在&lt;相同泛型&gt;的对象。variant 在实现不同类型的泛型的同时，提供对其包含的具体类型的安全访问。<br>
-基于此性质，boost variant 可以应用于创建json 这种数据结构，我们把json 中的Object, Array, String, Number, True, False, Null 统一当做同一种variant 类型。需要注意的是，json 中的Object 和 Array 类型是递归的variant 类型，在声明时需要使用 <strong>boost::recursive_wrapper</strong> 修饰。<strong>boost::recursivee_wrapper</strong>用于创建包含创建的variant类型的表达式。<br>
-在访问varint 类型时，可以使用<strong>boost::get<T></strong> 以及 <strong>boost::apply_visitor</strong> 的形式。<br>
-更多关于 boost variant 的介绍见:<br>
-https://www.boost.org/doc/libs/1_62_0/doc/html/variant/reference.html</p>
-<h2 id="json-数据结构">json 数据结构</h2>
-<p>json 的数据类型实现如下</p>
-<pre><code>/*************************************************************************
-    &gt; File Name: json_type.hpp
-    &gt; Author: ce39906
-    &gt; Mail: ce39906@163.com
-    &gt; Created Time: 2018-07-31 16:25:59
- ************************************************************************/
-#ifndef JSON_TYPE_HPP
-#define JSON_TYPE_HPP
-
-#include &lt;boost/variant.hpp&gt;
-
-#include &lt;string&gt;
-#include &lt;unordered_map&gt;
-#include &lt;vector&gt;
-
-namespace json
-{
-
-struct Object;
-struct Array;
-
-struct String
-{
-    String() {}
-    String(const char* value) : value{value} {}
-    String(std::string value) : value{std::move(value)} {}
-    std::string value;
-};
-
-struct Number
-{
-    Number() {};
-    Number(const double value) : value{value} {}
-    double value;
-};
-
-struct True
-{
-};
-
-struct False
-{
-};
-
-struct Null
-{
-};
-
-using Value = boost::variant&lt;String,
-                             Number,
-                             boost::recursive_wrapper&lt;Object&gt;,
-                             boost::recursive_wrapper&lt;Array&gt;,
-                             True,
-                             False,
-                             Null&gt;;
-
-struct Object
-{
-    bool isMember(const std::string&amp; key) const
-    {
-        return values.count(key) != 0;
-    }
-
-    const Value&amp; at(const std::string&amp; key) const
-    {
-        return values.at(key);
-    }
-
-    const Value&amp; operator[](const std::string&amp; key) const
-    {
-        return values.at(key);
-    }
-
-    std::unordered_map&lt;std::string, Value&gt; values;
-};
-
-struct Array
-{
-    const Value&amp; at(const size_t idx) const
-    {
-        return values.at(idx);
-    }
-
-    const Value&amp; operator[](const size_t idx) const
-    {
-        return values.at(idx);
-    }
-
-    size_t size() const
-    {
-        return values.size();
-    }
-
-    const Value&amp; front() const
-    {
-        return values.front();
-    }
-
-    const Value&amp; back() const
-    {
-        return values.back();
-    }
-
-    std::vector&lt;Value&gt; values;
-};
-} // ns json
-#endif
-</code></pre>
-<h2 id="json-数据访问">json 数据访问</h2>
-<p>本节只介绍使用<strong>boost::get<T></strong> 访问varint数据。<strong>boost::apply_visitor</strong> 的方式在序列化的部分介绍<br>
-代码示例如下</p>
-<pre><code>namespace access
-{
-
-inline const Object&amp; asObject(const Value&amp; value)
-{
-    return boost::get&lt;Object&gt;(value);
-}
-
-inline const Array&amp; asArray(const Value&amp; value)
-{
-    return boost::get&lt;Array&gt;(value);
-}
-
-inline const String&amp; asString(const Value&amp; value)
-{
-    return boost::get&lt;String&gt;(value);
-}
-
-inline const Number&amp; asNumber(const Value&amp; value)
-{
-    return boost::get&lt;Number&gt;(value);
-}
-
-inline const True&amp; asTrue(const Value&amp; value)
-{
-    return boost::get&lt;True&gt;(value);
-}
-
-inline const False&amp; asFalse(const Value&amp; value)
-{
-    return boost::get&lt;False&gt;(value);
-}
-
-inline const Null&amp; asNull(const Value&amp; value)
-{
-    return boost::get&lt;Null&gt;(value);
-}
-
-} // ns access
-</code></pre>
+                        <p>强大的boost</p>
 
                     </div>
                     <div class="post-info">
@@ -470,7 +315,8 @@ inline const Null&amp; asNull(const Value&amp; value)
                         </a>
                     </div>
                     <div class="gt-post-content post-abstract gt-c-content-color-second">
-                        
+                        <p>c++11 几个容易混淆的概念</p>
+
                     </div>
                     <div class="post-info">
                         <time class="post-time gt-c-content-color-first">
@@ -495,86 +341,7 @@ inline const Null&amp; asNull(const Value&amp; value)
                         </a>
                     </div>
                     <div class="gt-post-content post-abstract gt-c-content-color-second">
-                        <h2 id="trie-tree-介绍">Trie tree 介绍</h2>
-<p>trie 源自 <strong>retrieval</strong> ,中文称为前缀树或字典树。具体介绍见wiki <a href="https://zh.wikipedia.org/wiki/Trie">trie</a></p>
-<h2 id="c-实现">C++ 实现</h2>
-<p>以下trie实现支持任何语言(Chinese,English,Janpanse...)。主要包括以下三个接口</p>
-<pre><code>// 使用一组词初始化trie.
-void Init(const std::vector&lt;std::string&gt;&amp; dict);
-// 在trie 中查找word是否存在.
-bool Lookup(const std::string&amp; word);
-// 返回在trie中所有以word为前缀的词.
-std::vector&lt;std::string&gt; Suggest(const std::string&amp; word);
-</code></pre>
-<p>具体代码实现如下<br>
-trie.hpp</p>
-<pre><code>/*************************************************************************
-    &gt; File Name: trie.hpp
-    &gt; Author: ce39906
-    &gt; Mail: ce39906@163.com
-    &gt; Created Time: 2018-07-19 11:12:09
- ************************************************************************/
-#ifndef TRIE_HPP
-#define TRIE_HPP
-
-#include &lt;vector&gt;
-#include &lt;string&gt;
-
-namespace trie
-{
-
-class Trie
-{
-    static constexpr size_t kAsciiCount = 256;
-    struct TrieNode
-    {
-        TrieNode(const char val)
-          : val(val), is_end(false), childrens(kAsciiCount, nullptr)
-        {
-        }
-
-        char val;
-        bool is_end;
-        std::vector&lt;TrieNode*&gt; childrens;
-    };
-
-  public:
-    Trie()
-    {
-        root = new TrieNode('0');
-    }
-
-    ~Trie()
-    {
-        ReleaseTrie(root);
-    }
-
-    Trie(const Trie&amp;) = delete;
-    Trie&amp; operator = (const Trie&amp;) = delete;
-
-    void Init(const std::vector&lt;std::string&gt;&amp; dict);
-
-    bool Lookup(const std::string&amp; word) const;
-
-    std::vector&lt;std::string&gt; Suggest(const std::string&amp; word) const;
-
-    void PrintSuggs(const std::string&amp; word) const;
-
-  private:
-
-    void Insert(const std::string&amp; word);
-
-    bool Search(const TrieNode* parent, const std::string&amp; word, const size_t idx) const;
-
-    void Dfs(const TrieNode* cur, std::string&amp; word, std::vector&lt;std::string&gt;&amp; suggs) const;
-
-    void ReleaseTrie(const TrieNode* root);
-
-    TrieNode* root;
-};
-} // ns trie
-#endif
-</code></pre>
+                        <p>Sugg 技术的原理</p>
 
                     </div>
                     <div class="post-info">
@@ -600,7 +367,8 @@ class Trie
                         </a>
                     </div>
                     <div class="gt-post-content post-abstract gt-c-content-color-second">
-                        
+                        <p>很实用的技术，用来甩锅</p>
+
                     </div>
                     <div class="post-info">
                         <time class="post-time gt-c-content-color-first">
@@ -625,7 +393,8 @@ class Trie
                         </a>
                     </div>
                     <div class="gt-post-content post-abstract gt-c-content-color-second">
-                        
+                        <p>一个运维组件</p>
+
                     </div>
                     <div class="post-info">
                         <time class="post-time gt-c-content-color-first">
@@ -650,7 +419,8 @@ class Trie
                         </a>
                     </div>
                     <div class="gt-post-content post-abstract gt-c-content-color-second">
-                        
+                        <p>c++中的细节问题</p>
+
                     </div>
                     <div class="post-info">
                         <time class="post-time gt-c-content-color-first">
@@ -675,7 +445,8 @@ class Trie
                         </a>
                     </div>
                     <div class="gt-post-content post-abstract gt-c-content-color-second">
-                        
+                        <p>源自OSRM中的经典代码</p>
+
                     </div>
                     <div class="post-info">
                         <time class="post-time gt-c-content-color-first">

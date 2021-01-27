@@ -6,7 +6,7 @@
 
 <title>以静态库的方式应用LightGBM | Ce39906&#39;s Blog</title>
 
-<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611748236925">
+<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611754037346">
 
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://ce39906.github.io//styles/main.css">
@@ -179,7 +179,7 @@
             
         </div>
         <div style="text-align: center">
-            <form id="gridea-search-form" style="position: relative" data-update="1611748236925"
+            <form id="gridea-search-form" style="position: relative" data-update="1611754037346"
                 action="/search/index.html">
                 <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
                 <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
@@ -219,7 +219,9 @@
                     
                 </div>
                 <div class="post-content">
-                    <h2 id="介绍">介绍</h2>
+                    <p>在工程上应用LightGBM</p>
+<!-- more -->
+<h2 id="介绍">介绍</h2>
 <p>LightGBM 是微软提供的GBDT模型的一种高效实现。使用LightGBM解决问题的通用方式是首先使用python进行模型训练，完成训练后构建C++工程加载模型，实现回归分类或排序。<br>
 但目前微软开源的LightGBM实现中开放的Predict接口只支持从文件读取样本并把结果输出到文件的形式。这种形式直接部署到线上服务时需要将样本写入文件，开启LightGBM子进程，读取结果文件这三个流程。<br>
 为了解决以上问题，我对LightGBM的文件结构进行了调整，提供了直接接收一个样本或批量样本进行预测的接口。并把整个工程编译为静态库，线上服务只需要引入静态库以及头文件就可以将LightGBM集成。</p>

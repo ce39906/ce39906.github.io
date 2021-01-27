@@ -6,7 +6,7 @@
 
 <title>c++11 右值引用,移动构造函数,emplace_back 解析 | Ce39906&#39;s Blog</title>
 
-<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611748236925">
+<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611754037346">
 
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://ce39906.github.io//styles/main.css">
@@ -179,7 +179,7 @@
             
         </div>
         <div style="text-align: center">
-            <form id="gridea-search-form" style="position: relative" data-update="1611748236925"
+            <form id="gridea-search-form" style="position: relative" data-update="1611754037346"
                 action="/search/index.html">
                 <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
                 <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
@@ -215,7 +215,9 @@
                     
                 </div>
                 <div class="post-content">
-                    <h2 id="右值引用">右值引用</h2>
+                    <p>c++11 几个容易混淆的概念</p>
+<!-- more -->
+<h2 id="右值引用">右值引用</h2>
 <p>C++11 引入了右值引用的概念，使用&amp;&amp;表示。<br>
 首先简单介绍右值的概念，简单的讲，凡是真正存在内存当中，而不是寄存器中的值是左值，其余都是右值。更通俗的说法取地址操作可以得到的都是左值，其余都是右值。例如</p>
 <pre><code>int a = 2;

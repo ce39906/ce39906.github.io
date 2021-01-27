@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://ce39906.github.io/</id>
     <title>Ce39906&apos;s Blog</title>
-    <updated>2021-01-27T11:50:51.201Z</updated>
+    <updated>2021-01-27T13:28:46.239Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://ce39906.github.io/"/>
     <link rel="self" href="https://ce39906.github.io//atom.xml"/>
@@ -11,101 +11,15 @@
     <icon>https://ce39906.github.io//favicon.ico</icon>
     <rights>All rights reserved 2021, Ce39906&apos;s Blog</rights>
     <entry>
-        <title type="html"><![CDATA[Tensorflow 解决路况状态分类问题]]></title>
-        <id>https://ce39906.github.io//post/tensorflow-jie-jue-lu-kuang-zhuang-tai-fen-lei-wen-ti</id>
-        <link href="https://ce39906.github.io//post/tensorflow-jie-jue-lu-kuang-zhuang-tai-fen-lei-wen-ti">
-        </link>
-        <updated>2021-01-27T09:56:57.000Z</updated>
-        <summary type="html"><![CDATA[<h2 id="背景">背景</h2>
-<p>路况在地图渲染时候，会针对不同的拥堵情况选择不同颜色。一般来讲，道路拥堵情况分为三个状态，<strong>畅通，拥堵，缓行</strong>，分别用<strong>绿色，黄色，红色</strong>来渲染。<br>
-我们面临的问题是，已知道路属性以及通行速度，需要对路况状态进行分类。解决方案是依据第三方路况提供的路况状态以及抓取的高德路况状态来训练一个三分类模型。</p>
-<h2 id="特征处理">特征处理</h2>
-<p>应用的特征如下</p>
-<table>
-<thead>
-<tr>
-<th>feature</th>
-<th style="text-align:center">description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>speed</td>
-<td style="text-align:center">路况速度</td>
-</tr>
-<tr>
-<td>maxspeed</td>
-<td style="text-align:center">道路最大速度</td>
-</tr>
-<tr>
-<td>highway_level</td>
-<td style="text-align:center">道路等级,共有17种可能，使用one-hot-encoding</td>
-</tr>
-<tr>
-<td>lanes</td>
-<td style="text-align:center">车道数</td>
-</tr>
-<tr>
-<td>oneway</td>
-<td style="text-align:center">是否是单向路，使用one-hot-encoding</td>
-</tr>
-</tbody>
-</table>
-<p>路况状态使用 <strong>0-1-2</strong> 分别表示<strong>缓行-拥堵-畅通</strong><br>
-处理好的特征使用**\t**分割的文本处理，最后一列代表路况状态。</p>
-]]></summary>
-        <content type="html"><![CDATA[<h2 id="背景">背景</h2>
-<p>路况在地图渲染时候，会针对不同的拥堵情况选择不同颜色。一般来讲，道路拥堵情况分为三个状态，<strong>畅通，拥堵，缓行</strong>，分别用<strong>绿色，黄色，红色</strong>来渲染。<br>
-我们面临的问题是，已知道路属性以及通行速度，需要对路况状态进行分类。解决方案是依据第三方路况提供的路况状态以及抓取的高德路况状态来训练一个三分类模型。</p>
-<h2 id="特征处理">特征处理</h2>
-<p>应用的特征如下</p>
-<table>
-<thead>
-<tr>
-<th>feature</th>
-<th style="text-align:center">description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>speed</td>
-<td style="text-align:center">路况速度</td>
-</tr>
-<tr>
-<td>maxspeed</td>
-<td style="text-align:center">道路最大速度</td>
-</tr>
-<tr>
-<td>highway_level</td>
-<td style="text-align:center">道路等级,共有17种可能，使用one-hot-encoding</td>
-</tr>
-<tr>
-<td>lanes</td>
-<td style="text-align:center">车道数</td>
-</tr>
-<tr>
-<td>oneway</td>
-<td style="text-align:center">是否是单向路，使用one-hot-encoding</td>
-</tr>
-</tbody>
-</table>
-<p>路况状态使用 <strong>0-1-2</strong> 分别表示<strong>缓行-拥堵-畅通</strong><br>
-处理好的特征使用**\t**分割的文本处理，最后一列代表路况状态。</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[配置jupyter web server]]></title>
-        <id>https://ce39906.github.io//post/pei-zhi-jupyter-web-server</id>
-        <link href="https://ce39906.github.io//post/pei-zhi-jupyter-web-server">
-        </link>
-        <updated>2021-01-27T09:54:19.000Z</updated>
-    </entry>
-    <entry>
         <title type="html"><![CDATA[程序员应该拒绝使用baidu]]></title>
         <id>https://ce39906.github.io//post/程序员应该拒绝使用baidu</id>
         <link href="https://ce39906.github.io//post/程序员应该拒绝使用baidu">
         </link>
         <updated>2020-11-13T03:33:29.000Z</updated>
+        <summary type="html"><![CDATA[<p>RT</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>RT</p>
+]]></content>
     </entry>
     <entry>
         <title type="html"><![CDATA[Spark collect_list 保留空值]]></title>
@@ -113,6 +27,10 @@
         <link href="https://ce39906.github.io//post/Spark-collect-list-keep-null">
         </link>
         <updated>2020-10-15T08:52:52.000Z</updated>
+        <summary type="html"><![CDATA[<p>Spark collect_list 的坑</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>Spark collect_list 的坑</p>
+]]></content>
     </entry>
     <entry>
         <title type="html"><![CDATA[Spark repartition 和 coalesce]]></title>
@@ -120,6 +38,10 @@
         <link href="https://ce39906.github.io//post/Spark-repartition-和-coalesce">
         </link>
         <updated>2020-01-14T02:51:12.000Z</updated>
+        <summary type="html"><![CDATA[<p>Spark 的两个常用操作</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>Spark 的两个常用操作</p>
+]]></content>
     </entry>
     <entry>
         <title type="html"><![CDATA[XGBoost4j 调用python训练好的模型]]></title>
@@ -127,6 +49,10 @@
         <link href="https://ce39906.github.io//post/XGBoost4j-调用python训练好的模型">
         </link>
         <updated>2019-12-03T07:42:23.000Z</updated>
+        <summary type="html"><![CDATA[<p>XGBoost工程化中的一个问题</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>XGBoost工程化中的一个问题</p>
+]]></content>
     </entry>
     <entry>
         <title type="html"><![CDATA[读书短评-《以色列：一个国家的诞生》]]></title>
@@ -134,6 +60,10 @@
         <link href="https://ce39906.github.io//post/读书短评-《以色列：一个国家的诞生》">
         </link>
         <updated>2019-07-03T03:26:09.000Z</updated>
+        <summary type="html"><![CDATA[<p>一个令人敬佩的国度</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>一个令人敬佩的国度</p>
+]]></content>
     </entry>
     <entry>
         <title type="html"><![CDATA[Floyd Warshall Algorithm]]></title>
@@ -141,6 +71,21 @@
         <link href="https://ce39906.github.io//post/Floyd-Warshall-Algorithm">
         </link>
         <updated>2019-05-17T03:36:33.000Z</updated>
+        <summary type="html"><![CDATA[<p>经典路径规划算法之一</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>经典路径规划算法之一</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[配置jupyter web server]]></title>
+        <id>https://ce39906.github.io//post/pei-zhi-jupyter-web-server</id>
+        <link href="https://ce39906.github.io//post/pei-zhi-jupyter-web-server">
+        </link>
+        <updated>2019-05-15T09:54:19.000Z</updated>
+        <summary type="html"><![CDATA[<p>流行的在线notebook工具</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>流行的在线notebook工具</p>
+]]></content>
     </entry>
     <entry>
         <title type="html"><![CDATA[C++11新特性总结]]></title>
@@ -148,6 +93,10 @@
         <link href="https://ce39906.github.io//post/C-11新特性总结">
         </link>
         <updated>2019-05-11T04:51:02.000Z</updated>
+        <summary type="html"><![CDATA[<p>C++11 已经过去十年了</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>C++11 已经过去十年了</p>
+]]></content>
     </entry>
     <entry>
         <title type="html"><![CDATA[neural-style生成毕加索风格图片]]></title>
@@ -155,5 +104,20 @@
         <link href="https://ce39906.github.io//post/neural-style生成毕加索风格图片">
         </link>
         <updated>2019-04-24T03:32:26.000Z</updated>
+        <summary type="html"><![CDATA[<p>深度学习也可以用来搞艺术</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>深度学习也可以用来搞艺术</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[抓取北邮人论坛招聘版及跳槽版每日帖数]]></title>
+        <id>https://ce39906.github.io//post/抓取北邮人论坛招聘版及跳槽版每日帖数</id>
+        <link href="https://ce39906.github.io//post/抓取北邮人论坛招聘版及跳槽版每日帖数">
+        </link>
+        <updated>2019-04-15T08:14:57.000Z</updated>
+        <summary type="html"><![CDATA[<p>互联网寒冬下的暗中观察</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>互联网寒冬下的暗中观察</p>
+]]></content>
     </entry>
 </feed>

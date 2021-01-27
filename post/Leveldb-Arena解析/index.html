@@ -6,7 +6,7 @@
 
 <title>Leveldb Arena解析 | Ce39906&#39;s Blog</title>
 
-<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611748236925">
+<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611754037346">
 
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://ce39906.github.io//styles/main.css">
@@ -179,7 +179,7 @@
             
         </div>
         <div style="text-align: center">
-            <form id="gridea-search-form" style="position: relative" data-update="1611748236925"
+            <form id="gridea-search-form" style="position: relative" data-update="1611754037346"
                 action="/search/index.html">
                 <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
                 <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
@@ -215,7 +215,9 @@
                     
                 </div>
                 <div class="post-content">
-                    <h2 id="简介">简介</h2>
+                    <p>RT</p>
+<!-- more -->
+<h2 id="简介">简介</h2>
 <p>Arena 是leveldb 实现的简单的内存池，以最小4096bytes 为单位申请block, 使用指针记录当前block 中空余内存起始位置以及当前block剩余空间。将所有的block 放到blocks_ 数组中。Arena 提供了分配内存以及分配对齐的内存的两种接口，没有释放内存的接口，当Arena 的生命周期结束时，由Arena 的析构函数统一释放内存。Arena 的主要结构如下图所示：<br>
 <img src="https://img-blog.csdn.net/20180503153740789?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NhcmJvbjA2/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="leveldb arena"></p>
 <h2 id="leveldb-代码实现">Leveldb 代码实现</h2>

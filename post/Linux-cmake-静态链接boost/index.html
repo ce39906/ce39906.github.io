@@ -6,7 +6,7 @@
 
 <title>Linux cmake 静态链接boost | Ce39906&#39;s Blog</title>
 
-<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611748236925">
+<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611754037346">
 
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://ce39906.github.io//styles/main.css">
@@ -179,7 +179,7 @@
             
         </div>
         <div style="text-align: center">
-            <form id="gridea-search-form" style="position: relative" data-update="1611748236925"
+            <form id="gridea-search-form" style="position: relative" data-update="1611754037346"
                 action="/search/index.html">
                 <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
                 <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
@@ -215,7 +215,9 @@
                     
                 </div>
                 <div class="post-content">
-                    <h2 id="背景">背景</h2>
+                    <p>静态编译boost</p>
+<!-- more -->
+<h2 id="背景">背景</h2>
 <p>使用动态链接编译的二进制程序在执行时要求开发环境与生产环境严格一致，因此我们更倾向于使用静态链接的方式链接第三方库。本文介绍如何在Linux 环境下使用cmake 静态链接Boost 库。</p>
 <h2 id="示例">示例</h2>
 <p>我们将编译好boost静态库.a 文件和头文件放入third_party 目录，在CMakeLists.txt 中使用find_package 方法查找boost静态库。<br>
