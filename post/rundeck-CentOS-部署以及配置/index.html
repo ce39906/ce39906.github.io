@@ -1,0 +1,375 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>rundeck CentOS 部署以及配置 | Ce39906&#39;s Blog</title>
+
+<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611748236925">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://ce39906.github.io//styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<style>
+    hr {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        border: 0;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <style>
+    /* 导航栏样式 */
+    .navbar {
+        position: relative;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        -ms-flex-align: center;
+        align-items: center;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+        padding: 0.5rem 1rem;
+    }
+
+    .navbar-brand {
+        display: inline-block;
+        padding-top: 0.3125rem;
+        padding-bottom: 0.3125rem;
+        margin-right: 1rem;
+        font-size: 1.25rem;
+        line-height: inherit;
+        white-space: nowrap;
+    }
+
+    .navbar-brand:hover,
+    .navbar-brand:focus {
+        text-decoration: none;
+    }
+
+    .navbar-nav {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        padding-left: 0;
+        margin-bottom: 0;
+        list-style: none;
+    }
+
+    .navbar-collapse {
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        -ms-flex-positive: 1;
+        flex-grow: 1;
+        -ms-flex-align: center;
+        align-items: center;
+    }
+
+    .navbar-toggler {
+        padding: 0.25rem 0.75rem;
+        font-size: 1.25rem;
+        line-height: 1;
+        background-color: transparent;
+        border: 1px solid transparent;
+        border-radius: 0.25rem;
+    }
+
+    .navbar-toggler:hover,
+    .navbar-toggler:focus {
+        text-decoration: none;
+    }
+
+    @media (min-width: 992px) {
+        .navbar-expand-lg {
+            -ms-flex-flow: row nowrap;
+            flex-flow: row nowrap;
+            -ms-flex-pack: start;
+            justify-content: flex-start;
+        }
+
+        .navbar-expand-lg .navbar-nav {
+            -ms-flex-direction: row;
+            flex-direction: row;
+        }
+
+        .navbar-expand-lg .navbar-collapse {
+            display: -ms-flexbox !important;
+            display: flex !important;
+            -ms-flex-preferred-size: auto;
+            flex-basis: auto;
+        }
+
+        .navbar-expand-lg .navbar-toggler {
+            display: none;
+        }
+    }
+
+    @media (max-width: 991px) {
+        #navbarSupportedContent {
+            display: none;
+        }
+    }
+</style>
+<nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Ce39906&#39;s Blog
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1611748236925"
+                action="/search/index.html">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = function () {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    rundeck CentOS 部署以及配置
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2018-07-11 ·
+                    </time>
+                    
+                        <a href="https://ce39906.github.io//tag/_OdGJUpK1" class="post-tags">
+                            # Others
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h2 id="简介">简介</h2>
+<p>rundeck 是一个在多机器环境下实现自动化执行以及调度任务的开源工具。rundeck 提供了web 界面，用户可以通过web 界面定制任务，调度，观察节点的执行情况。</p>
+<h2 id="安装与配置">安装与配置</h2>
+<h3 id="安装">安装</h3>
+<p>rundeck 的官网位置<a href="https://www.rundeck.com/open-source">rundeck</a><br>
+rundeck 运行依赖于java，因此需要首先安装并配置java</p>
+<pre><code>yum install java-1.8.0-openjdk java-1.8.0-openjdk-devel -y
+</code></pre>
+<p>在 /etc/profile.d 目录下创建 java.sh， 在java.sh 中写入</p>
+<pre><code>#!/bin/bash
+JAVA_HOME=/usr/bin/java
+PATH=$JAVA_HOME/bin:$PATH
+export PATH JAVA_HOME
+export CLASSPATH=.
+</code></pre>
+<p>为java.sh 添加执行权限</p>
+<pre><code>chmod +x /etc/profile.d/java.sh
+</code></pre>
+<p>使java环境变量生效</p>
+<pre><code>source /etc/profile.d/java.sh
+</code></pre>
+<p>使用yum 安装rundeck</p>
+<pre><code>rpm -Uvh http://repo.rundeck.org/latest.rpm
+yum install rundeck
+</code></pre>
+<p>如果使用yum 安装失败，可以使用rpm 的方式安装。</p>
+<pre><code>wget http://download.rundeck.org/rpm/rundeck-2.11.5-1.56.GA.noarch.rpm
+wget http://download.rundeck.org/rpm/rundeck-config-2.11.5-1.56.GA.noarch.rpm
+rpm -i rundeck-2.11.5-1.56.GA.noarch.rpm rundeck-config-2.11.5-1.56.GA.noarch.rpm
+</code></pre>
+<p>启动rundeck 服务</p>
+<pre><code>/etc/init.d/rundeckd start
+</code></pre>
+<p>检查rundeck 是否启动</p>
+<pre><code>ps -ef | grep rundeck
+netstat -anp | grep 4440
+</code></pre>
+<h3 id="配置">配置</h3>
+<h4 id="更改默认用户名密码">更改默认用户名密码</h4>
+<p>rundeck 默认用户名密码都是admin，可以更改/etc/rundeck/realm.properties 文件中相应位置。更改后重启rundeck 服务</p>
+<pre><code>service rundeckd restart
+</code></pre>
+<h4 id="更改根url设置">更改根url设置</h4>
+<p>如果只在部署rundeck的机器访问rundeck web界面则不需要</p>
+<pre><code>vim /etc/rundeck/rundeck-config.properties
+vim /etc/rundeck/framework.properties
+</code></pre>
+<p>把这两个文件中所有的<strong>localhost</strong> 更改为本机的ip地址然后保存</p>
+<h4 id="添加node节点">添加node节点</h4>
+<p>在下面示例中展示</p>
+<h2 id="示例">示例</h2>
+<p>在浏览器中输入rundeck 地址，以我部署的服务为例http://10.4.227.26:4440/<br>
+<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_login.jpg" alt="这里写图片描述"><br>
+默认输入 admin admin 登录, 登录后新建一个project<br>
+<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_newproject.jpg" alt="这里写图片描述"><br>
+输入新建project 的名称以及描述其他按照默认选择，以test 为例，滚动到页面最后点击<strong>create</strong> 创建<br>
+<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_project1.jpg" alt="这里写图片描述"><br>
+<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_project2.jpg" alt="avatar"><br>
+下一步继续按照默认配置保存<br>
+新建工程后，我们查看工程下的node 节点<br>
+<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_nodes.jpg" alt="avatar"><br>
+可以看到默认情况工程下只有server node 节点。为了添加其他节点,我们进入到 /var/rundeck/projects/test/etc 路径，编辑resources.xml 文件，默认情况resources.xml 下只有server node， 如下图</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+
+&lt;project&gt;
+  &lt;node name=&quot;10.4.227.26&quot; description=&quot;Rundeck server node&quot; tags=&quot;&quot; hostname=&quot;10.4.227.26&quot; osArch=&quot;amd64&quot; osFamily=&quot;unix&quot; osName=&quot;Linux&quot; osVersion=&quot;3.10.0-123.el7.x86_64&quot; username=&quot;rundeck&quot;/&gt;
+&lt;/project&gt;
+</code></pre>
+<p>以10.4.227.21为例，添加node节点，添加client node 节点后配置如下</p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+
+&lt;project&gt;
+  &lt;node name=&quot;10.4.227.26&quot; description=&quot;Rundeck server node&quot; tags=&quot;&quot; hostname=&quot;10.4.227.26&quot; osArch=&quot;amd64&quot; osFamily=&quot;unix&quot; osName=&quot;Linux&quot; osVersion=&quot;3.10.0-123.el7.x86_64&quot; username=&quot;rundeck&quot;/&gt;
+  &lt;node name=&quot;10.4.227.21&quot; description=&quot;Rundeck client node&quot; tags=&quot;&quot; hostname=&quot;10.4.227.21&quot; osArch=&quot;amd64&quot; osFamily=&quot;unix&quot; osName=&quot;Linux&quot; osVersion=&quot;3.10.0-123.el7.x86_64&quot; username=&quot;ce39906&quot;/&gt;
+&lt;/project&gt;
+</code></pre>
+<p>新增的hostname username 需要配置正确。<br>
+完成配置后，刷新web 界面，可以看到新增的10.4.227.21<br>
+<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_nodes1.jpg" alt="avatar"><br>
+仅仅在rundeck server 添加如下配置不能实现rundeck server 到client 的无密码连接。因此，我们登录到rundeck client机器(10.4.227.21)，将 rundeck server(10.4.227.26) /var/lib/rundeck/.ssh/id_rsa.pub 的内容追加到 client 机器中的 ~/.ssh/authorized_keys<br>
+以上就完成rundeck node 节点的添加。下面我们测试通过web 界面配置在指定的node 节点上执行命令<br>
+<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_commands.jpg" alt="avatar"><br>
+选择所有节点后，我们以执行 <strong>ls /tmp</strong> 为例<br>
+<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_commands1.jpg" alt="avatar"><br>
+点击右上角的执行，执行结果如下<br>
+<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_commands2.jpg" alt="avatar"><br>
+除了简单的命令，rundeck job 支持实现更加复杂的任务。我们以执行脚本为例进行说明。首先新建一个job<br>
+<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_job.jpg" alt="avatar"><br>
+配置job 的名称以及描述<br>
+<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_job1.jpg" alt="avatar"><br>
+在step 中选择执行脚本任务<br>
+<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_job2.jpg" alt="avatar"><br>
+点击后编辑脚本并保存<br>
+<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_job3.jpg" alt="avatar"><br>
+选择执行job 的node, 这里我们选择client node(10.4.227.21) 执行<br>
+<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_job4.jpg" alt="avatar"><br>
+其他使用默认配置，点击创建，创建完成后执行job<br>
+<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_job5.jpg" alt="avatar"><br>
+执行结果如下<br>
+<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_job6.jpg" alt="avatar"><br>
+可以看到在rundeck client 上执行了job 指定的脚本(执行 whoami 以及 ifconfig)</p>
+<h2 id="思考">思考</h2>
+<p>rundeck 在完成初始配置后可以很方便用于在一组机器上执行各种任务，这种场景在生产环境以及日常运维中非常常见，类似的工具还有jenkins<br>
+前段时间公司部门要求开发自动部署工具，全套使用脚本+ ssh 的方式，健壮性和稳定性都存在不少问题。类似的自动部署的功能完全可以使用rundeck 配置job 的方式执行而不需要重新造轮子再搞一套鸡肋的东西。</p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://ce39906.github.io//post/C-cout打印uint8-t的正确方式" class="post-title gt-a-link">
+                    C++ cout打印uint8_t的正确方式
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">算法及读书杂记</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        
+    </div>
+    <div>
+        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
+                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://ce39906.github.io//atom.xml" target="_blank">RSS</a></a>
+    </div>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

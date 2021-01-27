@@ -1,0 +1,565 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>Memcached hashtable解析 | Ce39906&#39;s Blog</title>
+
+<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611748236925">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://ce39906.github.io//styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<style>
+    hr {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        border: 0;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <style>
+    /* 导航栏样式 */
+    .navbar {
+        position: relative;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        -ms-flex-align: center;
+        align-items: center;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+        padding: 0.5rem 1rem;
+    }
+
+    .navbar-brand {
+        display: inline-block;
+        padding-top: 0.3125rem;
+        padding-bottom: 0.3125rem;
+        margin-right: 1rem;
+        font-size: 1.25rem;
+        line-height: inherit;
+        white-space: nowrap;
+    }
+
+    .navbar-brand:hover,
+    .navbar-brand:focus {
+        text-decoration: none;
+    }
+
+    .navbar-nav {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        padding-left: 0;
+        margin-bottom: 0;
+        list-style: none;
+    }
+
+    .navbar-collapse {
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        -ms-flex-positive: 1;
+        flex-grow: 1;
+        -ms-flex-align: center;
+        align-items: center;
+    }
+
+    .navbar-toggler {
+        padding: 0.25rem 0.75rem;
+        font-size: 1.25rem;
+        line-height: 1;
+        background-color: transparent;
+        border: 1px solid transparent;
+        border-radius: 0.25rem;
+    }
+
+    .navbar-toggler:hover,
+    .navbar-toggler:focus {
+        text-decoration: none;
+    }
+
+    @media (min-width: 992px) {
+        .navbar-expand-lg {
+            -ms-flex-flow: row nowrap;
+            flex-flow: row nowrap;
+            -ms-flex-pack: start;
+            justify-content: flex-start;
+        }
+
+        .navbar-expand-lg .navbar-nav {
+            -ms-flex-direction: row;
+            flex-direction: row;
+        }
+
+        .navbar-expand-lg .navbar-collapse {
+            display: -ms-flexbox !important;
+            display: flex !important;
+            -ms-flex-preferred-size: auto;
+            flex-basis: auto;
+        }
+
+        .navbar-expand-lg .navbar-toggler {
+            display: none;
+        }
+    }
+
+    @media (max-width: 991px) {
+        #navbarSupportedContent {
+            display: none;
+        }
+    }
+</style>
+<nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Ce39906&#39;s Blog
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1611748236925"
+                action="/search/index.html">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = function () {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    Memcached hashtable解析
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2018-04-11 ·
+                    </time>
+                    
+                        <a href="https://ce39906.github.io//tag/TuR2tao3AiW" class="post-tags">
+                            # Memcached
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h1 id="介绍">介绍</h1>
+<p>Memcached中实现了高性能的hashtable。其解决hash冲突的方法采用拉链法。当hashtable 中存储的item个数大于容器大小的1.5倍的时候通知线程进行hashtable 扩容，为了保证在扩容期间的读写性能，扩容线程默认每次只迁移一个bucket。设置一个变量标识当前的迁移进度，在进行读写操作时根据此变量确定是去 <strong>old_hashtable</strong> 还是 <strong>primary_hashtable</strong> 进行操作。</p>
+<h1 id="代码解析">代码解析</h1>
+<h2 id="主要接口">主要接口</h2>
+<h3 id="初始化">初始化</h3>
+<pre><code>/*数组的大小都是2指数次幂，这样的好处是可以将 index % hashsize 
+变为 index &amp; hashmask*/
+#define hashsize(n) ((ub4)1&lt;&lt;(n))
+#define hashmask(n) (hashsize(n)-1)
+// 初始化函数的作用是为主表分配空间
+void assoc_init(const int hashtable_init) {
+    if (hashtable_init) {
+        hashpower = hashtable_init;
+    }
+    primary_hashtable = calloc(hashsize(hashpower), sizeof(void *));
+    if (! primary_hashtable) {
+        fprintf(stderr, &quot;Failed to init hashtable.\n&quot;);
+        exit(EXIT_FAILURE);
+    }
+    STATS_LOCK();
+    stats_state.hash_power_level = hashpower;
+    stats_state.hash_bytes = hashsize(hashpower) * sizeof(void *);
+    STATS_UNLOCK();
+}
+</code></pre>
+<h3 id="查找">查找</h3>
+<p>hash 查找的逻辑是优先使用hash 预算定位到bucket,然后循环bucket 链表找到指定的key。需要理解的地方在于查找时可能存在hashtable 正在进行扩展，所以需要确定是在<strong>old_hashtable</strong>还是 <strong>primary_hashtable</strong> 进行查找。</p>
+<pre><code>item *assoc_find(const char *key, const size_t nkey, const uint32_t hv) {
+    item *it;
+    unsigned int oldbucket;
+    /* expanding 标识扩展是否完成。
+    expand_bucket表示当前扩展的进度，使用位与操作查找bucket位置 */
+    if (expanding &amp;&amp;
+        (oldbucket = (hv &amp; hashmask(hashpower - 1))) &gt;= expand_bucket)
+    {
+        it = old_hashtable[oldbucket];
+    } else {
+        it = primary_hashtable[hv &amp; hashmask(hashpower)];
+    }
+
+    item *ret = NULL;
+    int depth = 0;
+    // 循环单链表查找指定key
+    while (it) {
+        if ((nkey == it-&gt;nkey) &amp;&amp; (memcmp(key, ITEM_key(it), nkey) == 0)) {
+            ret = it;
+            break;
+        }
+        it = it-&gt;h_next;
+        ++depth;
+    }
+    MEMCACHED_ASSOC_FIND(key, nkey, depth);
+    return ret;
+}
+</code></pre>
+<h3 id="插入">插入</h3>
+<p>插入的主要逻辑是找到指定桶的位置，将当前插入的节点设置为桶中位置的链表头结点位置，并且重新设置桶中元素的value</p>
+<pre><code>int assoc_insert(item *it, const uint32_t hv) {
+    unsigned int oldbucket;
+
+//  assert(assoc_find(ITEM_key(it), it-&gt;nkey) == 0);  /* shouldn't have duplicately named things defined */
+
+    if (expanding &amp;&amp;
+        (oldbucket = (hv &amp; hashmask(hashpower - 1))) &gt;= expand_bucket)
+    {
+        it-&gt;h_next = old_hashtable[oldbucket];
+        old_hashtable[oldbucket] = it;
+    } else {
+        it-&gt;h_next = primary_hashtable[hv &amp; hashmask(hashpower)];
+        primary_hashtable[hv &amp; hashmask(hashpower)] = it;
+    }
+
+    MEMCACHED_ASSOC_INSERT(ITEM_key(it), it-&gt;nkey);
+    return 1;
+}
+</code></pre>
+<h3 id="删除">删除</h3>
+<p>删除接口的主要逻辑是使用**_hashitem_before** 函数找到要删除item前一个item指针位置，然后将此指针的位置直接指向被删除item 的下一个item 位置</p>
+<pre><code>void assoc_delete(const char *key, const size_t nkey, const uint32_t hv) {
+    item **before = _hashitem_before(key, nkey, hv);
+
+    if (*before) {
+        item *nxt;
+        /* The DTrace probe cannot be triggered as the last instruction
+         * due to possible tail-optimization by the compiler
+         */
+        MEMCACHED_ASSOC_DELETE(key, nkey);
+        nxt = (*before)-&gt;h_next;
+        (*before)-&gt;h_next = 0;   /* probably pointless, but whatever. */
+        *before = nxt;
+        return;
+    }
+    /* Note:  we never actually get here.  the callers don't delete things
+       they can't find. */
+    assert(*before != 0);
+}
+</code></pre>
+<h2 id="其他辅助函数">其他辅助函数</h2>
+<h3 id="_hashitem_before">_hashitem_before</h3>
+<p>函数的作用是查找给定item的前一个节点的指针，在delete 接口中调用</p>
+<pre><code>static item** _hashitem_before (const char *key, const size_t nkey, const uint32_t hv) {
+    item **pos;
+    unsigned int oldbucket;
+    // 同理是确定是在old_hashtable 还是在primary_hashtable
+    if (expanding &amp;&amp;
+        (oldbucket = (hv &amp; hashmask(hashpower - 1))) &gt;= expand_bucket)
+    {
+        pos = &amp;old_hashtable[oldbucket];
+    } else {
+        pos = &amp;primary_hashtable[hv &amp; hashmask(hashpower)];
+    }
+    // 从头结点的位置开始顺序遍历单链表中的节点
+    while (*pos &amp;&amp; ((nkey != (*pos)-&gt;nkey) || memcmp(key, ITEM_key(*pos), nkey))) {
+        pos = &amp;(*pos)-&gt;h_next;
+    }
+    return pos;
+}
+</code></pre>
+<h3 id="assoc_expand">assoc_expand</h3>
+<p>函数的作用是执行hash表的扩容，执行的过程是将当前<strong>primary_hashtable</strong> 指定为<strong>old_hashtable</strong>, 为<strong>primary_hashtable</strong> 分配内存,<strong>primary_hashtable</strong>的大小是<strong>old_hashtable</strong> 的两倍，将标识是否在扩展的bool型变量 <strong>expanding</strong> 设置为true。将标识扩展进度的变量<strong>expand_bucket</strong>设置为0</p>
+<pre><code>/* grows the hashtable to the next power of 2. */
+static void assoc_expand(void) {
+    old_hashtable = primary_hashtable;
+
+    primary_hashtable = calloc(hashsize(hashpower + 1), sizeof(void *));
+    if (primary_hashtable) {
+        if (settings.verbose &gt; 1)
+            fprintf(stderr, &quot;Hash table expansion starting\n&quot;);
+        hashpower++;
+        expanding = true;
+        expand_bucket = 0;
+        STATS_LOCK();
+        stats_state.hash_power_level = hashpower;
+        stats_state.hash_bytes += hashsize(hashpower) * sizeof(void *);
+        stats_state.hash_is_expanding = true;
+        STATS_UNLOCK();
+    } else {
+        primary_hashtable = old_hashtable;
+        /* Bad news, but we can keep running. */
+    }
+}
+</code></pre>
+<h3 id="assoc_start_expand">assoc_start_expand</h3>
+<p>函数的作用判断是否进行扩展，进行扩展的临界条件是hashtable 中item 个数大于hash 桶数的1.5倍。满足此临界条件时通知扩展线程进行扩展</p>
+<pre><code>void assoc_start_expand(uint64_t curr_items) {
+    if (started_expanding)
+        return;
+
+    if (curr_items &gt; (hashsize(hashpower) * 3) / 2 &amp;&amp;
+          hashpower &lt; HASHPOWER_MAX) {
+        started_expanding = true;
+        pthread_cond_signal(&amp;maintenance_cond);
+    }
+}
+</code></pre>
+<h3 id="start_assoc_maintenance_thread">start_assoc_maintenance_thread</h3>
+<p>函数的作用是创建hash 扩展线程，可以根据用户指定的参数设置每次扩展多少个bucket。如果不指定此参数的话，默认每次只扩展一个bucket</p>
+<pre><code>int start_assoc_maintenance_thread() {
+    int ret;
+    char *env = getenv(&quot;MEMCACHED_HASH_BULK_MOVE&quot;);
+    if (env != NULL) {
+        hash_bulk_move = atoi(env);
+        if (hash_bulk_move == 0) {
+            hash_bulk_move = DEFAULT_HASH_BULK_MOVE;
+        }
+    }
+    pthread_mutex_init(&amp;maintenance_lock, NULL);
+    if ((ret = pthread_create(&amp;maintenance_tid, NULL,
+                              assoc_maintenance_thread, NULL)) != 0) {
+        fprintf(stderr, &quot;Can't create thread: %s\n&quot;, strerror(ret));
+        return -1;
+    }
+    return 0;
+}
+</code></pre>
+<h3 id="assoc_maintenance_thread">assoc_maintenance_thread</h3>
+<p>函数的作用是执行实际的bucket 扩展。具体解释见注释</p>
+<pre><code>static void *assoc_maintenance_thread(void *arg) {
+
+    mutex_lock(&amp;maintenance_lock);
+    while (do_run_maintenance_thread) {
+        int ii = 0;
+
+        /* There is only one expansion thread, so no need to global lock. */
+        // 循环每次扩展的全部bucket
+        for (ii = 0; ii &lt; hash_bulk_move &amp;&amp; expanding; ++ii) {
+            item *it, *next;
+            unsigned int bucket;
+            void *item_lock = NULL;
+
+            /* bucket = hv &amp; hashmask(hashpower) =&gt;the bucket of hash table
+             * is the lowest N bits of the hv, and the bucket of item_locks is
+             *  also the lowest M bits of hv, and N is greater than M.
+             *  So we can process expanding with only one item_lock. cool! */
+            /* expand_bucket需要锁保护,由于处于同一个bucket
+             中的特性是这些item 的hv 的低N位是完全相同，对应的
+             item_lock 的位置靠hv 的低M位确定，由于item_lock
+             数组大小小于桶数组的大小，所以有 M &lt; N ,也就是说处
+             于同一个桶中的item拥有相同item_lock,所以在遍历桶中
+             所有的item 的时候不需要在额外获取item_lock。这里的
+             设计非常精妙~ */
+            if ((item_lock = item_trylock(expand_bucket))) {
+                    /* 遍历bucket 中全部item,插入到
+                    primary_hashtable 中相应bucket */
+                    for (it = old_hashtable[expand_bucket]; NULL != it; it = next) {
+                        next = it-&gt;h_next;
+                        bucket = hash(ITEM_key(it), it-&gt;nkey) &amp; hashmask(hashpower);
+                        it-&gt;h_next = primary_hashtable[bucket];
+                        primary_hashtable[bucket] = it;
+                    }
+                    // old_hashtable 中bucket 内容设置为空
+                    old_hashtable[expand_bucket] = NULL;
+                    // 维护当前扩展的进度
+                    expand_bucket++;
+                    /* 如果扩展已经全部完成则设置expanding为
+                    false ,释放old_hashtable 的内存*/
+                    if (expand_bucket == hashsize(hashpower - 1)) {
+                        expanding = false;
+                        free(old_hashtable);
+                        STATS_LOCK();
+                        stats_state.hash_bytes -= hashsize(hashpower - 1) * sizeof(void *);
+                        stats_state.hash_is_expanding = false;
+                        STATS_UNLOCK();
+                        if (settings.verbose &gt; 1)
+                            fprintf(stderr, &quot;Hash table expansion done\n&quot;);
+                    }
+
+            } else {
+                usleep(10*1000);
+            }
+            // 释放资源
+            if (item_lock) {
+                item_trylock_unlock(item_lock);
+                item_lock = NULL;
+            }
+        }
+        // 如果不在进行扩展，则设置条件变量，等待被触发扩展
+        if (!expanding) {
+            /* We are done expanding.. just wait for next invocation */
+            started_expanding = false;
+            pthread_cond_wait(&amp;maintenance_cond, &amp;maintenance_lock);
+            /* assoc_expand() swaps out the hash table entirely, so we need
+             * all threads to not hold any references related to the hash
+             * table while this happens.
+             * This is instead of a more complex, possibly slower algorithm to
+             * allow dynamic hash table expansion without causing significant
+             * wait times.
+             */
+            pause_threads(PAUSE_ALL_THREADS);
+            assoc_expand();
+            pause_threads(RESUME_ALL_THREADS);
+        }
+    }
+    return NULL;
+}
+</code></pre>
+<h1 id="线程安全">线程安全</h1>
+<p>memcached 使用分段锁实现hashtable 线程安全，分段锁避免了hashtable 中全部的item公用一个锁，公用一个锁的会降低hashtable 的读写性能。下面部分代码是memcached 初始化分段锁数组的逻辑。</p>
+<pre><code>    if (nthreads &lt; 3) {
+        power = 10;
+    } else if (nthreads &lt; 4) {
+        power = 11;
+    } else if (nthreads &lt; 5) {
+        power = 12;
+    } else if (nthreads &lt;= 10) {
+        power = 13;
+    } else if (nthreads &lt;= 20) {
+        power = 14;
+    } else {
+        /* 32k buckets. just under the hashpower default. */
+        power = 15;
+    }
+    /* 保证分段锁的数目小于hashtable 桶的个数，这样设计的好处之一
+    是在扩展的时候针对一个桶中的所有item 对应的是同一个
+    item_lock*/
+    if (power &gt;= hashpower) {
+        fprintf(stderr, &quot;Hash table power size (%d) cannot be equal to or less than item lock table (%d)\n&quot;, hashpower, power);
+        fprintf(stderr, &quot;Item lock table grows with `-t N` (worker threadcount)\n&quot;);
+        fprintf(stderr, &quot;Hash table grows with `-o hashpower=N` \n&quot;);
+        exit(1);
+    }
+
+    item_lock_count = hashsize(power);
+    item_lock_hashpower = power;
+    // 分配分段锁数组
+    item_locks = calloc(item_lock_count, sizeof(pthread_mutex_t));
+    if (! item_locks) {
+        perror(&quot;Can't allocate item locks&quot;);
+        exit(1);
+    }
+</code></pre>
+<p>在对hashtable 进行多线程读写时，首先需要根据hash 算法计算出hv 值，然后根据hv 获取item_lock,获取到item_lock 之后再进行读写操作。这也从侧面解释了为什么memcached在扩展时默认每次只扩展一个bucket，因为在进行扩展的时候需要占有item_lock，每次执行扩展的bucket 数多会影响读写性能。</p>
+<h1 id="总结">总结</h1>
+<p>memcached 的hashtable是典型的拉链式hashtable,实现代码短小易读，使用一个线程进行hashtable的扩展以保证不会出现item增多导致哈希冲突激增降低读写性能的现象，除此之外使用分段锁来保证多线程的读写安全，相比全局锁也可以提升读写性能。memcached hashsize设置为2的整数次幂的设计非常精妙，首先这样可以将查找hash bucket索引的取余操作转化为对（hashsize-1）取按位与操作，在加上分段锁的数目大小小于hashsize 的设置可以保证一个bucket 中所有的item 对应于同一个分段锁，进而保证在扩展bucket中全部内容时只需要获取一次分段锁!</p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://ce39906.github.io//post/C-内存数据结构与二进制文件之间的序列化和反序列化" class="post-title gt-a-link">
+                    C++ 内存数据结构与二进制文件之间的序列化和反序列化
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">算法及读书杂记</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        
+    </div>
+    <div>
+        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
+                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://ce39906.github.io//atom.xml" target="_blank">RSS</a></a>
+    </div>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

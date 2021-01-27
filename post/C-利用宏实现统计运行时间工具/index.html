@@ -1,0 +1,373 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>C++利用宏实现统计运行时间工具 | Ce39906&#39;s Blog</title>
+
+<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611748236925">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://ce39906.github.io//styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<style>
+    hr {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        border: 0;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <style>
+    /* 导航栏样式 */
+    .navbar {
+        position: relative;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        -ms-flex-align: center;
+        align-items: center;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+        padding: 0.5rem 1rem;
+    }
+
+    .navbar-brand {
+        display: inline-block;
+        padding-top: 0.3125rem;
+        padding-bottom: 0.3125rem;
+        margin-right: 1rem;
+        font-size: 1.25rem;
+        line-height: inherit;
+        white-space: nowrap;
+    }
+
+    .navbar-brand:hover,
+    .navbar-brand:focus {
+        text-decoration: none;
+    }
+
+    .navbar-nav {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        padding-left: 0;
+        margin-bottom: 0;
+        list-style: none;
+    }
+
+    .navbar-collapse {
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        -ms-flex-positive: 1;
+        flex-grow: 1;
+        -ms-flex-align: center;
+        align-items: center;
+    }
+
+    .navbar-toggler {
+        padding: 0.25rem 0.75rem;
+        font-size: 1.25rem;
+        line-height: 1;
+        background-color: transparent;
+        border: 1px solid transparent;
+        border-radius: 0.25rem;
+    }
+
+    .navbar-toggler:hover,
+    .navbar-toggler:focus {
+        text-decoration: none;
+    }
+
+    @media (min-width: 992px) {
+        .navbar-expand-lg {
+            -ms-flex-flow: row nowrap;
+            flex-flow: row nowrap;
+            -ms-flex-pack: start;
+            justify-content: flex-start;
+        }
+
+        .navbar-expand-lg .navbar-nav {
+            -ms-flex-direction: row;
+            flex-direction: row;
+        }
+
+        .navbar-expand-lg .navbar-collapse {
+            display: -ms-flexbox !important;
+            display: flex !important;
+            -ms-flex-preferred-size: auto;
+            flex-basis: auto;
+        }
+
+        .navbar-expand-lg .navbar-toggler {
+            display: none;
+        }
+    }
+
+    @media (max-width: 991px) {
+        #navbarSupportedContent {
+            display: none;
+        }
+    }
+</style>
+<nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Ce39906&#39;s Blog
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1611748236925"
+                action="/search/index.html">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = function () {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    C++利用宏实现统计运行时间工具
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2018-06-05 ·
+                    </time>
+                    
+                        <a href="https://ce39906.github.io//tag/_OdGJUpK1" class="post-tags">
+                            # Others
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h2 id="背景">背景</h2>
+<p>OSRM backend 代码中有一个timing_util.hpp的头文件，其利用宏以及c++11 chrono 实现了统计代码运行时间的工具。<br>
+在工程中统计代码运行时间非常常用，本文介绍OSRM timing_util的实现原理，并用示例来说明。</p>
+<h2 id="实现解析">实现解析</h2>
+<p>timing_util.hpp</p>
+<pre><code>#ifndef TIMING_UTIL_HPP
+#define TIMING_UTIL_HPP
+
+#include &lt;chrono&gt;
+#include &lt;cstdint&gt;
+
+namespace osrm
+{
+namespace util
+{
+// 用TIMER_START 定义一个变量记录开始的时间
+#define TIMER_START(_X) auto _X##_start = std::chrono::steady_clock::now(), _X##_stop = _X##_start
+// 用TIMER_STOP 定义一个变量记录结束的时间
+#define TIMER_STOP(_X) _X##_stop = std::chrono::steady_clock::now()
+// TIMER_NSEC 定义start到stop经历了多少纳秒
+#define TIMER_NSEC(_X)                                                                             \
+    std::chrono::duration_cast&lt;std::chrono::nanoseconds&gt;(_X##_stop - _X##_start).count()
+// TIMER_USEC 定义start到stop历经多少微秒
+#define TIMER_USEC(_X)                                                                             \
+    std::chrono::duration_cast&lt;std::chrono::microseconds&gt;(_X##_stop - _X##_start).count()
+// TIMER_MSEC 定义start到stop经历多少毫秒
+#define TIMER_MSEC(_X)                                                                             \
+    (0.000001 *                                                                                    \
+     std::chrono::duration_cast&lt;std::chrono::nanoseconds&gt;(_X##_stop - _X##_start).count())
+// TIMER_SEC 定义start到stop经历多少秒
+#define TIMER_SEC(_X)                                                                              \
+    (0.000001 *                                                                                    \
+     std::chrono::duration_cast&lt;std::chrono::microseconds&gt;(_X##_stop - _X##_start).count())
+// TIMER_MIN 定义start到stop经历多少分钟
+#define TIMER_MIN(_X)                                                                              \
+    std::chrono::duration_cast&lt;std::chrono::minutes&gt;(_X##_stop - _X##_start).count()
+}
+}
+
+#endif // TIMING_UTIL_HPP
+</code></pre>
+<p>timing_util在定义宏变量时使用 ##，##的作用是把宏参数和相邻的字符进行字符串连接，# 的作用是把宏参数当做一个字符串。以下是关于宏中# 以及## 用法的示例。</p>
+<pre><code>/*************************************************************************
+    &gt; File Name: test_macro.cpp
+    &gt; Author: ce39906
+    &gt; Mail: ce39906@163.com
+    &gt; Created Time: 2018-06-05 17:38:01
+ ************************************************************************/
+#include &lt;iostream&gt;
+
+#define STR(s) #s
+#define CONS(a, b) int(a##e##b)
+
+int main()
+{
+    // 输出字符串abc
+    std::cout &lt;&lt; STR(abc) &lt;&lt; std::endl;
+    // 输出2000 (2e3 == 2000)
+    std::cout &lt;&lt; CONS(2, 3) &lt;&lt; std::endl;
+    return 0;
+}
+</code></pre>
+<h2 id="timing_util统计运行时间示例">TIMING_UTIL统计运行时间示例</h2>
+<p>timing_util.cpp</p>
+<pre><code>/*************************************************************************
+    &gt; File Name: timing_util.cpp
+    &gt; Author: ce39906
+    &gt; Mail: ce39906@163.com
+    &gt; Created Time: 2018-06-05 17:46:50
+ ************************************************************************/
+#include &quot;timing_util.hpp&quot;
+#include &lt;iostream&gt;
+
+using namespace osrm::util;
+
+int main()
+{
+    TIMER_START(x);
+    for (int i = 0; i &lt; 10000; i++)
+    {
+        for (int j = 0; j &lt; 10000; j++)
+        {
+            int ij = i * j;
+        }
+    }
+    TIMER_STOP(x);
+    std::cout &lt;&lt; &quot;Two Level Loop Cost &quot; &lt;&lt; TIMER_NSEC(x) &lt;&lt; &quot; ns.\n&quot;;
+    std::cout &lt;&lt; &quot;Two Level Loop Cost &quot; &lt;&lt; TIMER_USEC(x) &lt;&lt; &quot; us.\n&quot;;
+    std::cout &lt;&lt; &quot;Two Level Loop Cost &quot; &lt;&lt; TIMER_MSEC(x) &lt;&lt; &quot; ms.\n&quot;;
+    std::cout &lt;&lt; &quot;Two Level Loop Cost &quot; &lt;&lt; TIMER_SEC(x) &lt;&lt; &quot; s.\n&quot;;
+    std::cout &lt;&lt; &quot;Two Level Loop Cost &quot; &lt;&lt; TIMER_MIN(x) &lt;&lt; &quot; min.\n&quot;;
+    return 0;
+}
+</code></pre>
+<p>编译</p>
+<pre><code>g++ timing_util.cpp -o timing_util --std=c++11
+</code></pre>
+<p>运行</p>
+<pre><code>./timing_util
+</code></pre>
+<p>运行结果如下<br>
+<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/timing_util.png" alt="avatar"></p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://ce39906.github.io//post/Linux-cmake-静态链接boost" class="post-title gt-a-link">
+                    Linux cmake 静态链接boost
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">算法及读书杂记</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        
+    </div>
+    <div>
+        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
+                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://ce39906.github.io//atom.xml" target="_blank">RSS</a></a>
+    </div>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

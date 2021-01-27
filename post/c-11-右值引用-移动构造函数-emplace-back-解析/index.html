@@ -1,0 +1,394 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>c++11 右值引用,移动构造函数,emplace_back 解析 | Ce39906&#39;s Blog</title>
+
+<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611748236925">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://ce39906.github.io//styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<style>
+    hr {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        border: 0;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <style>
+    /* 导航栏样式 */
+    .navbar {
+        position: relative;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        -ms-flex-align: center;
+        align-items: center;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+        padding: 0.5rem 1rem;
+    }
+
+    .navbar-brand {
+        display: inline-block;
+        padding-top: 0.3125rem;
+        padding-bottom: 0.3125rem;
+        margin-right: 1rem;
+        font-size: 1.25rem;
+        line-height: inherit;
+        white-space: nowrap;
+    }
+
+    .navbar-brand:hover,
+    .navbar-brand:focus {
+        text-decoration: none;
+    }
+
+    .navbar-nav {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        padding-left: 0;
+        margin-bottom: 0;
+        list-style: none;
+    }
+
+    .navbar-collapse {
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        -ms-flex-positive: 1;
+        flex-grow: 1;
+        -ms-flex-align: center;
+        align-items: center;
+    }
+
+    .navbar-toggler {
+        padding: 0.25rem 0.75rem;
+        font-size: 1.25rem;
+        line-height: 1;
+        background-color: transparent;
+        border: 1px solid transparent;
+        border-radius: 0.25rem;
+    }
+
+    .navbar-toggler:hover,
+    .navbar-toggler:focus {
+        text-decoration: none;
+    }
+
+    @media (min-width: 992px) {
+        .navbar-expand-lg {
+            -ms-flex-flow: row nowrap;
+            flex-flow: row nowrap;
+            -ms-flex-pack: start;
+            justify-content: flex-start;
+        }
+
+        .navbar-expand-lg .navbar-nav {
+            -ms-flex-direction: row;
+            flex-direction: row;
+        }
+
+        .navbar-expand-lg .navbar-collapse {
+            display: -ms-flexbox !important;
+            display: flex !important;
+            -ms-flex-preferred-size: auto;
+            flex-basis: auto;
+        }
+
+        .navbar-expand-lg .navbar-toggler {
+            display: none;
+        }
+    }
+
+    @media (max-width: 991px) {
+        #navbarSupportedContent {
+            display: none;
+        }
+    }
+</style>
+<nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Ce39906&#39;s Blog
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1611748236925"
+                action="/search/index.html">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = function () {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    c++11 右值引用,移动构造函数,emplace_back 解析
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2018-07-26 ·
+                    </time>
+                    
+                        <a href="https://ce39906.github.io//tag/A4gbajWnZJ" class="post-tags">
+                            # c++11
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h2 id="右值引用">右值引用</h2>
+<p>C++11 引入了右值引用的概念，使用&amp;&amp;表示。<br>
+首先简单介绍右值的概念，简单的讲，凡是真正存在内存当中，而不是寄存器中的值是左值，其余都是右值。更通俗的说法取地址操作可以得到的都是左值，其余都是右值。例如</p>
+<pre><code>int a = 2;
+</code></pre>
+<p>a 中就是一个左值，相对的，2 就是一个右值。关于右值更详细严谨的介绍见https://en.cppreference.com/w/cpp/language/value_category</p>
+<h2 id="移动构造函数">移动构造函数</h2>
+<p>在c++11 之前，类包括构造函数，析构函数，拷贝构造函数，赋值构造函数。对于存在指针变量的类来讲，其拷贝构造函数，赋值构造函数必须实现指针变量的深拷贝，这可能会涉及到比较耗时的操作(比如string 类存储了一个超长字符串，在调用其拷贝构造或赋值构造时需要超长字符串的拷贝)。<br>
+移动构造函数相对拷贝构造函数和赋值构造函数而言不会进行成员变量的深拷贝而是交换其所有权，这样就避免的拷贝时带来的性能损耗。<br>
+移动构造的函数声明如下</p>
+<pre><code>class_name ( class_name &amp;&amp; )；
+</code></pre>
+<h2 id="emplace_back">emplace_back</h2>
+<p>c++11 容器新增了 emplace_back, emplace等方法向容器中加入新的元素。以 vector 的emplace_back 为例，其函数声明如下</p>
+<pre><code>template&lt; class... Args &gt;
+void emplace_back( Args&amp;&amp;... args );
+</code></pre>
+<p>emplcae_back 接收一个右值引用，调用其移动构造函数，将对象移动到容器中，而之前的push_back 是调用一次对象的拷贝构造函数， 容器中存储的是拷贝后的副本。</p>
+<h2 id="stdmove">std::move</h2>
+<p>std::move 的作用是将左值转为右值引用类型。</p>
+<h2 id="示例">示例</h2>
+<p>示例代码测试了 移动构造函数，emplace_back, push_back, std::move</p>
+<pre><code>/*************************************************************************
+    &gt; File Name: emplace.cpp
+    &gt; Author: ce39906
+    &gt; Mail: ce39906@163.com
+    &gt; Created Time: 2018-07-26 15:03:11
+ ************************************************************************/
+#include &lt;vector&gt;
+#include &lt;cstring&gt;
+#include &lt;iostream&gt;
+class A
+{
+  public:
+    A (const int size) : size(size)
+    {
+        if (size)
+        {
+            data = new char[size];
+        }
+        std::cout &lt;&lt; &quot;I'm constructor.\n&quot;;
+    }
+
+    A (const A&amp; other)
+    {
+        size = other.size;
+        data = new char[size];
+        memcpy(data, other.data, size * sizeof(char));
+        std::cout &lt;&lt; &quot;I'm copy constructor.\n&quot;;
+    }
+
+    A (A&amp;&amp; other)
+    {
+        size = other.size;
+        data = other.data;
+
+        other.size = 0;
+        other.data = nullptr;
+        std::cout &lt;&lt; &quot;I'm move constructor.\n&quot;;
+    }
+
+  private:
+    int size;
+    char* data = nullptr;
+};
+
+int main()
+{
+    std::vector&lt;A&gt; vec;
+    vec.reserve(1024);
+
+    A tmp(5);
+    std::cout &lt;&lt; &quot;push_back a left value.\n&quot;;
+    vec.push_back(tmp);
+
+    std::cout &lt;&lt; &quot;push_back a right value with std::move.\n&quot;;
+    vec.push_back(std::move(tmp));
+
+    std::cout &lt;&lt; &quot;emplace_back a left value.\n&quot;;
+    vec.emplace_back(tmp);
+
+    std::cout &lt;&lt; &quot;emplace_back a right value with std::move.\n&quot;;
+    vec.emplace_back(std::move(tmp));
+
+    std::cout &lt;&lt; &quot;emplace_back in place.\n&quot;;
+    vec.emplace_back(5);
+
+    std::cout &lt;&lt; &quot;=========================================\n&quot;;
+    std::cout &lt;&lt; &quot;test with buildin string move and emplace_back\n&quot;;
+    std::cout &lt;&lt; &quot;=========================================\n&quot;;
+
+    std::vector&lt;std::string&gt; str_vec;
+    str_vec.reserve(1024);
+
+    std::string str = &quot;I'd like to be inserted to a container&quot;;
+
+    std::cout &lt;&lt; &quot;before emplace_back to vec, str is:\n&quot;;
+    std::cout &lt;&lt; str &lt;&lt; std::endl;
+    std::cout &lt;&lt; &quot;c_str address is &quot; &lt;&lt; (void*) str.c_str() &lt;&lt; std::endl;
+
+    str_vec.emplace_back(std::move(str));
+
+    std::cout &lt;&lt; &quot;after emplace_back to vec, str is:\n&quot;;
+    std::cout &lt;&lt; str &lt;&lt; std::endl;
+    std::cout &lt;&lt; &quot;c_str address is &quot; &lt;&lt; (void*) str.c_str() &lt;&lt; std::endl;
+    std::cout &lt;&lt; &quot;c_str address of the string in container is &quot;
+        &lt;&lt; (void*) str_vec.front().c_str() &lt;&lt; std::endl;
+}
+</code></pre>
+<p>编译代码</p>
+<blockquote>
+<p>g++ --std=c++11 emplace.cpp -o emplace</p>
+</blockquote>
+<p>执行，输出结果如下<br>
+<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/emplace.png" alt="emplace"></p>
+<p>从执行结果中，我们可以得出以下结论</p>
+<ol>
+<li>push_back 可以接收左值也可以接受右值，接收左值时使用拷贝构造，接收右值时使用移动构造</li>
+<li>emplace_back 接收右值时调用类的移动构造</li>
+<li>emplace_back 接收左值时，实际上的执行效果是先对传入的参数进行拷贝构造，然后使用拷贝构造后的副本，<strong>也就是说，emplace_back在接收一个左值的时候其效果和push_back一致！所以在使用emplace_back 时需要确保传入的参数是一个右值引用，如果不是，请使用std::move()进行转换</strong></li>
+<li>emplace_back 接收多个参数时，可以调用匹配的构造函数<strong>实现在容器内的原地构造</strong></li>
+<li>使用string 类验证了移动构造函数式对类成员所有权的传递，从上图中看到string 在插入前c_str的地址和使用emplace_back 移动到容器后的c_str的地址一致。并且移动后字符串c_str 的地址指向其他位置。</li>
+</ol>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://ce39906.github.io//post/Trie-C-实现与解析" class="post-title gt-a-link">
+                    Trie C++ 实现与解析
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">算法及读书杂记</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        
+    </div>
+    <div>
+        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
+                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://ce39906.github.io//atom.xml" target="_blank">RSS</a></a>
+    </div>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

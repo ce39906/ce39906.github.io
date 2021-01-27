@@ -1,0 +1,514 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>Tensorflow 编译及应用C++静态库 | Ce39906&#39;s Blog</title>
+
+<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611748236925">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://ce39906.github.io//styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<style>
+    hr {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        border: 0;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <style>
+    /* 导航栏样式 */
+    .navbar {
+        position: relative;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        -ms-flex-align: center;
+        align-items: center;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+        padding: 0.5rem 1rem;
+    }
+
+    .navbar-brand {
+        display: inline-block;
+        padding-top: 0.3125rem;
+        padding-bottom: 0.3125rem;
+        margin-right: 1rem;
+        font-size: 1.25rem;
+        line-height: inherit;
+        white-space: nowrap;
+    }
+
+    .navbar-brand:hover,
+    .navbar-brand:focus {
+        text-decoration: none;
+    }
+
+    .navbar-nav {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        padding-left: 0;
+        margin-bottom: 0;
+        list-style: none;
+    }
+
+    .navbar-collapse {
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        -ms-flex-positive: 1;
+        flex-grow: 1;
+        -ms-flex-align: center;
+        align-items: center;
+    }
+
+    .navbar-toggler {
+        padding: 0.25rem 0.75rem;
+        font-size: 1.25rem;
+        line-height: 1;
+        background-color: transparent;
+        border: 1px solid transparent;
+        border-radius: 0.25rem;
+    }
+
+    .navbar-toggler:hover,
+    .navbar-toggler:focus {
+        text-decoration: none;
+    }
+
+    @media (min-width: 992px) {
+        .navbar-expand-lg {
+            -ms-flex-flow: row nowrap;
+            flex-flow: row nowrap;
+            -ms-flex-pack: start;
+            justify-content: flex-start;
+        }
+
+        .navbar-expand-lg .navbar-nav {
+            -ms-flex-direction: row;
+            flex-direction: row;
+        }
+
+        .navbar-expand-lg .navbar-collapse {
+            display: -ms-flexbox !important;
+            display: flex !important;
+            -ms-flex-preferred-size: auto;
+            flex-basis: auto;
+        }
+
+        .navbar-expand-lg .navbar-toggler {
+            display: none;
+        }
+    }
+
+    @media (max-width: 991px) {
+        #navbarSupportedContent {
+            display: none;
+        }
+    }
+</style>
+<nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Ce39906&#39;s Blog
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1611748236925"
+                action="/search/index.html">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = function () {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    Tensorflow 编译及应用C++静态库
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2018-09-11 ·
+                    </time>
+                    
+                        <a href="https://ce39906.github.io//tag/J2BpTA3Sgg" class="post-tags">
+                            # Tensorflow
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h2 id="背景">背景</h2>
+<p>目前对Tensorflow的主流应用模式是使用python训练模型，使用c++或者java应用训练好的模型。上篇博客介绍了如何在工程中应用Tensorflow 动态库，本博客介绍如何在工程中应用Tensorflow静态库</p>
+<h2 id="编译静态链接库">编译静态链接库</h2>
+<p>clone tensorflow git 仓库</p>
+<pre><code class="language-bash">git clone https://github.com/tensorflow/tensorflow.git
+cd tensorflow
+</code></pre>
+<p>进入 tensorflow 工程下contrib/makefile路径</p>
+<pre><code class="language-bash">tensorflow/contrib/makefile
+</code></pre>
+<p>运行编译脚本</p>
+<pre><code># MacOS 以及Linux 使用此脚本
+./build_all_linux.sh
+</code></pre>
+<p>脚本执行完成后我们得到tensorflow静态库以及相应头文件。<br>
+下一步我们将Tensorflow静态库头文件及Tensorflow依赖的静态库头文件整理到统一路径下，其他c++ 工程就可以应用这些库文件及头文件。</p>
+<pre><code class="language-bash"># 将tensorflow 头文件以及库文件收集到此路径
+mkdir -p ~/tensorflow_libs/tensorflow
+# include 路径存放tensorflow主要头文件
+mkdir -p ~/tensorflow_libs/tensorflow/include/tensorflow
+# lib 路径存放编译好的静态库
+mkdir -p ~/tensorflow_libs/tensorflow/lib
+# 拷贝tensorflow 主要头文件
+cp -r tensorflow/core ~/tensorflow_libs/tensorflow/include
+# 拷贝tensoflow 静态库
+cp tensorflow/contrib/makefile/gen/lib/libtensorflow-core.a ~/tensorflow_libs/tensorflow/lib
+# 拷贝tensorflow 第三方头文件
+mkdir -p ~/tensorflow_libs/tensorflow/tensorflow_third_party
+cp -r third_party ~/tensorflow_libs/tensorflow/tensorflow_third_party
+# 拷贝gen目录下文件
+cp -r tensorflow/contrib/makefile/gen/host_obj ~/tensorflow_libs/tensorflow/
+cp -r tensorflow/contrib/makefile/gen/proto ~/tensorflow_libs/tensorflow/
+cp -r tensorflow/contrib/makefile/gen/protobuf ~/tensorflow_libs/tensorflow/
+cp -r tensorflow/contrib/makefile/gen/proto_text ~/tensorflow_libs/tensorflow/
+
+# 拷贝downloads下文件
+# eigen3
+mkdir -p ~/tensorflow_libs/tensorflow/eigen3
+cp -r tensorflow/contrib/makefile/downloads/eigen/Eigen ~/tensorflow_libs/tensorflow/eigen3
+cp -r tensorflow/contrib/makefile/downloads/eigen/unsupported ~/tensorflow_libs/tensorflow/eigen3
+# absl
+cp -r tensorflow/contrib/makefile/downloads/absl ~/tensorflow_libs/tensorflow/
+# nsyc
+mkdir -p ~/tensorflow_libs/tensorflow/nsyc/include
+mkdir -p ~/tensorflow_libs/tensorflow/nsyc/lib
+# 拷贝nsyc 头文件
+cp -r tensorflow/contrib/makefile/downloads/nsync/* ~/tensorflow_libs/tensorflow/nsyc/include
+# 拷贝nsyc 库文件
+cp tensorflow/contrib/makefile/downloads/nsync/builds/default.macos.c++11/libnsync.a ~/tensorflow_libs/tensorflow/nsyc/lib
+</code></pre>
+<!--more-->
+<h2 id="应用静态链接库">应用静态链接库</h2>
+<h3 id="示例python-model">示例python model</h3>
+<p>我们使用一个简单的model作为示例，该model实现了两个字符串拼接的功能。模型保存到<strong>test_model.pb</strong>。代码如下</p>
+<pre><code class="language-python">#-*- coding: utf-8 -*-
+&quot;&quot;&quot;
+File Name: test_model.py
+Author: ce39906
+mail: ce39906@163.com
+Created Time: 2018-09-11 17:15:32
+&quot;&quot;&quot;
+import tensorflow as tf
+
+a = tf.Variable(&quot;hello &quot;, name = &quot;a&quot;)
+b = tf.Variable(&quot;tensorflow&quot;, name = &quot;b&quot;)
+result = tf.add(a, b, name = &quot;result&quot;)
+
+with tf.Session() as sess:
+    sess.run(tf.global_variables_initializer())
+    tf.train.write_graph(sess.graph_def, '.', 'test_model.pb', as_text = False)
+    print result.eval()
+</code></pre>
+<h3 id="c工程加载model">c++工程加载model</h3>
+<p>首先我们将整理好的tensorflow 头文件以及静态库文件全部拷贝到c++工程目录，本例中存放tensorflow头文件和库文件的路径为<strong>tensorflow</strong></p>
+<pre><code class="language-bash">#将整理好的tensorflow头文件及库文件全部拷贝到c++工程目录
+cp -r ~/tensorflow_libs/tensorflow .
+</code></pre>
+<p>示例c++ 代码如下</p>
+<pre><code class="language-c++">/*************************************************************************
+    &gt; File Name: load_model.cpp
+    &gt; Author: ce39906
+    &gt; Mail: ce39906@163.com
+    &gt; Created Time: 2018-09-08 08:28:51
+ ************************************************************************/
+#include &quot;tensorflow/core/public/session.h&quot;
+#include &quot;tensorflow/core/platform/env.h&quot;
+
+#include &lt;iostream&gt;
+#include &lt;string&gt;
+
+const static std::string kModelPath = &quot;test_model.pb&quot;;
+
+int main()
+{
+    using namespace tensorflow;
+    auto session = NewSession(SessionOptions());
+    if (session == nullptr)
+    {
+        std::cerr &lt;&lt; &quot;Tensorflow session create failded.\n&quot;;
+        return -1;
+    }
+    else
+    {
+        std::cout &lt;&lt; &quot;Tensorflow session create success.\n&quot;;
+    }
+
+    Status status;
+    // Read in the protobuf graph we exported
+    GraphDef graph_def;
+    status = ReadBinaryProto(Env::Default(), kModelPath, &amp;graph_def);
+    if (!status.ok())
+    {
+        std::cerr &lt;&lt; &quot;Error reading graph definition from &quot; &lt;&lt; kModelPath
+            &lt;&lt; &quot;: &quot; &lt;&lt; status.ToString();
+        return -1;
+    }
+    else
+    {
+        std::cout &lt;&lt; &quot;Read graph def success.\n&quot;;
+    }
+    // Add the graph to the session
+    status = session-&gt;Create(graph_def);
+    if (!status.ok())
+    {
+        std::cerr &lt;&lt; &quot;Error creating graph: &quot; &lt;&lt; status.ToString();
+        return -1;
+    }
+    else
+    {
+        std::cout &lt;&lt; &quot;Create graph success.\n&quot;;
+    }
+    // Set model input
+    Tensor hello(DT_STRING, TensorShape());
+    hello.scalar&lt;string&gt;()() = &quot;hello&quot;;
+
+    Tensor tensorflow(DT_STRING, TensorShape());
+    tensorflow.scalar&lt;string&gt;()() = &quot; tensorflow&quot;;
+
+    // Apply the loaded model
+    std::vector&lt;std::pair&lt;string, tensorflow::Tensor&gt;&gt; inputs =
+    {
+        { &quot;a&quot;, hello },
+        { &quot;b&quot;, tensorflow },
+    }; // input
+
+    std::vector&lt;tensorflow::Tensor&gt; outputs; // output
+    status = session-&gt;Run(inputs, {&quot;result&quot;}, {}, &amp;outputs);
+    if (!status.ok())
+    {
+        std::cerr &lt;&lt; status.ToString() &lt;&lt; std::endl;
+        return -1;
+    }
+    else
+    {
+        std::cout &lt;&lt; &quot;Run session successfully&quot; &lt;&lt; std::endl;
+    }
+    // Output the result
+    const auto result = outputs[0].scalar&lt;string&gt;()();
+    std::cout &lt;&lt; &quot;Result value: &quot; &lt;&lt; result &lt;&lt; std::endl;
+
+    status = session-&gt;Close();
+    if (!status.ok())
+    {
+        std::cerr &lt;&lt; &quot;Session closed success&quot;;
+        return -1;
+    }
+
+    return 0;
+}
+</code></pre>
+<p>CMakeLists.txt 如下</p>
+<pre><code class="language-cmake">CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+
+SET(TENSORFLOW_INCLUDE_PATH ${CMAKE_SOURCE_DIR}/tensorflow/include)
+SET(TENSORFLOW_LIBARY ${CMAKE_SOURCE_DIR}/tensorflow/lib/libtensorflow-core.a)
+MESSAGE(STATUS &quot;TENSORFLOW_INCLUDE_PATH ${TENSORFLOW_INCLUDE_PATH}&quot;)
+MESSAGE(STATUS &quot;TENSORFLOW_LIBARY ${TENSORFLOW_LIBARY}&quot;)
+
+SET(TENSORFLOW_PROTOBUF_INCLUDE_PATH ${CMAKE_SOURCE_DIR}/tensorflow/protobuf/include)
+SET(TENSORFLOW_PROTOBUF_LIBRARY_PATH ${CMAKE_SOURCE_DIR}/tensorflow/protobuf/lib)
+SET(TENSORFLOW_PROTOBUF_LIBRARY ${TENSORFLOW_PROTOBUF_LIBRARY_PATH}/libprotobuf.a)
+SET(TENSORFLOW_PROTOBUF_LITE_LIBRARY ${TENSORFLOW_PROTOBUF_LIBRARY_PATH}/libprotobuf-lite.a)
+SET(TENSORFLOW_PROTOC_LIBRARY ${TENSORFLOW_PROTOBUF_LIBRARY_PATH}/libprotoc.a)
+MESSAGE(STATUS &quot;TENSORFLOW_PROTOBUF_INCLUDE_PATH ${TENSORFLOW_PROTOBUF_INCLUDE_PATH}&quot;)
+MESSAGE(STATUS &quot;TENSORFLOW_PROTOBUF_LIBRARY_PATH ${TENSORFLOW_PROTOBUF_LIBRARY_PATH}&quot;)
+
+SET(TENSORFLOW_NSYNC_INCLUDE_PATH ${CMAKE_SOURCE_DIR}/tensorflow/nsync/include)
+SET(TENSORFLOW_NSYNC_LIBRARY_PATH ${CMAKE_SOURCE_DIR}/tensorflow/nsync/lib)
+MESSAGE(STATUS &quot;TENSORFLOW_NSYNC_INCLUDE_PATH ${TENSORFLOW_NSYNC_INCLUDE_PATH}&quot;)
+MESSAGE(STATUS &quot;TENSORFLOW_NSYNC_LIBRARY_PATH ${TENSORFLOW_NSYNC_LIBRARY_PATH}&quot;)
+SET(TENSORFLOW_NSYNC_LIBRARY ${TENSORFLOW_NSYNC_LIBRARY_PATH}/libnsync.a)
+
+SET(TENSORFLOW_PROTO_INCLUDE_PATH ${CMAKE_SOURCE_DIR}/tensorflow/proto)
+SET(TENSORFLOW_PROTO_TEXT_INCLUDE_PATH ${CMAKE_SOURCE_DIR}/tensorflow/proto_text)
+SET(TENSORFLOW_HOST_OBJ_INCLUDE_PATH ${CMAKE_SOURCE_DIR}/tensorflow/host_obj)
+SET(TENSORFLOW_EIGEN_INCLUDE_PATH ${CMAKE_SOURCE_DIR}/tensorflow/eigen3)
+SET(TENSORFLOW_ABSL_INCLUDE_PATH ${CMAKE_SOURCE_DIR}/tensorflow/absl)
+SET(TENSORFLOW_THIRD_PARTY_INCLUDE_PATH ${CMAKE_SOURCE_DIR}/tensorflow/tensorflow_third_party)
+MESSAGE(STATUS &quot;TENSORFLOW_PROTO_INCLUDE_PATH ${TENSORFLOW_PROTO_INCLUDE_PATH}&quot;)
+MESSAGE(STATUS &quot;TENSORFLOW_PROTO_TEXT_INCLUDE_PATH ${TENSORFLOW_PROTO_TEXT_INCLUDE_PATH}&quot;)
+MESSAGE(STATUS &quot;TENSORFLOW_HOST_OBJ_INCLUDE_PATH ${TENSORFLOW_HOST_OBJ_INCLUDE_PATH}&quot;)
+MESSAGE(STATUS &quot;TENSORFLOW_EIGEN_INCLUDE_PATH ${TENSORFLOW_EIGEN_INCLUDE_PATH}&quot;)
+MESSAGE(STATUS &quot;TENSORFLOW_ABSL_INCLUDE_PATH ${TENSORFLOW_ABSL_INCLUDE_PATH}&quot;)
+MESSAGE(STATUS &quot;TENSORFLOW_THIRD_PARTY_INCLUDE_PATH ${TENSORFLOW_THIRD_PARTY_INCLUDE_PATH}&quot;)
+
+INCLUDE_DIRECTORIES(${TENSORFLOW_PROTOBUF_INCLUDE_PATH})
+INCLUDE_DIRECTORIES(${TENSORFLOW_INCLUDE_PATH})
+INCLUDE_DIRECTORIES(${TENSORFLOW_PROTO_INCLUDE_PATH})
+INCLUDE_DIRECTORIES(${TENSORFLOW_PROTO_TEXT_INCLUDE_PATH})
+INCLUDE_DIRECTORIES(${TENSORFLOW_HOST_OBJ_INCLUDE_PATH})
+INCLUDE_DIRECTORIES(${TENSORFLOW_EIGEN_INCLUDE_PATH})
+INCLUDE_DIRECTORIES(${TENSORFLOW_ABSL_INCLUDE_PATH})
+INCLUDE_DIRECTORIES(${TENSORFLOW_NSYNC_INCLUDE_PATH})
+INCLUDE_DIRECTORIES(${TENSORFLOW_THIRD_PARTY_INCLUDE_PATH})
+
+ADD_EXECUTABLE(load_model load_model.cpp)
+
+SET(LOAD_MODEL_LIBRARIES
+    ${TENSORFLOW_PROTOBUF_LIBRARY}
+    ${TENSORFLOW_PROTOC_LIBRARY}
+    ${TENSORFLOW_NSYNC_LIBRARY}
+    ${TENSORFLOW_LIBARY})
+
+SET(LDFLAGS &quot;-std=c++11 -msse4.1 -fPIC -O3 -march=native -Wall -finline-functions -undefined dynamic_lookup -all_load&quot;)
+SET(CMAKE_CXX_FLAGS &quot;${CMAKE_CXX_FLAGS}${LDFLAGS}&quot;)
+
+MESSAGE(STATUS &quot;CMAKE_CXX_COMPILER: ${CMAKE_CXX_COMPILER}&quot;)
+MESSAGE(STATUS &quot;CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}&quot;)
+TARGET_LINK_LIBRARIES(load_model ${LOAD_MODEL_LIBRARIES} ${CMAKE_CXX_FLAGS})
+</code></pre>
+<p>编译</p>
+<pre><code class="language-bash">mkdir -p build &amp;&amp; cd build
+cmake ..
+make
+# 将编译好的二进制文件拷贝到上级目录
+cp load_model ..
+</code></pre>
+<p>执行</p>
+<blockquote>
+<p>./load_model</p>
+</blockquote>
+<p>输出如下<br>
+<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/tensorflow-load-model.png" alt="pic"></p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://ce39906.github.io//post/Tensorflow-编译及应用C-动态库" class="post-title gt-a-link">
+                    Tensorflow 编译及应用C++动态库
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">算法及读书杂记</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        
+    </div>
+    <div>
+        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
+                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://ce39906.github.io//atom.xml" target="_blank">RSS</a></a>
+    </div>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

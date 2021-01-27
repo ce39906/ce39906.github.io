@@ -1,0 +1,386 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>C++11新特性总结 | Ce39906&#39;s Blog</title>
+
+<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611748236925">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://ce39906.github.io//styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<style>
+    hr {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        border: 0;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <style>
+    /* 导航栏样式 */
+    .navbar {
+        position: relative;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        -ms-flex-align: center;
+        align-items: center;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+        padding: 0.5rem 1rem;
+    }
+
+    .navbar-brand {
+        display: inline-block;
+        padding-top: 0.3125rem;
+        padding-bottom: 0.3125rem;
+        margin-right: 1rem;
+        font-size: 1.25rem;
+        line-height: inherit;
+        white-space: nowrap;
+    }
+
+    .navbar-brand:hover,
+    .navbar-brand:focus {
+        text-decoration: none;
+    }
+
+    .navbar-nav {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        padding-left: 0;
+        margin-bottom: 0;
+        list-style: none;
+    }
+
+    .navbar-collapse {
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        -ms-flex-positive: 1;
+        flex-grow: 1;
+        -ms-flex-align: center;
+        align-items: center;
+    }
+
+    .navbar-toggler {
+        padding: 0.25rem 0.75rem;
+        font-size: 1.25rem;
+        line-height: 1;
+        background-color: transparent;
+        border: 1px solid transparent;
+        border-radius: 0.25rem;
+    }
+
+    .navbar-toggler:hover,
+    .navbar-toggler:focus {
+        text-decoration: none;
+    }
+
+    @media (min-width: 992px) {
+        .navbar-expand-lg {
+            -ms-flex-flow: row nowrap;
+            flex-flow: row nowrap;
+            -ms-flex-pack: start;
+            justify-content: flex-start;
+        }
+
+        .navbar-expand-lg .navbar-nav {
+            -ms-flex-direction: row;
+            flex-direction: row;
+        }
+
+        .navbar-expand-lg .navbar-collapse {
+            display: -ms-flexbox !important;
+            display: flex !important;
+            -ms-flex-preferred-size: auto;
+            flex-basis: auto;
+        }
+
+        .navbar-expand-lg .navbar-toggler {
+            display: none;
+        }
+    }
+
+    @media (max-width: 991px) {
+        #navbarSupportedContent {
+            display: none;
+        }
+    }
+</style>
+<nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Ce39906&#39;s Blog
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1611748236925"
+                action="/search/index.html">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = function () {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    C++11新特性总结
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2019-05-11 ·
+                    </time>
+                    
+                        <a href="https://ce39906.github.io//tag/A4gbajWnZJ" class="post-tags">
+                            # c++11
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <p><img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/c%2B%2B11.png" alt="pic"><br>
+C++11相对C++03带来的改进主要包括核心语言以及标准库扩充两方面</p>
+<h2 id="核心语言">核心语言</h2>
+<h3 id="语言现代化简洁化">语言现代化简洁化</h3>
+<h4 id="类型推导">类型推导</h4>
+<blockquote>
+<p>auto : 自动类型推导，本质是类型修饰符，常用于声明迭代器类型，滥用会导致代码可读性下降<br>
+delctype : 是一个类型推导的运算符，常用于模板实例化时返回值类型推导</p>
+</blockquote>
+<h4 id="模板细节改进">模板细节改进</h4>
+<blockquote>
+<p>连续两个右尖括号：之前会与右移运算符冲突(新标准前已被一些编译器修复)<br>
+模板别名：using 可以完全替代typedef, 且改善之前typedef 和模板配合不好的问题<br>
+函数模板默认参数：C++03 只有类模板允许有默认参数，C++11 函数模板也支持默认参数</p>
+</blockquote>
+<h4 id="列表初始化">列表初始化</h4>
+<p>以初始化一个vector 为例</p>
+<pre><code class="language-c++">//c++03
+vector&lt;int&gt; v;
+v.push_back(2);
+v.push_back(3);
+v.push_back(5);
+//c++11
+vector&lt;int&gt; v = {2, 3, 5};
+</code></pre>
+<h4 id="foreach-loop">foreach loop</h4>
+<p>以遍历一个vector为例</p>
+<pre><code class="language-c++">//c++03
+vector&lt;int&gt; v;
+for (inst i = 0; i &lt; v.size(); i++)
+{
+}
+//c++11
+for (int a : v)
+{
+}
+</code></pre>
+<h4 id="stdfunction-以及bind">std::function 以及bind</h4>
+<blockquote>
+<p>std::function : c++ 可调用对象包括函数指针，函数对象，可被转化为函数指针的类对象, std::function 将这些可调用对象统一包装起来<br>
+bind: 将可调用对象与函数参数对象进行绑定。可以用于将不同函数转化为同一函数签名(用于线程池)</p>
+</blockquote>
+<h4 id="lambda-表达式">lambda 表达式</h4>
+<blockquote>
+<p>函数声明变的简洁<br>
+方便配合标准库<br>
+实现功能闭包</p>
+</blockquote>
+<h4 id="tuple-元组">tuple 元组</h4>
+<blockquote>
+<p>pair 只能支持两个元素，tuple 支持多个元素</p>
+</blockquote>
+<h3 id="提升程序性能">提升程序性能</h3>
+<h4 id="右值引用和移动构造">右值引用和移动构造</h4>
+<blockquote>
+<p>右值引用：右值引用解决了左值引用无法传递临时对象和常引用对象。右值引用允许传递一个可变的临时对象引用。主要配合移动构造。<br>
+移动构造：使用移动而非复制语义完成构造过程，主要用于解决从函数返回值时的大量深拷贝开销。使用右值引用和移动构造，在按值传递和返回临时对象时，即可免去不必要的内存分配和数据拷贝开销<br>
+move: 将左值转化为右值<br>
+forward以及完美转发：一个右值引用的参数，在函数内部转发该参数的时候，这个参数变为左值。所谓完美转发是指在函数模板中，完全依照模板的参数类型将参数传递给函数调用的另一个函数</p>
+</blockquote>
+<h3 id="语言改进">语言改进</h3>
+<h4 id="成员默认初始值">成员默认初始值</h4>
+<pre><code class="language-c++">class A
+{
+	int a = 1;
+	int b = 2;
+};
+</code></pre>
+<h4 id="override-和final">override 和final</h4>
+<blockquote>
+<p>override : 用于标识指定的虚方法重载了基类中的同名虚方法。该修饰符导致编译时严格检查。避免因函数签名不同而重载失败<br>
+final: 用于修饰类或方案，修饰类时表示这个类不能被继承，修饰方法时表示此虚方法已经是最终实现</p>
+</blockquote>
+<h4 id="nullptr">nullptr</h4>
+<p>严格代表空指针, 解决了NULL 在int 型以及 指针型参数的函数重载异议的问题</p>
+<h4 id="enum-class">Enum class</h4>
+<p>强枚举类型杜绝了不同枚举类型之间的比较或枚举与整形之间的比较，能够在编译时发现更多错误</p>
+<h4 id="模板不定长参数">模板不定长参数</h4>
+<p>为模板方法提供了类似普通函数的可变数量参数（…）支持，可极大地方便一些特殊模板的构建，例如：用于实现智能指针模板类中的“operator-&gt;*()”（成员指针解引用）操作，以及一些类似于“printf”的模板方法。</p>
+<h4 id="新字符串类型">新字符串类型</h4>
+<p>C++11 中新增了 char16_t 和 char32_t 两中类型，用以应对 wchar_t 位宽不确定的问题。又新增了 UTF-8（u8）、UTF-16（u）和 UTF-32（U）字符串字面值定义方法。</p>
+<h4 id="thread_local">thread_local</h4>
+<p>增加线程本地存储，不必使用编译器提供的thread_local</p>
+<h4 id="显示默认和禁用构造方法">显示默认和禁用构造方法</h4>
+<p>C++11 中，用户可以通过“= default”后缀修饰符，为每个类显式指定默认构造函数。也可以通过“= delete”后缀修饰构造函数和赋值等操作（通常用来实现禁止复制的语义）。增加代码可读性。</p>
+<h4 id="static_assert">static_assert</h4>
+<p>assert是运行时检测，static_assert 用于模板实例化时检测</p>
+<h2 id="标准库扩充">标准库扩充</h2>
+<h3 id="容器">容器</h3>
+<blockquote>
+<p>为容器新增移动构造函数以及在容器中新增元素的移动版本，emplace，emplace_back<br>
+新增hash 型容器，unordered_map, unodered_set</p>
+</blockquote>
+<h3 id="新增算法">新增算法</h3>
+<blockquote>
+<p>all_of, any_of, none_of<br>
+find_if_not<br>
+copy_if<br>
+max_element, min_element<br>
+is_sorted, is_sorted_until</p>
+</blockquote>
+<h3 id="线程支持">线程支持</h3>
+<p>新标准库提供了线程，互斥量，条件变量，原子量以及内存屏障的实现</p>
+<h3 id="正则表达式">正则表达式</h3>
+<p>新的标准库支持正则搜索和替换</p>
+<h3 id="智能指针">智能指针</h3>
+<blockquote>
+<p>unique_ptr : 保证指针对对象的唯一绑定，只能通过移动语义交换所有权<br>
+shared_ptr: 使用一个原子变量进行引用计数，计数为0时销毁对象，在多线程情况下拷贝会增加新能损耗<br>
+weak_ptr: 辅助shared_ptr 使用，解决shared_ptr 循环引用问题，也用于观察者模式</p>
+</blockquote>
+<h3 id="随机数生成器">随机数生成器</h3>
+<p>新标准库提供了右值伪随机数生成器</p>
+<h3 id="时间库">时间库</h3>
+<p>新标准库提供时间库chrono，支持设置地区时区</p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://ce39906.github.io//post/neural-style生成毕加索风格图片" class="post-title gt-a-link">
+                    neural-style生成毕加索风格图片
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">算法及读书杂记</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        
+    </div>
+    <div>
+        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
+                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://ce39906.github.io//atom.xml" target="_blank">RSS</a></a>
+    </div>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

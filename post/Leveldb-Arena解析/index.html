@@ -1,0 +1,415 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>Leveldb Arena解析 | Ce39906&#39;s Blog</title>
+
+<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611748236925">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://ce39906.github.io//styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<style>
+    hr {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        border: 0;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <style>
+    /* 导航栏样式 */
+    .navbar {
+        position: relative;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        -ms-flex-align: center;
+        align-items: center;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+        padding: 0.5rem 1rem;
+    }
+
+    .navbar-brand {
+        display: inline-block;
+        padding-top: 0.3125rem;
+        padding-bottom: 0.3125rem;
+        margin-right: 1rem;
+        font-size: 1.25rem;
+        line-height: inherit;
+        white-space: nowrap;
+    }
+
+    .navbar-brand:hover,
+    .navbar-brand:focus {
+        text-decoration: none;
+    }
+
+    .navbar-nav {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        padding-left: 0;
+        margin-bottom: 0;
+        list-style: none;
+    }
+
+    .navbar-collapse {
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        -ms-flex-positive: 1;
+        flex-grow: 1;
+        -ms-flex-align: center;
+        align-items: center;
+    }
+
+    .navbar-toggler {
+        padding: 0.25rem 0.75rem;
+        font-size: 1.25rem;
+        line-height: 1;
+        background-color: transparent;
+        border: 1px solid transparent;
+        border-radius: 0.25rem;
+    }
+
+    .navbar-toggler:hover,
+    .navbar-toggler:focus {
+        text-decoration: none;
+    }
+
+    @media (min-width: 992px) {
+        .navbar-expand-lg {
+            -ms-flex-flow: row nowrap;
+            flex-flow: row nowrap;
+            -ms-flex-pack: start;
+            justify-content: flex-start;
+        }
+
+        .navbar-expand-lg .navbar-nav {
+            -ms-flex-direction: row;
+            flex-direction: row;
+        }
+
+        .navbar-expand-lg .navbar-collapse {
+            display: -ms-flexbox !important;
+            display: flex !important;
+            -ms-flex-preferred-size: auto;
+            flex-basis: auto;
+        }
+
+        .navbar-expand-lg .navbar-toggler {
+            display: none;
+        }
+    }
+
+    @media (max-width: 991px) {
+        #navbarSupportedContent {
+            display: none;
+        }
+    }
+</style>
+<nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Ce39906&#39;s Blog
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1611748236925"
+                action="/search/index.html">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = function () {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    Leveldb Arena解析
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2018-05-03 ·
+                    </time>
+                    
+                        <a href="https://ce39906.github.io//tag/sKN_FIXf8-e" class="post-tags">
+                            # Leveldb
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h2 id="简介">简介</h2>
+<p>Arena 是leveldb 实现的简单的内存池，以最小4096bytes 为单位申请block, 使用指针记录当前block 中空余内存起始位置以及当前block剩余空间。将所有的block 放到blocks_ 数组中。Arena 提供了分配内存以及分配对齐的内存的两种接口，没有释放内存的接口，当Arena 的生命周期结束时，由Arena 的析构函数统一释放内存。Arena 的主要结构如下图所示：<br>
+<img src="https://img-blog.csdn.net/20180503153740789?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2NhcmJvbjA2/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="leveldb arena"></p>
+<h2 id="leveldb-代码实现">Leveldb 代码实现</h2>
+<p>leveldb arena 实现在util/arena.h 以及 util/arena.cc</p>
+<h3 id="接口以及成员">接口以及成员</h3>
+<pre><code>class Arena {
+ public:
+  Arena();
+  ~Arena();
+
+  // Return a pointer to a newly allocated memory block of &quot;bytes&quot; bytes.
+  // 分配指定大小的内存，并返回分配内存的首地址
+  char* Allocate(size_t bytes);
+  // 分配指定大小并且对齐的内存
+  // Allocate memory with the normal alignment guarantees provided by malloc
+  char* AllocateAligned(size_t bytes);
+
+  // Returns an estimate of the total memory usage of data allocated
+  // by the arena.
+  // 统计使用了多少内存
+  size_t MemoryUsage() const {
+    return reinterpret_cast&lt;uintptr_t&gt;(memory_usage_.NoBarrier_Load());
+  }
+
+ private:
+  // 分配内存，根据情况决定是否使用新的block
+  char* AllocateFallback(size_t bytes);
+  // 分配一个新的block
+  char* AllocateNewBlock(size_t block_bytes);
+
+  // Allocation state
+  // 指向一个block中未被使用的内存首地址
+  char* alloc_ptr_;
+  // 表示一个block还剩余多少空间
+  size_t alloc_bytes_remaining_;
+
+  // Array of new[] allocated memory blocks
+  // 内存池数组
+  std::vector&lt;char*&gt; blocks_;
+
+  // Total memory usage of the arena.
+  // 统计内存使用，原子变量
+  port::AtomicPointer memory_usage_;
+  
+  // No copying allowed
+  // 将拷贝构造和赋值构造设置为私有
+  Arena(const Arena&amp;);
+  void operator=(const Arena&amp;);
+};
+</code></pre>
+<h3 id="分配指定bytes-的内存">分配指定bytes 的内存</h3>
+<p>首先根据alloc_bytes_remaining_判断是否需要分配一个新的block ,如果不需要的话，则重新设置alloc_ptr_ 以及 alloc_bytes_remaining_，否则调用<strong>AllocFallback</strong>方法分配新的block,并且判断新的block 是否可以被复用。</p>
+<pre><code>inline char* Arena::Allocate(size_t bytes) {
+  // The semantics of what to return are a bit messy if we allow
+  // 0-byte allocations, so we disallow them here (we don't need
+  // them for our internal use).
+  assert(bytes &gt; 0);
+  // 判断是否有可被复用的block
+  if (bytes &lt;= alloc_bytes_remaining_) {
+    char* result = alloc_ptr_;
+    alloc_ptr_ += bytes;
+    alloc_bytes_remaining_ -= bytes;
+    return result;
+  }
+  return AllocateFallback(bytes);
+}
+</code></pre>
+<h3 id="分配指定bytes-对齐的内存">分配指定bytes 对齐的内存</h3>
+<p>与上一个接口不同的地方在于，将传入的bytes 化为可对齐内存的大小</p>
+<pre><code>char* Arena::AllocateAligned(size_t bytes) {
+  // 获取当前系统指针大小
+  const int align = (sizeof(void*) &gt; 8) ? sizeof(void*) : 8;
+  // 指针大小必须是2的整数次幂，2的整数次幂的二进制表示中
+  // 有且只有1位是1
+  assert((align &amp; (align-1)) == 0);   // Pointer size should be a power of 2
+  // 判断bytes是不是align 的整数倍，由于align是2的
+  // 整数次幂，所以对align的取模运算可以转化为
+  // 对（align - 1）进行按位与
+  size_t current_mod = reinterpret_cast&lt;uintptr_t&gt;(alloc_ptr_) &amp; (align-1);
+  // 为了对齐内存需要新增的大小
+  size_t slop = (current_mod == 0 ? 0 : align - current_mod);
+  // needed 表示分配对齐的内存所需的大小
+  // 后面的逻辑同前
+  size_t needed = bytes + slop;
+  char* result;
+  if (needed &lt;= alloc_bytes_remaining_) {
+    result = alloc_ptr_ + slop;
+    alloc_ptr_ += needed;
+    alloc_bytes_remaining_ -= needed;
+  } else {
+    // AllocateFallback always returned aligned memory
+    result = AllocateFallback(bytes);
+  }
+  assert((reinterpret_cast&lt;uintptr_t&gt;(result) &amp; (align-1)) == 0);
+  return result;
+}
+</code></pre>
+<h3 id="allocatefallback">AllocateFallback</h3>
+<p>函数的作用是分配一个新的block。不同的是，如果bytes 小于blocksize 的四分之一，则此新分配的block 可以被继续复用。否则的话直接分配新的block, Arena 中可被复用的block 保持不变。</p>
+<pre><code>char* Arena::AllocateFallback(size_t bytes) {
+  // 分配的bytes较小，此新block可以被复用
+  if (bytes &gt; kBlockSize / 4) {
+    // Object is more than a quarter of our block size.  Allocate it separately
+    // to avoid wasting too much space in leftover bytes.
+    char* result = AllocateNewBlock(bytes);
+    return result;
+  }
+
+  // We waste the remaining space in the current block.
+  // 此新分配的block可以被复用，重新设置
+  // alloc_ptr_ 以及 alloc_bytes_remaining_
+  alloc_ptr_ = AllocateNewBlock(kBlockSize);
+  alloc_bytes_remaining_ = kBlockSize;
+
+  char* result = alloc_ptr_;
+  alloc_ptr_ += bytes;
+  alloc_bytes_remaining_ -= bytes;
+  return result;
+}
+</code></pre>
+<h3 id="allocatenewblock">AllocateNewBlock</h3>
+<p>直接使用new分配符分配指定大小的内存，并且更新memory_usage_</p>
+<pre><code>char* Arena::AllocateNewBlock(size_t block_bytes) {
+  // 分配空间
+  char* result = new char[block_bytes];
+  // 新的block 加入内存池
+  blocks_.push_back(result);
+  // 更新memory_usage_
+  memory_usage_.NoBarrier_Store(
+      reinterpret_cast&lt;void*&gt;(MemoryUsage() + block_bytes + sizeof(char*)));
+  return result;
+}
+</code></pre>
+<h3 id="析构">析构</h3>
+<p>逐个释放内存池中的block</p>
+<pre><code>Arena::~Arena() {
+  for (size_t i = 0; i &lt; blocks_.size(); i++) {
+    delete[] blocks_[i];
+  }
+}
+</code></pre>
+<h2 id="总结">总结</h2>
+<p>Leveldb Arena 实现简单，Arena 的设计与leveldb 特定的应用场景相关，比如一个memtable 使用一个Arena对象统一获取内存，当memtable对象声明周期结束时，由Arena 统一释放内存，不需要消费者每次new一片内存就要自己delete 掉。</p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://ce39906.github.io//post/Leveldb-BloomFilter-解析" class="post-title gt-a-link">
+                    Leveldb BloomFilter 解析
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">算法及读书杂记</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        
+    </div>
+    <div>
+        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
+                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://ce39906.github.io//atom.xml" target="_blank">RSS</a></a>
+    </div>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

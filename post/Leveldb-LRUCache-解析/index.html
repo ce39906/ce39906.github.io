@@ -1,0 +1,598 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>Leveldb LRUCache 解析 | Ce39906&#39;s Blog</title>
+
+<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611748236925">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://ce39906.github.io//styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<style>
+    hr {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        border: 0;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <style>
+    /* 导航栏样式 */
+    .navbar {
+        position: relative;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        -ms-flex-align: center;
+        align-items: center;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+        padding: 0.5rem 1rem;
+    }
+
+    .navbar-brand {
+        display: inline-block;
+        padding-top: 0.3125rem;
+        padding-bottom: 0.3125rem;
+        margin-right: 1rem;
+        font-size: 1.25rem;
+        line-height: inherit;
+        white-space: nowrap;
+    }
+
+    .navbar-brand:hover,
+    .navbar-brand:focus {
+        text-decoration: none;
+    }
+
+    .navbar-nav {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        padding-left: 0;
+        margin-bottom: 0;
+        list-style: none;
+    }
+
+    .navbar-collapse {
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        -ms-flex-positive: 1;
+        flex-grow: 1;
+        -ms-flex-align: center;
+        align-items: center;
+    }
+
+    .navbar-toggler {
+        padding: 0.25rem 0.75rem;
+        font-size: 1.25rem;
+        line-height: 1;
+        background-color: transparent;
+        border: 1px solid transparent;
+        border-radius: 0.25rem;
+    }
+
+    .navbar-toggler:hover,
+    .navbar-toggler:focus {
+        text-decoration: none;
+    }
+
+    @media (min-width: 992px) {
+        .navbar-expand-lg {
+            -ms-flex-flow: row nowrap;
+            flex-flow: row nowrap;
+            -ms-flex-pack: start;
+            justify-content: flex-start;
+        }
+
+        .navbar-expand-lg .navbar-nav {
+            -ms-flex-direction: row;
+            flex-direction: row;
+        }
+
+        .navbar-expand-lg .navbar-collapse {
+            display: -ms-flexbox !important;
+            display: flex !important;
+            -ms-flex-preferred-size: auto;
+            flex-basis: auto;
+        }
+
+        .navbar-expand-lg .navbar-toggler {
+            display: none;
+        }
+    }
+
+    @media (max-width: 991px) {
+        #navbarSupportedContent {
+            display: none;
+        }
+    }
+</style>
+<nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Ce39906&#39;s Blog
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1611748236925"
+                action="/search/index.html">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = function () {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    Leveldb LRUCache 解析
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2018-05-09 ·
+                    </time>
+                    
+                        <a href="https://ce39906.github.io//tag/sKN_FIXf8-e" class="post-tags">
+                            # Leveldb
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h2 id="lru原理">LRU原理</h2>
+<p>LRU 是一种经典的缓存淘汰策略，其原理以及实现可以查看我之前的博客<a href="https://ce39906.github.io/2018/04/02/LRU-Cache-%E8%A7%A3%E6%9E%90%E5%8F%8A%E5%AE%9E%E7%8E%B0/">LRU Cache 解析及实现</a>。本文主要解析Leveldb LRU Cache。</p>
+<h2 id="leveldb-实现">Leveldb 实现</h2>
+<p>Leveldb 实现的LRUCache 使用自己实现的简单hashtable存储键值对，循环双链表记录每个元素的访问时间，为了提升多线程环境下的读写性能，Leveldb 内部使用LRUCache 数组对外提供服务。</p>
+<h3 id="cache-entry">Cache Entry</h3>
+<pre><code>struct LRUHandle {
+  void* value;
+  void (*deleter)(const Slice&amp;, void* value);
+  // next_hash 代表在hash桶中下一个元素的位置
+  LRUHandle* next_hash;
+  // 双链表中下个元素的位置
+  LRUHandle* next;
+  // 双链表中上个元素的位置
+  LRUHandle* prev;
+  size_t charge;      // TODO(opt): Only allow uint32_t?
+  size_t key_length;
+  // 使用次数
+  uint32_t refs;
+  // key 的hash值用于在LRUCache数组以及hash表中定位
+  uint32_t hash;      // Hash of key(); used for fast sharding and comparisons
+  char key_data[1];   // Beginning of key
+
+  Slice key() const {
+    // For cheaper lookups, we allow a temporary Handle object
+    // to store a pointer to a key in &quot;value&quot;.
+    if (next == this) {
+      return *(reinterpret_cast&lt;Slice*&gt;(value));
+    } else {
+      return Slice(key_data, key_length);
+    }
+  }
+};
+</code></pre>
+<h3 id="简单hash表">简单hash表</h3>
+<p>Leveldb LRU Cache 实现了线程安全的拉链式的hashtable</p>
+<pre><code>class HandleTable {
+ public:
+  HandleTable() : length_(0), elems_(0), list_(NULL) { Resize(); }
+  ~HandleTable() { delete[] list_; }
+  // 查找，直接调用FindPointer方法
+  LRUHandle* Lookup(const Slice&amp; key, uint32_t hash) {
+    return *FindPointer(key, hash);
+  }
+ // 插入，使用FindPointer方法找到插入位置，在hashtable 对位位置插入，当hashtable 中的元素个数大于桶的个数时候触发hashtable 的扩容
+  LRUHandle* Insert(LRUHandle* h) {
+    LRUHandle** ptr = FindPointer(h-&gt;key(), h-&gt;hash);
+    LRUHandle* old = *ptr;
+    h-&gt;next_hash = (old == NULL ? NULL : old-&gt;next_hash);
+    *ptr = h;
+    if (old == NULL) {
+      ++elems_;
+      if (elems_ &gt; length_) {
+        // Since each cache entry is fairly large, we aim for a small
+        // average linked list length (&lt;= 1).
+        Resize();
+      }
+    }
+    return old;
+  }
+// 删除hashtable中的元素，同样使用FindPointer方法定位到在hashtable 中的位置
+  LRUHandle* Remove(const Slice&amp; key, uint32_t hash) {
+    LRUHandle** ptr = FindPointer(key, hash);
+    LRUHandle* result = *ptr;
+    if (result != NULL) {
+      *ptr = result-&gt;next_hash;
+      --elems_;
+    }
+    return result;
+  }
+
+ private:
+  // The table consists of an array of buckets where each bucket is
+  // a linked list of cache entries that hash into the bucket.
+  uint32_t length_;
+  uint32_t elems_;
+  LRUHandle** list_;
+
+  // Return a pointer to slot that points to a cache entry that
+  // matches key/hash.  If there is no such cache entry, return a
+  // pointer to the trailing slot in the corresponding linked list.
+  // 找到hash 元素的地址
+  LRUHandle** FindPointer(const Slice&amp; key, uint32_t hash) {
+	//找到hash 桶的位置，由于length_是2的指数次幂，所以使用 按位与替换mod操作进行加速
+    LRUHandle** ptr = &amp;list_[hash &amp; (length_ - 1)];
+    // 遍历hash桶中的单链表直到找到相应节点或单链表结束
+    while (*ptr != NULL &amp;&amp;
+           ((*ptr)-&gt;hash != hash || key != (*ptr)-&gt;key())) {
+      ptr = &amp;(*ptr)-&gt;next_hash;
+    }
+    return ptr;
+  }
+  // hash 表扩容
+  void Resize() {
+	// 每次扩容都是翻倍，保证hash桶的个数是2的指数次幂
+    uint32_t new_length = 4;
+    while (new_length &lt; elems_) {
+      new_length *= 2;
+    }
+    // 创建一个新的hashtable
+    LRUHandle** new_list = new LRUHandle*[new_length];
+    memset(new_list, 0, sizeof(new_list[0]) * new_length);
+    uint32_t count = 0;
+    // 逐个桶迁移到新的hashtable
+    for (uint32_t i = 0; i &lt; length_; i++) {
+      LRUHandle* h = list_[i];
+      while (h != NULL) {
+        LRUHandle* next = h-&gt;next_hash;
+        uint32_t hash = h-&gt;hash;
+        LRUHandle** ptr = &amp;new_list[hash &amp; (new_length - 1)];
+        h-&gt;next_hash = *ptr;
+        *ptr = h;
+        h = next;
+        count++;
+      }
+    }
+    assert(elems_ == count);
+    // 释放掉老的hashtable
+    delete[] list_;
+    // 替换为新的hashtable
+    list_ = new_list;
+    length_ = new_length;
+  }
+};
+</code></pre>
+<h3 id="单个lrucache实现">单个LRUCache实现</h3>
+<h4 id="lrucache-类声明">LRUCache 类声明</h4>
+<pre><code>class LRUCache {
+ public:
+  LRUCache();
+  ~LRUCache();
+
+  // Separate from constructor so caller can easily make an array of LRUCache
+  void SetCapacity(size_t capacity) { capacity_ = capacity; }
+
+  // Like Cache methods, but with an extra &quot;hash&quot; parameter.
+  Cache::Handle* Insert(const Slice&amp; key, uint32_t hash,
+                        void* value, size_t charge,
+                        void (*deleter)(const Slice&amp; key, void* value));
+  Cache::Handle* Lookup(const Slice&amp; key, uint32_t hash);
+  void Release(Cache::Handle* handle);
+  void Erase(const Slice&amp; key, uint32_t hash);
+  void Prune();
+  size_t TotalCharge() const {
+    MutexLock l(&amp;mutex_);
+    return usage_;
+  }
+
+ private:
+  void LRU_Remove(LRUHandle* e);
+  void LRU_Append(LRUHandle* e);
+  void Unref(LRUHandle* e);
+
+  // Initialized before use.
+  // LRUCache 存储的元素个数，超过此个数触发淘汰机制
+  size_t capacity_;
+
+  // mutex_ protects the following state.
+  mutable port::Mutex mutex_;
+  size_t usage_;
+
+  // Dummy head of LRU list.
+  // lru.prev is newest entry, lru.next is oldest entry.
+  // 按照访问时间顺序存储的双向循环链表
+  LRUHandle lru_;
+  // 自己实现的拉链式的hash table
+  HandleTable table_;
+};
+</code></pre>
+<h4 id="lrucache-插入">LRUCache 插入</h4>
+<pre><code>Cache::Handle* LRUCache::Insert(
+    const Slice&amp; key, uint32_t hash, void* value, size_t charge,
+    void (*deleter)(const Slice&amp; key, void* value)) {
+  MutexLock l(&amp;mutex_);
+  // 构造一个新的LRUHandle 对象
+  LRUHandle* e = reinterpret_cast&lt;LRUHandle*&gt;(
+      malloc(sizeof(LRUHandle)-1 + key.size()));
+  e-&gt;value = value;
+  e-&gt;deleter = deleter;
+  e-&gt;charge = charge;
+  e-&gt;key_length = key.size();
+  e-&gt;hash = hash;
+  e-&gt;refs = 2;  // One from LRUCache, one for the returned handle
+  memcpy(e-&gt;key_data, key.data(), key.size());
+  // 插入到双向链表表头的位置
+  LRU_Append(e);
+  usage_ += charge;
+
+  LRUHandle* old = table_.Insert(e);
+  // 替换掉LRUCache中重复的元素
+  if (old != NULL) {
+    LRU_Remove(old);
+    Unref(old);
+  }
+  // 触发LRU 淘汰
+  while (usage_ &gt; capacity_ &amp;&amp; lru_.next != &amp;lru_) {
+    // 淘汰双向链表最后的元素
+    LRUHandle* old = lru_.next;
+    // 删除双向链表中的元素
+    LRU_Remove(old);
+    // 删除hashtable中的元素
+    table_.Remove(old-&gt;key(), old-&gt;hash);
+    Unref(old);
+  }
+  // 返回刚刚插入的Handle对象，此对象引用计数为2
+  return reinterpret_cast&lt;Cache::Handle*&gt;(e);
+}
+</code></pre>
+<h4 id="lrucache-删除">LRUCache 删除</h4>
+<pre><code>void LRUCache::Erase(const Slice&amp; key, uint32_t hash) {
+  MutexLock l(&amp;mutex_);
+  // 删除hashtable中对应的元素，
+  // 如果该元素存在在hashtable中则在双向链表中进行删除
+  LRUHandle* e = table_.Remove(key, hash);
+  if (e != NULL) {
+    LRU_Remove(e);
+    Unref(e);
+  }
+}
+</code></pre>
+<h4 id="lrucache-prune">LRUCache Prune</h4>
+<p>删除LRUCache中ref为1 的元素，最初插入的元素的引用为2，外部消费者对使用结束的元素ref减一。LRUCache中ref 为1 的handle表示此元素只在LRUCache中出现，外部并不使用。此方法的作用就是删除这样的元素。</p>
+<pre><code>void LRUCache::Prune() {
+  MutexLock l(&amp;mutex_);
+  for (LRUHandle* e = lru_.next; e != &amp;lru_; ) {
+    LRUHandle* next = e-&gt;next;
+    if (e-&gt;refs == 1) {
+      table_.Remove(e-&gt;key(), e-&gt;hash);
+      LRU_Remove(e);
+      Unref(e);
+    }
+    e = next;
+  }
+}
+</code></pre>
+<h4 id="lru_remove">LRU_Remove</h4>
+<p>删除双向链表中一个节点</p>
+<pre><code>void LRUCache::LRU_Remove(LRUHandle* e) {
+  e-&gt;next-&gt;prev = e-&gt;prev;
+  e-&gt;prev-&gt;next = e-&gt;next;
+}
+</code></pre>
+<h4 id="lru_append">LRU_Append</h4>
+<p>插入到双向链表表头位置</p>
+<pre><code>void LRUCache::LRU_Append(LRUHandle* e) {
+  // Make &quot;e&quot; newest entry by inserting just before lru_
+  e-&gt;next = &amp;lru_;
+  e-&gt;prev = lru_.prev;
+  e-&gt;prev-&gt;next = e;
+  e-&gt;next-&gt;prev = e;
+}
+</code></pre>
+<h3 id="shardedlrucache">ShardedLRUCache</h3>
+<pre><code>static const int kNumShardBits = 4;
+// 16个 lru cache，目的在多线程的环境下，每个线程的访问都会锁住缓冲区
+// 如果缓冲区比较大的话， 多线程情况下的性能比较差，
+// 所以使用hash 的方式将一块cache 缓冲区 划分为多个小块的缓冲区
+static const int kNumShards = 1 &lt;&lt; kNumShardBits;
+class ShardedLRUCache : public Cache {
+ private:
+  // LRUCache 数组，每个LRUCache对象使用自己的锁
+  LRUCache shard_[kNumShards];
+  // 这个锁只保护id
+  port::Mutex id_mutex_;
+  uint64_t last_id_;
+
+  static inline uint32_t HashSlice(const Slice&amp; s) {
+    return Hash(s.data(), s.size(), 0);
+  }
+  // Shard 函数，根据key计算的hash 值定位LRUCache数组的位置
+  static uint32_t Shard(uint32_t hash) {
+    // 不需要使用mod运算，此数值一定是在0~kNumShards这个区间
+    return hash &gt;&gt; (32 - kNumShardBits);
+  }
+
+ public:
+  explicit ShardedLRUCache(size_t capacity)
+      : last_id_(0) {
+    // 向上取整，为每个LRUCache 分配容量
+    const size_t per_shard = (capacity + (kNumShards - 1)) / kNumShards;
+    for (int s = 0; s &lt; kNumShards; s++) {
+      shard_[s].SetCapacity(per_shard);
+    }
+  }
+  virtual ~ShardedLRUCache() { }
+  // 插入时，先使用Shard方法定位到相应的LRUCache
+  virtual Handle* Insert(const Slice&amp; key, void* value, size_t charge,
+                         void (*deleter)(const Slice&amp; key, void* value)) {
+    const uint32_t hash = HashSlice(key);
+    return shard_[Shard(hash)].Insert(key, hash, value, charge, deleter);
+  }
+  virtual Handle* Lookup(const Slice&amp; key) {
+    const uint32_t hash = HashSlice(key);
+    return shard_[Shard(hash)].Lookup(key, hash);
+  }
+  virtual void Release(Handle* handle) {
+    LRUHandle* h = reinterpret_cast&lt;LRUHandle*&gt;(handle);
+    shard_[Shard(h-&gt;hash)].Release(handle);
+  }
+  virtual void Erase(const Slice&amp; key) {
+    const uint32_t hash = HashSlice(key);
+    shard_[Shard(hash)].Erase(key, hash);
+  }
+  virtual void* Value(Handle* handle) {
+    return reinterpret_cast&lt;LRUHandle*&gt;(handle)-&gt;value;
+  }
+  virtual uint64_t NewId() {
+    MutexLock l(&amp;id_mutex_);
+    return ++(last_id_);
+  }
+  virtual void Prune() {
+    for (int s = 0; s &lt; kNumShards; s++) {
+      shard_[s].Prune();
+    }
+  }
+  virtual size_t TotalCharge() const {
+    size_t total = 0;
+    for (int s = 0; s &lt; kNumShards; s++) {
+      total += shard_[s].TotalCharge();
+    }
+    return total;
+  }
+};
+
+</code></pre>
+<h2 id="总结">总结</h2>
+<p>Leveldb 实现的LRUCahe 基于hashtable以及双向链表实现，为了提升性能以及保证跨平台特性，Leveldb 实现了一个线程安全的拉链式hashtable,此hashtable 的缺点是当触发扩容操作的时候需要将老hashtable 的全部元素复制到新的hashtable 中，这会期间会一直占用锁，此时多线程环境下的读写会阻塞。这一点Memcached 中实现的hashtable是有一个线程专门负责扩展，每次只扩展一个元素。<br>
+Leveldb 为了提升多线程环境下的读写性能，将固定容量的Cache分摊到多个LRUCache，每个LRUCache保证自己的线程安全，这就降低了多线程环境下锁的竞争。这种做法与分段锁的思想类似。</p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://ce39906.github.io//post/Linux-shell-颜色输出" class="post-title gt-a-link">
+                    Linux shell 颜色输出
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">算法及读书杂记</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        
+    </div>
+    <div>
+        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
+                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://ce39906.github.io//atom.xml" target="_blank">RSS</a></a>
+    </div>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

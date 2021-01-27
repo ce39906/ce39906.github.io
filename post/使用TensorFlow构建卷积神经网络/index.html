@@ -1,0 +1,443 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>使用TensorFlow构建卷积神经网络 | Ce39906&#39;s Blog</title>
+
+<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611748236925">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://ce39906.github.io//styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<style>
+    hr {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        border: 0;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <style>
+    /* 导航栏样式 */
+    .navbar {
+        position: relative;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        -ms-flex-align: center;
+        align-items: center;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+        padding: 0.5rem 1rem;
+    }
+
+    .navbar-brand {
+        display: inline-block;
+        padding-top: 0.3125rem;
+        padding-bottom: 0.3125rem;
+        margin-right: 1rem;
+        font-size: 1.25rem;
+        line-height: inherit;
+        white-space: nowrap;
+    }
+
+    .navbar-brand:hover,
+    .navbar-brand:focus {
+        text-decoration: none;
+    }
+
+    .navbar-nav {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        padding-left: 0;
+        margin-bottom: 0;
+        list-style: none;
+    }
+
+    .navbar-collapse {
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        -ms-flex-positive: 1;
+        flex-grow: 1;
+        -ms-flex-align: center;
+        align-items: center;
+    }
+
+    .navbar-toggler {
+        padding: 0.25rem 0.75rem;
+        font-size: 1.25rem;
+        line-height: 1;
+        background-color: transparent;
+        border: 1px solid transparent;
+        border-radius: 0.25rem;
+    }
+
+    .navbar-toggler:hover,
+    .navbar-toggler:focus {
+        text-decoration: none;
+    }
+
+    @media (min-width: 992px) {
+        .navbar-expand-lg {
+            -ms-flex-flow: row nowrap;
+            flex-flow: row nowrap;
+            -ms-flex-pack: start;
+            justify-content: flex-start;
+        }
+
+        .navbar-expand-lg .navbar-nav {
+            -ms-flex-direction: row;
+            flex-direction: row;
+        }
+
+        .navbar-expand-lg .navbar-collapse {
+            display: -ms-flexbox !important;
+            display: flex !important;
+            -ms-flex-preferred-size: auto;
+            flex-basis: auto;
+        }
+
+        .navbar-expand-lg .navbar-toggler {
+            display: none;
+        }
+    }
+
+    @media (max-width: 991px) {
+        #navbarSupportedContent {
+            display: none;
+        }
+    }
+</style>
+<nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Ce39906&#39;s Blog
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1611748236925"
+                action="/search/index.html">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = function () {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    使用TensorFlow构建卷积神经网络
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2018-10-25 ·
+                    </time>
+                    
+                        <a href="https://ce39906.github.io//tag/J2BpTA3Sgg" class="post-tags">
+                            # Tensorflow
+                        </a>
+                    
+                        <a href="https://ce39906.github.io//tag/MAcF0JZFDs" class="post-tags">
+                            # Algorithm
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <p>本文介绍使用TensorFlow构建卷积神经网络解决kaggle上的<a href="https://www.kaggle.com/c/digit-recognizer">digit-recognizer</a>问题。</p>
+<h2 id="数据规格">数据规格</h2>
+<p>kaggle提供的数据集来自<a href="http://yann.lecun.com/exdb/mnist/">MNIST</a>上的60000条手写数字数据。数据中每个手写数字图像使用28 * 28 的灰度图表示 。</p>
+<h2 id="模型结构">模型结构</h2>
+<p>本文展示的CNN模型包括1个输入层，2个卷积层，2个池化层，1个全连接层以及1个大小为10的输出层。卷积层使用<a href="https://en.wikipedia.org/wiki/Rectifier_%28neural_networks%29">Relu activation function</a>引入非线性特性。池化层使用max-pooling，大小为2 * 2, 步长设置为2。输出层使用<a href="https://en.wikipedia.org/wiki/Softmax_function">softmax activation function</a> 输出0到1的浮点数(最后一层所有node结果相加结果为1)。<br>
+模型构建过程参照<a href="https://www.tensorflow.org/tutorials/estimators/cnn">Tensorflow Tutorials</a></p>
+<!--more-->
+<h2 id="代码实现">代码实现</h2>
+<pre><code class="language-python">&quot;&quot;&quot;
+File Name: tf_cnn.py
+Author: ce39906
+mail: ce39906@163.com
+Created Time: 2018-10-25 10:55:56
+&quot;&quot;&quot;
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+
+import numpy as np
+import pandas as pd
+import tensorflow as tf
+from sklearn.preprocessing import StandardScaler
+
+tf.logging.set_verbosity(tf.logging.INFO)
+
+def cnn_model_fn(features, labels, mode):
+    # input layer
+    input_layer = tf.reshape(features[&quot;x&quot;], [-1, 28, 28, 1])
+    # convolutional layer 1
+    conv1 = tf.layers.conv2d(
+        inputs = input_layer,
+        filters  = 32,
+        kernel_size = [5, 5],
+        padding = &quot;same&quot;,
+        activation = tf.nn.relu)
+    # pooling layer 1
+    pool1 = tf.layers.max_pooling2d(
+        inputs = conv1,
+        pool_size = [2, 2],
+        strides = 2)
+    # convolutional layer 2
+    conv2 = tf.layers.conv2d(
+        inputs = pool1,
+        filters = 64,
+        kernel_size = [5, 5],
+        padding = &quot;same&quot;,
+        activation = tf.nn.relu)
+    # pooling layer 2
+    pool2 = tf.layers.max_pooling2d(
+        inputs = conv2,
+        pool_size = [2, 2],
+        strides = 2)
+    # dense layer
+    pool2_flat = tf.reshape(pool2, [-1, 7 * 7 * 64])
+    dense = tf.layers.dense(
+        inputs = pool2_flat,
+        units = 1024,
+        activation = tf.nn.relu)
+    dropout = tf.layers.dropout(
+        inputs = dense,
+        rate = 0.4,
+        training = mode == tf.estimator.ModeKeys.TRAIN)
+    # logits layer
+    logits = tf.layers.dense(
+        inputs = dropout,
+        units = 10)
+    # do predict
+    predictions = {
+        &quot;classes&quot; : tf.argmax(input = logits, axis = 1),
+        &quot;probabilities&quot; : tf.nn.softmax(logits, name = &quot;softmax_tensor&quot;)
+    }
+
+    if mode == tf.estimator.ModeKeys.PREDICT:
+        return tf.estimator.EstimatorSpec(
+                    mode = mode,
+                    predictions = predictions)
+
+    # calculate loss (both TRAIN and EVAL mode)
+    loss = tf.losses.sparse_softmax_cross_entropy(labels = labels, logits = logits)
+
+    # configure the Trainning Op
+    if mode == tf.estimator.ModeKeys.TRAIN:
+        optimizer = tf.train.GradientDescentOptimizer(learning_rate = 0.001)
+        train_op = optimizer.minimize(
+            loss = loss,
+            global_step = tf.train.get_global_step())
+
+        return tf.estimator.EstimatorSpec(
+                    mode = mode,
+                    loss = loss,
+                    train_op = train_op)
+
+
+    # add evaluation metrics (for EVAL mode)
+    eval_metric_ops = {
+        &quot;accuracy&quot; : tf.metrics.accuracy(
+            labels = labels, predictions = predictions[&quot;classes&quot;])}
+
+    return tf.estimator.EstimatorSpec(
+            mode = mode,
+            loss = loss,
+            eval_metric_ops = eval_metric_ops)
+
+def main():
+    train_data = pd.read_csv('train.csv')
+    test_data = pd.read_csv('test.csv')
+
+    labels = np.array(train_data.pop('label'))
+    data = StandardScaler().fit_transform(np.float32(train_data.values))
+    validation_size = 10000
+
+    train_data, valid_data = data[ : -validation_size], data[-validation_size : ]
+    train_labels, valid_labels = labels[: -validation_size], labels[-validation_size : ]
+
+    test_data = StandardScaler().fit_transform(np.float32(test_data.values))
+
+    classifier = tf.estimator.Estimator(
+        model_fn = cnn_model_fn,
+        model_dir = &quot;/tmp/cnn_model&quot;)
+    # Set up logging for predictions
+    tensors_to_log = {&quot;probabilities&quot; : &quot;softmax_tensor&quot;}
+    logging_hook = tf.train.LoggingTensorHook(
+        tensors = tensors_to_log, every_n_iter = 50)
+
+    # train the model
+    train_input_fn = tf.estimator.inputs.numpy_input_fn(
+        x = {&quot;x&quot; : train_data},
+        y = train_labels,
+        batch_size = 100,
+        num_epochs = None,
+        shuffle = True)
+
+    classifier.train(
+        input_fn = train_input_fn,
+        steps = 20000,
+        hooks = [logging_hook])
+
+    # evaluate the model and print results
+    eval_input_fn = tf.estimator.inputs.numpy_input_fn(
+        x = {&quot;x&quot; : valid_data},
+        y = valid_labels,
+        num_epochs = 1,
+        shuffle = False)
+
+    eval_results = classifier.evaluate(input_fn = eval_input_fn)
+    print (eval_results)
+    # evaluate the model and print results
+    predict_input_fn = tf.estimator.inputs.numpy_input_fn(
+        x = {&quot;x&quot; : test_data},
+        num_epochs = 1,
+        shuffle = False)
+
+    preidct_results = classifier.predict(input_fn = predict_input_fn)
+
+    test_labels = []
+    for predict_result in preidct_results:
+        test_labels.append(predict_result['classes'])
+    test_labels = np.array(test_labels)
+
+    submission = pd.DataFrame({'ImageId' : (np.arange(test_labels.shape[0]) + 1),'Label' : test_labels})
+    submission.to_csv('submission.csv', index = False)
+
+if __name__ == '__main__':
+    main()
+</code></pre>
+<h2 id="结果">结果</h2>
+<p>交叉测试准确率为97.58%<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/tf_cnn_result.png" alt="pic"><br>
+提交到kaggle后准确率为97.35%<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/cnn_kaggle_res.png" alt="pic"></p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://ce39906.github.io//post/Tensorflow-编译及应用C-静态库" class="post-title gt-a-link">
+                    Tensorflow 编译及应用C++静态库
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">算法及读书杂记</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        
+    </div>
+    <div>
+        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
+                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://ce39906.github.io//atom.xml" target="_blank">RSS</a></a>
+    </div>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

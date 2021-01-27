@@ -1,0 +1,367 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>C++11 智能指针 | Ce39906&#39;s Blog</title>
+
+<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611748236925">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://ce39906.github.io//styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<style>
+    hr {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        border: 0;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <style>
+    /* 导航栏样式 */
+    .navbar {
+        position: relative;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        -ms-flex-align: center;
+        align-items: center;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+        padding: 0.5rem 1rem;
+    }
+
+    .navbar-brand {
+        display: inline-block;
+        padding-top: 0.3125rem;
+        padding-bottom: 0.3125rem;
+        margin-right: 1rem;
+        font-size: 1.25rem;
+        line-height: inherit;
+        white-space: nowrap;
+    }
+
+    .navbar-brand:hover,
+    .navbar-brand:focus {
+        text-decoration: none;
+    }
+
+    .navbar-nav {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        padding-left: 0;
+        margin-bottom: 0;
+        list-style: none;
+    }
+
+    .navbar-collapse {
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        -ms-flex-positive: 1;
+        flex-grow: 1;
+        -ms-flex-align: center;
+        align-items: center;
+    }
+
+    .navbar-toggler {
+        padding: 0.25rem 0.75rem;
+        font-size: 1.25rem;
+        line-height: 1;
+        background-color: transparent;
+        border: 1px solid transparent;
+        border-radius: 0.25rem;
+    }
+
+    .navbar-toggler:hover,
+    .navbar-toggler:focus {
+        text-decoration: none;
+    }
+
+    @media (min-width: 992px) {
+        .navbar-expand-lg {
+            -ms-flex-flow: row nowrap;
+            flex-flow: row nowrap;
+            -ms-flex-pack: start;
+            justify-content: flex-start;
+        }
+
+        .navbar-expand-lg .navbar-nav {
+            -ms-flex-direction: row;
+            flex-direction: row;
+        }
+
+        .navbar-expand-lg .navbar-collapse {
+            display: -ms-flexbox !important;
+            display: flex !important;
+            -ms-flex-preferred-size: auto;
+            flex-basis: auto;
+        }
+
+        .navbar-expand-lg .navbar-toggler {
+            display: none;
+        }
+    }
+
+    @media (max-width: 991px) {
+        #navbarSupportedContent {
+            display: none;
+        }
+    }
+</style>
+<nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Ce39906&#39;s Blog
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1611748236925"
+                action="/search/index.html">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = function () {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    C++11 智能指针
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2018-08-08 ·
+                    </time>
+                    
+                        <a href="https://ce39906.github.io//tag/A4gbajWnZJ" class="post-tags">
+                            # c++11
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h2 id="智能指针的思想">智能指针的思想</h2>
+<p>c++ 要求程序员自己管理内存，为程序员提供了更高自由度，但更高的自由度同时意味着更多责任。为了减少c++程序员在使用裸指针时可能带来的内存泄露，c++11 引入智能指针帮助程序员管理内存。智能指针背后的设计思想是<a href="https://zh.cppreference.com/w/cpp/language/raii">RAII</a></p>
+<h2 id="unique_ptr">unique_ptr</h2>
+<p>unique_ptr 设计的目的是保证指针变量只指向一个实体，避免出现有其他指针变量指向相同实体，或者此指针变量指向同类型的其他实体。可以理解为指针变量与实体之间是一对一的关系。<br>
+为了实现上述设计目标，unique_ptr 的拷贝构造函数以及赋值构造函数都声明为<strong>deleted</strong>(c++11引入，和将拷贝构造函数以及赋值构造函数声明为private实现的效果一致)。所以unique_ptr 只允许使用裸指针初始化或者使用其他unique_ptr移动构造。比较特殊的是，一个新的unique_ptr变量可以从返回值为unique_ptr的函数构造。</p>
+<pre><code>unique_ptr&lt;int&gt; p(new int(2));   // allowed
+unique_ptr&lt;int&gt; p1(p);     // not allowed
+unique_ptr&lt;int&gt; p2 = p;  // not allowed
+unique_ptr&lt;int&gt; p3(std::move(p)); // allowed
+unique_ptr&lt;int&gt; p4 = std::move(p) // allowed
+
+unique_ptr&lt;int&gt; foo()
+{
+    unique_ptr&lt;int&gt; p(new int(2));
+    return p;
+}
+
+unique_ptr&lt;int&gt; p5 = foo();  // allowed
+</code></pre>
+<p>在引入 unique_ptr 之前，存在一个叫做auto_ptr 的智能指针，auto_ptr 与 unique_ptr 不同点是auto_ptr没有禁止拷贝构造和赋值构造，并且在执行拷贝构造和赋值构造后，之前的指针变量指向null，再次解引用时会产生运行时错误，这就是auto_ptr被广为诟病的地方。unique_ptr只有在被显示移动的时候才会将实体的所有权交给其他变量。现auto_ptr已经弃用。</p>
+<h2 id="shared_ptr">shared_ptr</h2>
+<p>unique_ptr 实现指针变量与实体之前一一对应关系，但是在实际应用中，我们经常存在多个指针变量共同指向一个实体的场景，当所有指针变量的生命周期结束时再释放相应的资源。shared_ptr 就是为了解决此问题而引入。<br>
+简单的来讲，shared_ptr 实现的原理是在内部使用一个引用计数，每当有一个新的指针变量绑定到实体上时内部的引用计数加一，如果有指针变量生命周期结束引用计数减一，当引用计数为0时，释放相应资源。<br>
+shared_ptr 可以使用 <strong>use_count()</strong> 方法查看引用计数大小。<br>
+在多线程的环境下使用shared_ptr的const成员方法不需要外部的同步机制，使用shared_ptr的非const方法时需要重载shared_ptr的原子方法防止数据竞争。<br>
+<strong>需要注意的是</strong>，shared_ptr的引用计数内部的实现原理是一个原子变量，因此在多线程的环境下有大量的shared_ptr变量的复制以及销毁的话会带来比较大的性能损耗，所以如果新的shared_ptr 变量不需要改变指向的实体的内容时应该按照 <strong>const reference</strong>的方式使用。这个问题在我实际开发中遇到过，问题比较隐蔽，花费了大量时间才定位到。</p>
+<h2 id="weak_ptr">weak_ptr</h2>
+<h3 id="weak_ptr-的定义">weak_ptr 的定义</h3>
+<p>weak_ptr 是为了配合shared_ptr而引入，weak_ptr 指向shared_ptr 管理的对象但是不会增加shared_ptr内部的引用计数，也就是说，不管是否有weak_ptr 指向对象，只要是shared_ptr的引用计数为0时，对象也会被销毁。weak_ptr 没有重载 * 以及 -&gt; 方法。weak_ptr 提供了use_count 查看观察的shared_ptr的引用计数，使用expired 方法判断shared_ptr 指向的对象是否被销毁，使用lock方法创建一个新的shared_ptr 变量。</p>
+<h3 id="shared_ptr-循环引用问题">shared_ptr 循环引用问题</h3>
+<p>考虑以下代码</p>
+<pre><code>#include &lt;memory&gt;
+#include &lt;iostream&gt;
+
+class B;
+
+class A
+{
+  public:
+    A()
+    {
+        std::cout &lt;&lt; &quot;A construct.\n&quot;;
+    }
+
+    ~A()
+    {
+        std::cout &lt;&lt; &quot;A destruct.\n&quot;;
+    }
+
+    std::shared_ptr&lt;B&gt; pb;
+
+};
+
+class B
+{
+  public:
+    B()
+    {
+        std::cout &lt;&lt; &quot;B construct.\n&quot;;
+    }
+
+    ~B()
+    {
+        std::cout &lt;&lt; &quot;B destruct.\n&quot;;
+    }
+
+    std::shared_ptr&lt;A&gt; pa;
+
+};
+
+int main()
+{
+    std::shared_ptr&lt;A&gt; a(new A());
+    std::shared_ptr&lt;B&gt; b(new B());
+
+    a-&gt;pb = b;
+    b-&gt;pa = a;
+
+    return 0;
+}
+</code></pre>
+<p>编译后执行结果如下</p>
+<blockquote>
+<p>A construct.<br>
+B construct.</p>
+</blockquote>
+<p>可以看到，由于互相引用，shared_ptr a 以及 b 所管理的对象都没有释放。我们把上述代码中的类A 以及类B中成员变量都声明为weak_ptr 类型后重新编译运行后的结果如下</p>
+<blockquote>
+<p>A construct.<br>
+B construct.<br>
+B destruct.<br>
+A destruct.</p>
+</blockquote>
+<p>由此可见，weak_ptr 不会增加shared_ptr 的互相引用的问题，可以保证shared_ptr所管理的资源可以正确释放。</p>
+<h3 id="weak_ptr-与观察者模式">weak_ptr 与观察者模式</h3>
+<p>利用weak_ptr的特性，使用weak_ptr 以及shared_ptr配合可以实现<a href="https://zh.wikipedia.org/wiki/%E8%A7%82%E5%AF%9F%E8%80%85%E6%A8%A1%E5%BC%8F">观察者模式</a></p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://ce39906.github.io//post/Json-library-implemented-by-boost-variant" class="post-title gt-a-link">
+                    Json library implemented by boost variant
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">算法及读书杂记</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        
+    </div>
+    <div>
+        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
+                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://ce39906.github.io//atom.xml" target="_blank">RSS</a></a>
+    </div>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

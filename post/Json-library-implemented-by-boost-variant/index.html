@@ -1,0 +1,677 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>Json library implemented by boost variant | Ce39906&#39;s Blog</title>
+
+<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611748236925">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://ce39906.github.io//styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<style>
+    hr {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        border: 0;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <style>
+    /* 导航栏样式 */
+    .navbar {
+        position: relative;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        -ms-flex-align: center;
+        align-items: center;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+        padding: 0.5rem 1rem;
+    }
+
+    .navbar-brand {
+        display: inline-block;
+        padding-top: 0.3125rem;
+        padding-bottom: 0.3125rem;
+        margin-right: 1rem;
+        font-size: 1.25rem;
+        line-height: inherit;
+        white-space: nowrap;
+    }
+
+    .navbar-brand:hover,
+    .navbar-brand:focus {
+        text-decoration: none;
+    }
+
+    .navbar-nav {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        padding-left: 0;
+        margin-bottom: 0;
+        list-style: none;
+    }
+
+    .navbar-collapse {
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        -ms-flex-positive: 1;
+        flex-grow: 1;
+        -ms-flex-align: center;
+        align-items: center;
+    }
+
+    .navbar-toggler {
+        padding: 0.25rem 0.75rem;
+        font-size: 1.25rem;
+        line-height: 1;
+        background-color: transparent;
+        border: 1px solid transparent;
+        border-radius: 0.25rem;
+    }
+
+    .navbar-toggler:hover,
+    .navbar-toggler:focus {
+        text-decoration: none;
+    }
+
+    @media (min-width: 992px) {
+        .navbar-expand-lg {
+            -ms-flex-flow: row nowrap;
+            flex-flow: row nowrap;
+            -ms-flex-pack: start;
+            justify-content: flex-start;
+        }
+
+        .navbar-expand-lg .navbar-nav {
+            -ms-flex-direction: row;
+            flex-direction: row;
+        }
+
+        .navbar-expand-lg .navbar-collapse {
+            display: -ms-flexbox !important;
+            display: flex !important;
+            -ms-flex-preferred-size: auto;
+            flex-basis: auto;
+        }
+
+        .navbar-expand-lg .navbar-toggler {
+            display: none;
+        }
+    }
+
+    @media (max-width: 991px) {
+        #navbarSupportedContent {
+            display: none;
+        }
+    }
+</style>
+<nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Ce39906&#39;s Blog
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1611748236925"
+                action="/search/index.html">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = function () {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    Json library implemented by boost variant
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2018-08-01 ·
+                    </time>
+                    
+                        <a href="https://ce39906.github.io//tag/KYwLFMMec0" class="post-tags">
+                            # Boost
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h2 id="boost-variant-介绍">boost variant 介绍</h2>
+<p>boost variant 是一个不同union的泛型类，它用于存储和操作不同类型但在使用时存在&lt;相同泛型&gt;的对象。variant 在实现不同类型的泛型的同时，提供对其包含的具体类型的安全访问。<br>
+基于此性质，boost variant 可以应用于创建json 这种数据结构，我们把json 中的Object, Array, String, Number, True, False, Null 统一当做同一种variant 类型。需要注意的是，json 中的Object 和 Array 类型是递归的variant 类型，在声明时需要使用 <strong>boost::recursive_wrapper</strong> 修饰。<strong>boost::recursivee_wrapper</strong>用于创建包含创建的variant类型的表达式。<br>
+在访问varint 类型时，可以使用<strong>boost::get<T></strong> 以及 <strong>boost::apply_visitor</strong> 的形式。<br>
+更多关于 boost variant 的介绍见:<br>
+https://www.boost.org/doc/libs/1_62_0/doc/html/variant/reference.html</p>
+<h2 id="json-数据结构">json 数据结构</h2>
+<p>json 的数据类型实现如下</p>
+<pre><code>/*************************************************************************
+    &gt; File Name: json_type.hpp
+    &gt; Author: ce39906
+    &gt; Mail: ce39906@163.com
+    &gt; Created Time: 2018-07-31 16:25:59
+ ************************************************************************/
+#ifndef JSON_TYPE_HPP
+#define JSON_TYPE_HPP
+
+#include &lt;boost/variant.hpp&gt;
+
+#include &lt;string&gt;
+#include &lt;unordered_map&gt;
+#include &lt;vector&gt;
+
+namespace json
+{
+
+struct Object;
+struct Array;
+
+struct String
+{
+    String() {}
+    String(const char* value) : value{value} {}
+    String(std::string value) : value{std::move(value)} {}
+    std::string value;
+};
+
+struct Number
+{
+    Number() {};
+    Number(const double value) : value{value} {}
+    double value;
+};
+
+struct True
+{
+};
+
+struct False
+{
+};
+
+struct Null
+{
+};
+
+using Value = boost::variant&lt;String,
+                             Number,
+                             boost::recursive_wrapper&lt;Object&gt;,
+                             boost::recursive_wrapper&lt;Array&gt;,
+                             True,
+                             False,
+                             Null&gt;;
+
+struct Object
+{
+    bool isMember(const std::string&amp; key) const
+    {
+        return values.count(key) != 0;
+    }
+
+    const Value&amp; at(const std::string&amp; key) const
+    {
+        return values.at(key);
+    }
+
+    const Value&amp; operator[](const std::string&amp; key) const
+    {
+        return values.at(key);
+    }
+
+    std::unordered_map&lt;std::string, Value&gt; values;
+};
+
+struct Array
+{
+    const Value&amp; at(const size_t idx) const
+    {
+        return values.at(idx);
+    }
+
+    const Value&amp; operator[](const size_t idx) const
+    {
+        return values.at(idx);
+    }
+
+    size_t size() const
+    {
+        return values.size();
+    }
+
+    const Value&amp; front() const
+    {
+        return values.front();
+    }
+
+    const Value&amp; back() const
+    {
+        return values.back();
+    }
+
+    std::vector&lt;Value&gt; values;
+};
+} // ns json
+#endif
+</code></pre>
+<h2 id="json-数据访问">json 数据访问</h2>
+<p>本节只介绍使用<strong>boost::get<T></strong> 访问varint数据。<strong>boost::apply_visitor</strong> 的方式在序列化的部分介绍<br>
+代码示例如下</p>
+<pre><code>namespace access
+{
+
+inline const Object&amp; asObject(const Value&amp; value)
+{
+    return boost::get&lt;Object&gt;(value);
+}
+
+inline const Array&amp; asArray(const Value&amp; value)
+{
+    return boost::get&lt;Array&gt;(value);
+}
+
+inline const String&amp; asString(const Value&amp; value)
+{
+    return boost::get&lt;String&gt;(value);
+}
+
+inline const Number&amp; asNumber(const Value&amp; value)
+{
+    return boost::get&lt;Number&gt;(value);
+}
+
+inline const True&amp; asTrue(const Value&amp; value)
+{
+    return boost::get&lt;True&gt;(value);
+}
+
+inline const False&amp; asFalse(const Value&amp; value)
+{
+    return boost::get&lt;False&gt;(value);
+}
+
+inline const Null&amp; asNull(const Value&amp; value)
+{
+    return boost::get&lt;Null&gt;(value);
+}
+
+} // ns access
+</code></pre>
+<!--more-->
+<h2 id="json-序列化">json 序列化</h2>
+<p>json 序列化利用<strong>boost::apply_visitor</strong>. <strong>boost::apply_visitor</strong>需要实现一个visitor 函数对象，函数对象针对不同实际类型实现不同的序列化方式，针对Object以及Array 这两种类型需要递归调用visitor。<br>
+示例代码如下</p>
+<pre><code>/*************************************************************************
+    &gt; File Name: json_serialize.hpp
+    &gt; Author: ce39906
+    &gt; Mail: ce39906@163.com
+    &gt; Created Time: 2018-07-31 17:23:19
+ ************************************************************************/
+#ifndef JSON_SERIALIZE_HPP
+#define JSON_SERIALIZE_HPP
+
+#include &quot;json_type.hpp&quot;
+#include &quot;json_util.hpp&quot;
+
+#include &lt;vector&gt;
+#include &lt;ostream&gt;
+
+namespace json
+{
+
+struct SerializeToOstream : boost::static_visitor&lt;void&gt;
+{
+    explicit SerializeToOstream (std::ostream&amp; out) : out(out) {}
+
+    void operator() (const String&amp; string) const
+    {
+        out &lt;&lt; &quot;\&quot;&quot;;
+        out &lt;&lt; string.value;
+        out &lt;&lt; &quot;\&quot;&quot;;
+    }
+
+    void operator() (const Number&amp; number) const
+    {
+        out &lt;&lt; util::cast::to_string_with_percision(number.value);
+    }
+
+    void operator() (const Object&amp; object) const
+    {
+        out &lt;&lt; &quot;{&quot;;
+        for (auto it = object.values.begin(); it != object.values.end();)
+        {
+            out &lt;&lt; &quot;\&quot;&quot; &lt;&lt; it-&gt;first &lt;&lt; &quot;\&quot;:&quot;;
+            boost::apply_visitor(SerializeToOstream(out), it-&gt;second);
+            if (++it != object.values.end())
+            {
+                out &lt;&lt; &quot;,&quot;;
+            }
+        }
+        out &lt;&lt; &quot;}&quot;;
+    }
+
+    void operator() (const Array&amp; array) const
+    {
+        out &lt;&lt; &quot;[&quot;;
+        for (auto it = array.values.cbegin(); it != array.values.cend();)
+        {
+            boost::apply_visitor(SerializeToOstream(out), *it);
+            if (++it != array.values.cend())
+            {
+                out &lt;&lt; &quot;,&quot;;
+            }
+        }
+        out &lt;&lt; &quot;]&quot;;
+    }
+
+    void operator() (const True&amp;) const
+    {
+        out &lt;&lt; &quot;ture&quot;;
+    }
+
+    void operator() (const False&amp;) const
+    {
+        out &lt;&lt; &quot;false&quot;;
+    }
+
+    void operator() (const Null&amp;) const
+    {
+        out &lt;&lt; &quot;null&quot;;
+    }
+
+  private:
+    std::ostream&amp; out;
+};
+
+struct SerializeToString : boost::static_visitor&lt;void&gt;
+{
+    explicit SerializeToString (std::string&amp; out) : out(out) {}
+
+    void operator() (const String&amp; string) const
+    {
+        out.push_back('\&quot;');
+        out.append(string.value);
+        out.push_back('\&quot;');
+    }
+
+    void operator() (const Number&amp; number) const
+    {
+        const std::string number_str = util::cast::to_string_with_percision(number.value);
+        out.append(std::move(number_str));
+    }
+
+    void operator() (const Object&amp; object) const
+    {
+        out.push_back('{');
+        for (auto it = object.values.begin(); it != object.values.end();)
+        {
+            out.push_back('\&quot;');
+            out.append(it-&gt;first);
+            out.push_back('\&quot;');
+            out.push_back(':');
+            boost::apply_visitor(SerializeToString(out), it-&gt;second);
+            if (++it != object.values.end())
+            {
+                out.push_back(',');
+            }
+        }
+        out.push_back('}');
+    }
+
+    void operator() (const Array&amp; array) const
+    {
+        out.push_back('[');
+        for (auto it = array.values.cbegin(); it != array.values.cend();)
+        {
+            boost::apply_visitor(SerializeToString(out), *it);
+            if (++it != array.values.cend())
+            {
+                out.push_back(',');
+            }
+        }
+        out.push_back(']');
+    }
+
+    void operator() (const True&amp;) const
+    {
+        out.append(&quot;true&quot;);
+    }
+
+    void operator() (const False&amp;) const
+    {
+        out.append(&quot;false&quot;);
+    }
+
+    void operator() (const Null&amp;) const
+    {
+        out.append(&quot;null&quot;);
+    }
+
+  private:
+    std::string&amp; out;
+};
+
+void serialize(std::ostream&amp; out, const Object&amp; object)
+{
+    Value value = object;
+    boost::apply_visitor(SerializeToOstream(out), value);
+}
+
+void serialize(std::string&amp; out, const Object&amp; object)
+{
+    Value value = object;
+    boost::apply_visitor(SerializeToString(out), value);
+}
+
+} // ns json
+#endif
+</code></pre>
+<h2 id="构造json-结构">构造json 结构</h2>
+<p>针对String,Number,True,False,Null 这类简单类型可以直接使用构造函数构造。<br>
+Array 类型内部使用vector 类型，构造时使用vector 的 push_back, emplace_back 方法增加Array的元素。<br>
+Object 类型内部使用unordered_map 类型，构造时可以使用 unordered_map 的内建方法。<br>
+示例代码如下：</p>
+<pre><code>Object obj;
+obj.values[&quot;string&quot;] = &quot;v1&quot;;
+obj.values[&quot;bool&quot;] = True();
+obj.values[&quot;null&quot;] = Null();
+obj.values[&quot;number&quot;] = Number(9);
+
+Array arr;
+arr.values.emplace_back(Number(1.02));
+arr.values.emplace_back(Number(2.2));
+arr.values.emplace_back(Number(3));
+arr.values.emplace_back(True());
+arr.values.emplace_back(False());
+obj.values[&quot;array&quot;] = std::move(arr);
+</code></pre>
+<h2 id="示例">示例</h2>
+<p>示例代码测试构建json对象，访问json对象，以及序列化json 对象。<br>
+示例代码如下</p>
+<pre><code>/*************************************************************************
+    &gt; File Name: test_json.cpp
+    &gt; Author: ce39906
+    &gt; Mail: ce39906@163.com
+    &gt; Created Time: 2018-07-31 19:26:17
+ ************************************************************************/
+#include &lt;iostream&gt;
+#include &quot;json.hpp&quot;
+
+using namespace json;
+
+int main()
+{
+    Object obj;
+    obj.values[&quot;string&quot;] = &quot;v1&quot;;
+    obj.values[&quot;bool&quot;] = True();
+    obj.values[&quot;null&quot;] = Null();
+    obj.values[&quot;number&quot;] = Number(9);
+
+    Array arr;
+    arr.values.emplace_back(Number(1.02));
+    arr.values.emplace_back(Number(2.2));
+    arr.values.emplace_back(Number(3));
+    arr.values.emplace_back(True());
+    arr.values.emplace_back(False());
+    obj.values[&quot;array&quot;] = std::move(arr);
+
+    // json access
+    std::cout &lt;&lt; &quot;Test json access.\n&quot;;
+    const auto&amp; arr1 = access::asArray(obj[&quot;array&quot;]);
+    std::cout &lt;&lt; &quot;first number in arr is &quot;
+        &lt;&lt; access::asNumber(arr1.front()).value &lt;&lt; std::endl;
+    // json serialize to ostream
+    std::cout &lt;&lt; &quot;Test serialize to ostream.\n&quot;;
+    serialize(std::cout, obj);
+    std::cout &lt;&lt; std::endl;
+    // json serialize to string
+    std::cout &lt;&lt; &quot;Test serialize to string.\n&quot;;
+    std::string str;
+    serialize(str, obj);
+    std::cout &lt;&lt; str &lt;&lt; std::endl;
+
+    return 0;
+}
+</code></pre>
+<h3 id="编译">编译</h3>
+<blockquote>
+<p>g++ --std=c++11 test_json.cpp -o test_json</p>
+</blockquote>
+<h3 id="执行">执行</h3>
+<p>执行结果如下<br>
+<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/variant_json.png" alt="pic"></p>
+<h2 id="todo">TODO</h2>
+<p>使用<strong>boost spirit</strong> 实现json反序列化</p>
+<h2 id="完整代码">完整代码</h2>
+<p>https://github.com/ce39906/self-practices/tree/master/cppcode/variant_json</p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://ce39906.github.io//post/c-11-右值引用-移动构造函数-emplace-back-解析" class="post-title gt-a-link">
+                    c++11 右值引用,移动构造函数,emplace_back 解析
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">算法及读书杂记</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        
+    </div>
+    <div>
+        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
+                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://ce39906.github.io//atom.xml" target="_blank">RSS</a></a>
+    </div>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

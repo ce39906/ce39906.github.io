@@ -1,0 +1,621 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>C++ DFA实现敏感词过滤 | Ce39906&#39;s Blog</title>
+
+<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611748236925">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://ce39906.github.io//styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<style>
+    hr {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        border: 0;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <style>
+    /* 导航栏样式 */
+    .navbar {
+        position: relative;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        -ms-flex-align: center;
+        align-items: center;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+        padding: 0.5rem 1rem;
+    }
+
+    .navbar-brand {
+        display: inline-block;
+        padding-top: 0.3125rem;
+        padding-bottom: 0.3125rem;
+        margin-right: 1rem;
+        font-size: 1.25rem;
+        line-height: inherit;
+        white-space: nowrap;
+    }
+
+    .navbar-brand:hover,
+    .navbar-brand:focus {
+        text-decoration: none;
+    }
+
+    .navbar-nav {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        padding-left: 0;
+        margin-bottom: 0;
+        list-style: none;
+    }
+
+    .navbar-collapse {
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        -ms-flex-positive: 1;
+        flex-grow: 1;
+        -ms-flex-align: center;
+        align-items: center;
+    }
+
+    .navbar-toggler {
+        padding: 0.25rem 0.75rem;
+        font-size: 1.25rem;
+        line-height: 1;
+        background-color: transparent;
+        border: 1px solid transparent;
+        border-radius: 0.25rem;
+    }
+
+    .navbar-toggler:hover,
+    .navbar-toggler:focus {
+        text-decoration: none;
+    }
+
+    @media (min-width: 992px) {
+        .navbar-expand-lg {
+            -ms-flex-flow: row nowrap;
+            flex-flow: row nowrap;
+            -ms-flex-pack: start;
+            justify-content: flex-start;
+        }
+
+        .navbar-expand-lg .navbar-nav {
+            -ms-flex-direction: row;
+            flex-direction: row;
+        }
+
+        .navbar-expand-lg .navbar-collapse {
+            display: -ms-flexbox !important;
+            display: flex !important;
+            -ms-flex-preferred-size: auto;
+            flex-basis: auto;
+        }
+
+        .navbar-expand-lg .navbar-toggler {
+            display: none;
+        }
+    }
+
+    @media (max-width: 991px) {
+        #navbarSupportedContent {
+            display: none;
+        }
+    }
+</style>
+<nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Ce39906&#39;s Blog
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1611748236925"
+                action="/search/index.html">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = function () {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    C++ DFA实现敏感词过滤
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2019-02-26 ·
+                    </time>
+                    
+                        <a href="https://ce39906.github.io//tag/MAcF0JZFDs" class="post-tags">
+                            # Algorithm
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h2 id="dfa-算法简介">DFA 算法简介</h2>
+<p>DFA算法全称是<a href="https://en.wikipedia.org/wiki/Deterministic_finite_automaton">Deterministic finite automaton</a>，翻译为中文是”确定有限状态机“。<br>
+此算法可以用于敏感字符的模式匹配，敏感词集合可以确定有限个状态，每个敏感词中的一个字符代表状态机中的一个状态。敏感词中的相邻字符代表相邻状态，前一个字符对应的状态可以转移到后一个字符对应的状态。除此之外，敏感词的最后一个字符对应的状态还需一个结束标识。<br>
+在进行匹配时顺序遍历文本，在状态机中查找相应状态，遇到结束标识时表示匹配到一个敏感词，记录匹配的长度，文本偏移相应的长度继续查找直到遍历到文本结尾。</p>
+<!--more-->
+<h2 id="c-代码实现">C++ 代码实现</h2>
+<p>words_filter.hpp</p>
+<pre><code class="language-cpp">/*************************************************************************
+    &gt; File Name: words_filter.hpp
+    &gt; Author: ce39906
+    &gt; Mail: ce39906@163.com
+    &gt; Created Time: 2019-02-25 15:05:00
+ ************************************************************************/
+#ifndef WORDS_FILTER_HPP
+#define WORDS_FILTER_HPP
+#include &lt;map&gt;
+#include &lt;vector&gt;
+#include &lt;set&gt;
+#include &lt;string&gt;
+
+struct TreeNode
+{
+    using TreeMap = std::map&lt;unsigned char, TreeNode*&gt;;
+
+    TreeNode()
+    {
+        c_ = '0';
+        is_end_ = false;
+    }
+
+    TreeNode(unsigned char c, bool is_end) :
+        c_(c), is_end_(is_end)
+    {
+    }
+
+    TreeNode* findChild(const unsigned char next_char) const
+    {
+        if (subtree_map_.count(next_char))
+        {
+            return subtree_map_.at(next_char);
+        }
+
+        return nullptr;
+    }
+    // insert and return child node
+    TreeNode* insertChild(const unsigned char next_char)
+    {
+        // already have the child
+        if (findChild(next_char))
+        {
+            return nullptr;
+        }
+
+        TreeNode* child = new TreeNode(next_char, false);
+        if (child == nullptr)
+        {
+            return nullptr;
+        }
+
+        subtree_map_.insert(std::make_pair(next_char, child));
+        return child;
+    }
+    // keyword
+    unsigned char c_;
+    // end flag
+    bool is_end_;
+    // subtree
+    TreeMap subtree_map_;
+};
+
+class WordsFilterTree
+{
+  public:
+    WordsFilterTree(const std::vector&lt;std::string&gt;&amp; sensitive_words);
+
+    bool addSensitiveWord(const std::string&amp; sensitive_word);
+
+    std::set&lt;std::string&gt; findAllSensitiveWords(const std::string&amp; text,
+                                                const int match_type = 2) const;
+
+    std::string replaceAllSensitiveWords(const std::string&amp; text,
+                                         const bool unix_shell_colored = true,
+                                         const int match_type = 2,
+                                         const unsigned char replaced_char = '*') const;
+
+  private:
+    TreeNode root_;
+
+    bool insert(TreeNode* parent, const std::string&amp; sensitive_word);
+
+    int checkSensitiveWord(const TreeNode* node,
+                           const std::string&amp; text,
+                           const int begin_index,
+                           const int match_type) const;
+};
+
+static const int kMinMatch = 1;
+static const int kMaxMatch = 2;
+static const int kBoldRedANSIColorCodeLen = 11;
+static const std::string kBoldRedANSIColorCodePrefix = &quot;\033[1;31m&quot;;
+static const std::string kBoldRedANSIColorCodeSuffix = &quot;\033[0m&quot;;
+
+static int utf8StringLen(const std::string&amp; word)
+{
+    const char* s = word.c_str();
+    int len = 0;
+    while (*s) len += (*s++ &amp; 0xc0) != 0x80;
+    return len;
+}
+
+#endif
+</code></pre>
+<p>words_filter.cpp</p>
+<pre><code class="language-cpp">/*************************************************************************
+    &gt; File Name: words_filter.cpp
+    &gt; Author: ce39906
+    &gt; Mail: ce39906@163.com
+    &gt; Created Time: 2019-02-26 14:17:18
+ ************************************************************************/
+#include &quot;words_filter.hpp&quot;
+
+WordsFilterTree::WordsFilterTree(const std::vector&lt;std::string&gt;&amp; sensitive_words)
+{
+    for (const std::string&amp; sensitive_word : sensitive_words)
+    {
+        insert(&amp;root_, sensitive_word);
+    }
+}
+
+bool WordsFilterTree::addSensitiveWord(const std::string&amp; sensitive_word)
+{
+    return insert(&amp;root_, sensitive_word);
+}
+
+std::set&lt;std::string&gt;
+WordsFilterTree::findAllSensitiveWords(const std::string&amp; text,
+                                       const int match_type) const
+{
+    std::set&lt;std::string&gt; matched_words;
+    int begin_index = 0;
+    const int n = text.size();
+    while (begin_index &lt; n)
+    {
+        int match_len = checkSensitiveWord(&amp;root_, text, begin_index, match_type);
+        if (match_len == 0)
+        {
+            begin_index++;
+        }
+        else
+        {
+            matched_words.insert(text.substr(begin_index, match_len));
+            begin_index += match_len;
+        }
+    }
+
+    return matched_words;
+}
+
+std::string
+WordsFilterTree::replaceAllSensitiveWords(const std::string&amp; text,
+                                          const bool unix_shell_colored,
+                                          const int match_type,
+                                          const unsigned char replaced_char) const
+{
+    //get one copy
+    std::string replaced_text = text;
+    int begin_index = 0;
+    int shift_len = 0;
+    const int n = text.size();
+    while (begin_index &lt; n)
+    {
+        int match_len = checkSensitiveWord(&amp;root_, text, begin_index, match_type);
+        if (match_len == 0)
+        {
+            begin_index++;
+        }
+        else
+        {
+            const std::string matched_word = text.substr(begin_index, match_len);
+            int utf8Len = utf8StringLen(matched_word);
+            std::string replaced_str = std::string(utf8Len, replaced_char);
+            if (unix_shell_colored)
+            {
+                replaced_str =   kBoldRedANSIColorCodePrefix
+                               + replaced_str
+                               + kBoldRedANSIColorCodeSuffix;
+            }
+
+            replaced_text =   replaced_text.substr(0, begin_index - shift_len)
+                            + replaced_str
+                            + replaced_text.substr(begin_index + match_len - shift_len);
+
+            begin_index += match_len;
+            shift_len += match_len - utf8Len;
+            shift_len -= unix_shell_colored ? kBoldRedANSIColorCodeLen : 0;
+        }
+    }
+
+    return replaced_text;
+}
+
+bool WordsFilterTree::insert(TreeNode* parent, const std::string&amp; sensitive_word)
+{
+
+    const int n = sensitive_word.size();
+    for (int i = 0; i &lt; n; i++)
+    {
+        if (!parent)
+        {
+            return false;
+        }
+
+        const unsigned char c = sensitive_word[i];
+        TreeNode* child = parent-&gt;findChild(c);
+        if (!child)
+        {
+            parent = parent-&gt;insertChild(c);
+        }
+        else
+        {
+            parent = child;
+        }
+
+        if (i == n - 1)
+        {
+            parent-&gt;is_end_ = true;
+        }
+    }
+
+    return true;
+}
+
+int WordsFilterTree::checkSensitiveWord(const TreeNode* node,
+                                        const std::string&amp; text,
+                                        const int begin_index,
+                                        const int match_type) const
+{
+    bool flag = false;
+    int match_len = 0;
+    const int n = text.size();
+    for (int i = begin_index; i &lt; n; i++)
+    {
+        const unsigned char c = text[i];
+        node = node-&gt;findChild(c);
+        if (!node)
+        {
+            break;
+        }
+        else
+        {
+            match_len++;
+            if (node-&gt;is_end_)
+            {
+                flag = true;
+                if (match_type == kMinMatch)
+                {
+                    break;
+                }
+            }
+        }
+    }
+
+    if (match_len &lt; 2 || !flag)
+    {
+        match_len = 0;
+    }
+
+    return match_len;
+}
+</code></pre>
+<h2 id="测试">测试</h2>
+<p>测试代码如下</p>
+<pre><code>/*************************************************************************
+    &gt; File Name: test_words_filter.cpp
+    &gt; Author: ce39906
+    &gt; Mail: ce39906@163.com
+    &gt; Created Time: 2019-02-25 16:36:46
+ ************************************************************************/
+#include &lt;iostream&gt;
+#include &quot;words_filter.hpp&quot;
+using namespace std;
+
+int main()
+{
+    vector&lt;string&gt; sensitive_words = {
+        &quot;全部&quot;,
+        &quot;手机&quot;,
+        &quot;追逐&quot;,
+        &quot;haha&quot;,
+        &quot;Indian&quot;,
+        &quot;Force&quot;
+    };
+
+    string text = &quot;如果流浪是你的天赋，那么你一定是我最美的追逐，&quot;
+                  &quot;如果爱情是你的游牧拥有过是不是该满足，谁带我踏&quot;
+                  &quot;上孤独的丝路，追逐你的脚步，谁带我离开孤独的丝&quot;
+                  &quot;路感受你的温度，我将眼泪流成天山上的湖，羌笛声&quot;
+                  &quot;胡旋舞为你笑为你哭，爱上你的全部放弃我的全部，&quot;
+                  &quot;爱上了你之后我开始领悟，陪你走了一段最唯美的国&quot;
+                  &quot;度.Pakistan Armed Forces spokesperson, Major G&quot;
+                  &quot;eneral Asif Ghafoor, on Twitter claimed Indian&quot;
+                  &quot; Air Force violated the Line of Control. Pakis&quot;
+                  &quot;tan Air Force immediately scrambled. Indian aircraf&quot;;
+
+    WordsFilterTree words_filter(sensitive_words);
+    cout &lt;&lt; &quot;Init sensitive words are :&quot; &lt;&lt; endl;
+    for (const string&amp; sensitive_word : sensitive_words)
+    {
+        cout &lt;&lt; kBoldRedANSIColorCodePrefix &lt;&lt; sensitive_word
+             &lt;&lt; kBoldRedANSIColorCodeSuffix &lt;&lt; &quot; &quot;;
+    }
+    cout &lt;&lt; endl;
+
+    string word = &quot;温度&quot;;
+    cout &lt;&lt; &quot;Add new sensitive word :&quot; &lt;&lt; endl;
+    cout &lt;&lt; kBoldRedANSIColorCodePrefix &lt;&lt; word &lt;&lt; kBoldRedANSIColorCodeSuffix;
+    words_filter.addSensitiveWord(word);
+    cout &lt;&lt; endl;
+
+    set&lt;string&gt; matched_words = words_filter.findAllSensitiveWords(text, 1);
+    cout &lt;&lt; &quot;Matched sensitvie words are :&quot; &lt;&lt; endl;
+    for (const string&amp; matched_word : matched_words)
+    {
+        cout &lt;&lt; kBoldRedANSIColorCodePrefix &lt;&lt; matched_word
+             &lt;&lt; kBoldRedANSIColorCodeSuffix &lt;&lt; &quot; &quot;;
+    }
+    cout &lt;&lt; endl;
+
+    cout &lt;&lt; &quot;Origin text is :&quot; &lt;&lt; endl;
+    cout &lt;&lt; text &lt;&lt; endl;
+    string replaced_text = words_filter.replaceAllSensitiveWords(text);
+    cout &lt;&lt; &quot;Replaced text is :&quot; &lt;&lt; endl;
+    cout &lt;&lt; replaced_text &lt;&lt; endl;
+
+    return 0;
+}
+</code></pre>
+<h2 id="代码地址">代码地址</h2>
+<blockquote>
+<p>https://github.com/ce39906/self-practices/tree/master/cppcode/words_filter</p>
+</blockquote>
+<h2 id="编译">编译</h2>
+<blockquote>
+<p>g++ -std=c++11 test_words_filter.cpp words_filter.cpp -o words_filter</p>
+</blockquote>
+<h2 id="结果">结果</h2>
+<blockquote>
+<p>./words_filter</p>
+</blockquote>
+<p><img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/words_filter.png" alt="pic"></p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://ce39906.github.io//post/yi-jing-tai-ku-de-fang-shi-ying-yong-lightgbm" class="post-title gt-a-link">
+                    以静态库的方式应用LightGBM
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">算法及读书杂记</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        
+    </div>
+    <div>
+        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
+                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://ce39906.github.io//atom.xml" target="_blank">RSS</a></a>
+    </div>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

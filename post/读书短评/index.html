@@ -1,0 +1,346 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>读书短评 | Ce39906&#39;s Blog</title>
+
+<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611748236925">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://ce39906.github.io//styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<style>
+    hr {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        border: 0;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <style>
+    /* 导航栏样式 */
+    .navbar {
+        position: relative;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        -ms-flex-align: center;
+        align-items: center;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+        padding: 0.5rem 1rem;
+    }
+
+    .navbar-brand {
+        display: inline-block;
+        padding-top: 0.3125rem;
+        padding-bottom: 0.3125rem;
+        margin-right: 1rem;
+        font-size: 1.25rem;
+        line-height: inherit;
+        white-space: nowrap;
+    }
+
+    .navbar-brand:hover,
+    .navbar-brand:focus {
+        text-decoration: none;
+    }
+
+    .navbar-nav {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        padding-left: 0;
+        margin-bottom: 0;
+        list-style: none;
+    }
+
+    .navbar-collapse {
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        -ms-flex-positive: 1;
+        flex-grow: 1;
+        -ms-flex-align: center;
+        align-items: center;
+    }
+
+    .navbar-toggler {
+        padding: 0.25rem 0.75rem;
+        font-size: 1.25rem;
+        line-height: 1;
+        background-color: transparent;
+        border: 1px solid transparent;
+        border-radius: 0.25rem;
+    }
+
+    .navbar-toggler:hover,
+    .navbar-toggler:focus {
+        text-decoration: none;
+    }
+
+    @media (min-width: 992px) {
+        .navbar-expand-lg {
+            -ms-flex-flow: row nowrap;
+            flex-flow: row nowrap;
+            -ms-flex-pack: start;
+            justify-content: flex-start;
+        }
+
+        .navbar-expand-lg .navbar-nav {
+            -ms-flex-direction: row;
+            flex-direction: row;
+        }
+
+        .navbar-expand-lg .navbar-collapse {
+            display: -ms-flexbox !important;
+            display: flex !important;
+            -ms-flex-preferred-size: auto;
+            flex-basis: auto;
+        }
+
+        .navbar-expand-lg .navbar-toggler {
+            display: none;
+        }
+    }
+
+    @media (max-width: 991px) {
+        #navbarSupportedContent {
+            display: none;
+        }
+    }
+</style>
+<nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Ce39906&#39;s Blog
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1611748236925"
+                action="/search/index.html">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = function () {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    读书短评
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2018-04-19 ·
+                    </time>
+                    
+                        <a href="https://ce39906.github.io//tag/nU3k2zQBP" class="post-tags">
+                            # Reading
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h1 id="2018-04-19">2018-04-19</h1>
+<h2 id="人类简史">《人类简史》</h2>
+<p>现代社会建立在人类的重重假设，回到非洲大草原摘个野果子吃就很快乐~<br>
+从物种繁衍的角度来看，小麦，家畜是比人要更成功的。但是物种繁衍的成功不等同于个体的快乐。有人可能会说小麦，家畜的一生都很短暂，但相对浩瀚宇宙来说，人的一生也是沧海一粟。都是匆匆过客，如果能更多卸下捆绑获得真正的快乐才是生活的真谛。</p>
+<h2 id="活着">《活着》</h2>
+<p>所有的困难都会过去，活着本身就是最大的意义。</p>
+<h2 id="围城">《围城》</h2>
+<p>很多现象都可以用围城思想来解释，里面的人想出去，外边的人想进去</p>
+<h2 id="明朝那些事">《明朝那些事》</h2>
+<p>除了朱元璋打天下，朱棣篡位，剩下大部分篇幅都在讲官场政治，当年明月本是公务员，写官场政治这些也非常熟悉，所以后面那几本叫《明朝官场那些事》可能更合适。</p>
+<h2 id="解忧杂货店">《解忧杂货店》</h2>
+<p>高产如东野，可能写悬疑探案类更费精力，所以来碗鸡汤喂喂。书中所有故事都说明了影射一个道理，向别人寻求建议的时候，自己心理已经有答案，只不过是希望别人加强一下自己的信念，如果建议和自己想的相反，你会找别的人再给你建议~</p>
+<h2 id="白鹿原">《白鹿原》</h2>
+<p>具有西北特色的低配百年孤独。读的过程中可以感受到西北作家的朴实的文风，稍微结合一点贵party的black历史就可以如此精彩！另外，读的过程中经常想吃羊肉泡馍~</p>
+<h2 id="苏东坡传">《苏东坡传》</h2>
+<p>上学课本上说的伟大的文学家，书画家。而借用林语堂在前言中对苏东坡的描述: “苏东坡是一个无可救药的乐天派、一个伟大的人道主义者、一个百姓的朋友、一个大文豪、大书法家、创新的画家、造酒试验家、一个工程师、一个憎恨清教徒主义的人、一位瑜伽修行者佛教徒、巨儒政治家、一个皇帝的秘书、酒仙、厚道的法官、一位在政治上专唱反调的人。一个月夜徘徊者、一个诗人、一个小丑”,相比之下自己的生活单调了好多，所以应该在自己身上点更多天赋。不写了，中午吃东坡肉。</p>
+<h1 id="2018-04-20">2018-04-20</h1>
+<h2 id="天龙八部">《天龙八部》</h2>
+<p>乔峰，段誉，虚竹，慕容复所有主要角色无不苦难。众生皆苦，无欲则刚，修炼成佛的还是没几个。</p>
+<h2 id="百年孤独">《百年孤独》</h2>
+<p>人生来孤独，所以需要把雕刻好小金鱼后融掉重新再雕，需要吃土排解孤独。随便拉出个人来，对他说“我想你才是真正的孤独吧！”他都会感到你是他的知音~</p>
+<h2 id="追风筝的人">《追风筝的人》</h2>
+<p>“为你，千千万万遍” 对主人的忠诚和对友谊的坚持要有多深才能说出这样的话。</p>
+<h2 id="鹿鼎记">《鹿鼎记》</h2>
+<p>“老子不干了” 在康熙皇帝和天地会之间脚踏两条船太累了！在这两个没法做决定的选择面前，干脆不选了，全都qtmd！</p>
+<h2 id="黄金时代">《黄金时代》</h2>
+<p>在混乱的年代，黄金时代年纪，有个人一起实践伟大革命友谊也很幸福吧！</p>
+<h1 id="2018-04-25">2018-04-25</h1>
+<h2 id="万寿寺">《万寿寺》</h2>
+<p>万寿寺的主要作用之一是为了老佛爷乘船去颐和园游玩的途中休息一下。之所以老佛爷成为了老佛爷是因为咸丰帝从她身上爬起来时那条射过精的疲软的jb,王小波称之为历史的脐带(hahaha)。所以他在万寿寺搞一些历史的脐带考，领导很不喜欢！</p>
+<h2 id="了不起的盖茨比">《了不起的盖茨比》</h2>
+<p>对黛西的爱情是盖茨比先生的一道绿光，绿光指引他前行，我猜在他临死之前，绿光也不曾熄灭。</p>
+<h2 id="指数基金投资指南">《指数基金投资指南》</h2>
+<p>钉大的扫盲科普书籍，1 h 看完，后面继续有选择的抄E大和钉大的作业。</p>
+<h1 id="2018-05-02">2018-05-02</h1>
+<h2 id="笑傲江湖">《笑傲江湖》</h2>
+<p>金庸武侠里面政治色彩很重的一本，前面甚嚣尘土的左盟主还是被岳君子阴了。伪君子比真小人更可怕。</p>
+<h2 id="神雕侠侣">《神雕侠侣》</h2>
+<p>侠之大者为国为民，杨过在最后领悟此道理，也解开了杀父之仇的心结。在经过无数挫折之后终于和小龙女走到一起，只是苦了那些“一见杨过误终身”的少女们~</p>
+<h1 id="2018-05-03">2018-05-03</h1>
+<h2 id="月亮与六便士">《月亮与六便士》</h2>
+<p>“忘了是谁说过，为了让灵魂受益，每天应该做两件自己不喜欢的事情，说着这句话的是一个富有智慧的人，我把这句格言谨记在新，遵照行事，因此每天我醒来起床，每晚上床睡下” 毛姆这句话描述的境界是生活中所做的任何事都是自己发自肺腑开心的事，这比诗和远方的境界高多了。我承认自己不可能达到那种境界，只希望自己在低头捞便士的同时不要忘了抬头看一下明亮的月亮。</p>
+<h2 id="1984">《1984》</h2>
+<p>&quot;Big brother is watching you.&quot;,原本影射苏联的一书放在今日天朝也并无太多违和。修宪之后，海康威视大涨就让我想到1984中的场景，依据相同的逻辑，中证传媒一定不会有大发展，军工企业虽然垃圾，但会有很大机会。不知道这书啥时候成为禁书。</p>
+<h2 id="寻找无双">《寻找无双》</h2>
+<p>王仙客在寻找无双的过程中困难重重，我们追寻的理想也同样如此吧，不过无所谓，重要的反而是追寻理想的过程吧！</p>
+<h2 id="革命时期的爱情">《革命时期的爱情》</h2>
+<p>所有混乱的事情，如果是放在革命时期也就显得不那么难以解释。X海鹰作为先进青年在挽救堕落青年的王二的时候怎么可以动歪心思！</p>
+<h2 id="爱你就像爱生命">《爱你就像爱生命》</h2>
+<p>王小波李银河书信整理合集。李银河在书中表示说自己是回应了王小波热烈的感情，同时对他的爱也变得炽烈。最喜欢里面的两句活，“一想起你我这张丑脸上就泛起笑容”，“你好哇，李银河”。</p>
+<h1 id="2018-05-08">2018-05-08</h1>
+<h2 id="蒋介石与现代中国">《蒋介石与现代中国》</h2>
+<p>讲述了委员长上位，完成中国形式上统一，抗日战争，国共内战，退守台湾五个阶段的大事。感受到那个动荡的时代波兰壮阔的历史，比历史课本中看到人物丰富立体。书中对抗日初期我党对抗日的态度，委员长对美玲的追求，退守台湾后两位大佬心照不宣共同薅美苏羊毛给我留下很深印象。最后留下在青岛花石楼里偶然看到的委员长一张诡异的微笑图。<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/WechatIMG28.jpeg" alt=""></p>
+<h2 id="天才在左疯子在右">《天才在左，疯子在右》</h2>
+<p>初读之后非常震撼，每个人的精神世界都是非常奇妙，即使是本人无法完全洞悉自己的全部想法。所谓精神病的概念，更多的是说那帮人的想法和社会主流价值观所要求的不一致。心理学是如此奇妙。</p>
+<h2 id="三体">《三体》</h2>
+<p>印象最深的是第二部中黑暗丛林法则，这个原则放到现在的社会也不无道理。看书过程中不断为作者磅礴而又严谨的想象所感叹，科幻的同时还可以看到作者对人性的思考，很赞。</p>
+<h1 id="2018-05-15">2018-05-15</h1>
+<h2 id="霍乱时期的爱情">《霍乱时期的爱情》</h2>
+<p>男主一生的主题就是对女主爱情的追求，在认识女主之后男主做的所有事情都是以赢得爱情为目标，和神雕侠侣里一见杨过毁终生的少女有些相似的感觉。书中描写了各种种类的爱情，读的同时还是感觉到和百年孤独类似的荒芜感，不同的是从这本书里还读到老爷子幽默的地方(比如女主从无限讨厌茄子，到无限热爱茄子，哈哈)。<br>
+看到豆瓣里很有意思的一个书评，“屌丝战胜高帅富的方法就是活得比高帅富久，所以屌丝们赶紧锻炼身体去吧”</p>
+<h1 id="2018-05-22">2018-05-22</h1>
+<h2 id="谁在世界中心">《谁在世界中心》</h2>
+<p>书中一直在强调地缘政治的重要性，大部分篇幅都在讲现在是海权时代，海洋强国才是真的强国。感到新奇的一点是如果继续全球变暖，北冰洋加速融化，俄罗斯会成为另外一个海洋大国，地缘优势会大大增加，那时候老毛子会更跳~</p>
+<h2 id="精进">《精进》</h2>
+<p>作为非常讨厌鸡汤以及成功学的我，在采铜的这本书中看到了超多的干货，里面很多思想和刘未鹏博客中的观点不谋而合。总之就是信息量超大的一本书。最近逛知乎看到采铜已经离开知乎了，这也并不奇怪，知乎现在已经是段子手和装逼犯集中的地方了，没那么多大佬了。</p>
+<h1 id="2018-05-25">2018-05-25</h1>
+<h2 id="送你一颗子弹">《送你一颗子弹》</h2>
+<p>刘瑜老师才是真正文艺女青年，整本书大部分是刘瑜老师在06-08年的生活见闻，其中充满了对生活，爱情，政治，自由的思考，文笔朴实犀利又不乏幽默，很赞。相比起来，生活中大部分自诩文艺的女青年还是差距太大了，建议她们多读读马克思，少看些张小娴吧。</p>
+<h1 id="2018-06-01">2018-06-01</h1>
+<h2 id="撒哈拉的故事">《撒哈拉的故事》</h2>
+<p>上高中还是本科的时候看过一遍。感觉到三毛作为一个文艺女青年也是够燥够任性，好好的在西班牙享受现代资本主义的灯红酒绿突然要跑到撒哈拉沙漠去。到撒哈拉之后自力更生经营自己的生活，见识了好多的奇奇怪怪的习俗同时又冒了好多险。总的来说，再次读的过程中不断感受到这位文艺女青年强大的气场。</p>
+<h1 id="2018-07-06">2018-07-06</h1>
+<h2 id="小王子">《小王子》</h2>
+<p>小王子在各个星球旅行，遇到形形色色各式各样不能理解的大人。这对应到现实生活中也正是如此，我们做的大部分事情可能都是没啥实际意义或者说已经脱离原本的想法，拥有孩子的天真以及直接了当实在难能可贵。</p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://ce39906.github.io//post/Leveldb-varint-解析" class="post-title gt-a-link">
+                    Leveldb varint 解析
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">算法及读书杂记</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        
+    </div>
+    <div>
+        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
+                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://ce39906.github.io//atom.xml" target="_blank">RSS</a></a>
+    </div>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

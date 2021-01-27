@@ -1,0 +1,408 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>Python 绘制指数相关性热力图 | Ce39906&#39;s Blog</title>
+
+<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611748236925">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://ce39906.github.io//styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<style>
+    hr {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        border: 0;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <style>
+    /* 导航栏样式 */
+    .navbar {
+        position: relative;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        -ms-flex-align: center;
+        align-items: center;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+        padding: 0.5rem 1rem;
+    }
+
+    .navbar-brand {
+        display: inline-block;
+        padding-top: 0.3125rem;
+        padding-bottom: 0.3125rem;
+        margin-right: 1rem;
+        font-size: 1.25rem;
+        line-height: inherit;
+        white-space: nowrap;
+    }
+
+    .navbar-brand:hover,
+    .navbar-brand:focus {
+        text-decoration: none;
+    }
+
+    .navbar-nav {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        padding-left: 0;
+        margin-bottom: 0;
+        list-style: none;
+    }
+
+    .navbar-collapse {
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        -ms-flex-positive: 1;
+        flex-grow: 1;
+        -ms-flex-align: center;
+        align-items: center;
+    }
+
+    .navbar-toggler {
+        padding: 0.25rem 0.75rem;
+        font-size: 1.25rem;
+        line-height: 1;
+        background-color: transparent;
+        border: 1px solid transparent;
+        border-radius: 0.25rem;
+    }
+
+    .navbar-toggler:hover,
+    .navbar-toggler:focus {
+        text-decoration: none;
+    }
+
+    @media (min-width: 992px) {
+        .navbar-expand-lg {
+            -ms-flex-flow: row nowrap;
+            flex-flow: row nowrap;
+            -ms-flex-pack: start;
+            justify-content: flex-start;
+        }
+
+        .navbar-expand-lg .navbar-nav {
+            -ms-flex-direction: row;
+            flex-direction: row;
+        }
+
+        .navbar-expand-lg .navbar-collapse {
+            display: -ms-flexbox !important;
+            display: flex !important;
+            -ms-flex-preferred-size: auto;
+            flex-basis: auto;
+        }
+
+        .navbar-expand-lg .navbar-toggler {
+            display: none;
+        }
+    }
+
+    @media (max-width: 991px) {
+        #navbarSupportedContent {
+            display: none;
+        }
+    }
+</style>
+<nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Ce39906&#39;s Blog
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1611748236925"
+                action="/search/index.html">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = function () {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    Python 绘制指数相关性热力图
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2019-03-01 ·
+                    </time>
+                    
+                        <a href="https://ce39906.github.io//tag/_OdGJUpK1" class="post-tags">
+                            # Others
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h2 id="数据获取">数据获取</h2>
+<p>全部指数数据从<a href="http://www.csindex.com.cn/zh-CN">中证指数公司</a>获取</p>
+<h2 id="加载数据">加载数据</h2>
+<p>使用pandas 解析所有excel, 保存每个指数对应的成分股的权重，数据中的一些指数只包含前十大权重股的权重，对这些指数中其他成分股的权重按照平均分配的方式设置。</p>
+<!--more-->
+<p>load_xls.py</p>
+<pre><code class="language-python">#-*- coding: utf-8 -*-
+&quot;&quot;&quot;
+File Name: load_xls.py
+Author: ce39906
+mail: ce39906@163.com
+Created Time: 2019-03-01 11:35:07
+&quot;&quot;&quot;
+import pandas as pd
+import numpy as np
+
+def load_close_weight_xls(filename):
+    print(&quot;loading &quot;, filename)
+    df = pd.read_excel(filename,
+                       converters={'指数代码Index Code' : lambda x: str(x)})
+    index_name = df['指数名称Index Name'].values[0]
+    index_code = df['指数代码Index Code'].values[0]
+    constituent_code = df['成分券代码Constituent Code'].values
+    weight = df['权重(%)Weight(%)'].values
+
+    n = weight.shape[0]
+    constituent_code_2_weight = {}
+    for i in range(n):
+        constituent_code_2_weight[constituent_code[i]] = weight[i]
+    return index_name, index_code, constituent_code_2_weight
+
+def load_cons_xls(filename):
+    print(&quot;loading &quot;, filename)
+    sheet1_df = pd.read_excel(filename,
+                              converters={'指数代码Index Code' : lambda x: str(x)})
+    index_name = sheet1_df['指数名称Index Name'].values[0]
+    index_code = sheet1_df['指数代码Index Code'].values[0]
+    constituent_code = sheet1_df['成分券代码Constituent Code'].values
+    sheet2_df = pd.read_excel(filename, sheet_name='weight')
+    top10_code_2_weight = {}
+    for index, row in sheet2_df.iterrows():
+        code = row['代码']
+        weight = row['权重']
+        top10_code_2_weight[code] = weight
+
+    total_count = constituent_code.shape[0]
+    top10_weight_count = len(top10_code_2_weight.keys())
+
+    top10_weight_sum = 0.0
+    for top10_weight in top10_code_2_weight.values():
+        top10_weight_sum += top10_weight
+
+    default_weight = (100.0 - top10_weight_sum) / (total_count - top10_weight_count)
+    constituent_code_2_weight = {}
+    for i in range(total_count):
+        code = constituent_code[i]
+        if code in top10_code_2_weight:
+            constituent_code_2_weight[code] = top10_code_2_weight[code]
+        else:
+            constituent_code_2_weight[code] = default_weight
+    return index_name, index_code, constituent_code_2_weigh
+</code></pre>
+<h2 id="向量化以及绘制热力图">向量化以及绘制热力图</h2>
+<p>向量化的方式是统计出所有指数全部成分股作为向量的全部维度。<br>
+针对每个指数对应的向量，首先将向量值全部设置为0，然后在向量上为成分股对应的维度赋值。<br>
+将每个指数都向量化后，合并到一个<strong>pandas dataframe</strong>中，<strong>dataframe</strong>中的每一列代表一个指数对应的向量。获取<strong>dataframe</strong>后使用**corr()**方法获得协方差矩阵，然后使用seaborn 绘制。<br>
+cal_stock_indices_correlation.py</p>
+<pre><code class="language-python">#-*- coding: utf-8 -*-
+&quot;&quot;&quot;
+File Name: cal_stock_indices_correlation.py
+Author: ce39906
+mail: ce39906@163.com
+Created Time: 2019-03-01 14:31:30
+&quot;&quot;&quot;
+import load_xls
+import os
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+plt.rcParams['font.sans-serif'] = ['SimHei']
+plt.rcParams['axes.unicode_minus'] = False
+
+def load_data():
+    stock_indices_data = {}
+    constituent_codes = set()
+
+    for filename in os.listdir('data'):
+        if not filename.endswith('.xls'):
+            continue
+
+        if len(filename) == 21:
+            index_name, index_code, constituent_code_2_weight = load_xls.load_close_weight_xls('data/' + filename)
+        else:
+            index_name, index_code, constituent_code_2_weight = load_xls.load_cons_xls('data/' + filename)
+
+        for constituent_code in constituent_code_2_weight.keys():
+            constituent_codes.add(constituent_code)
+
+        stock_indices_data[index_name + '_' + str(index_code)] = constituent_code_2_weight
+
+    return list(constituent_codes), stock_indices_data
+
+def vectorization(constituent_codes, stock_indices_data):
+    n = len(constituent_codes)
+    df = pd.DataFrame()
+    for stock_index_name, weights in stock_indices_data.items():
+        vector = [0.0] * n
+        for i in range(n):
+            code = constituent_codes[i]
+            if code in weights:
+                vector[i] = weights[code] / 100.0
+        df[stock_index_name] = vector
+
+    return df
+
+def plot_corr_heatmap(df):
+    corr = df.corr()
+    f, ax = plt.subplots(figsize=(15, 15))
+    sns.heatmap(corr,
+                cmap='rainbow',
+                linewidths=0.05,
+                ax=ax,
+                square=True,
+                annot=True)
+    f.savefig('stock_indices_corr_heatmap.png')
+
+def main():
+    constituent_codes, stock_indices_data = load_data()
+    df = vectorization(constituent_codes, stock_indices_data)
+    plot_corr_heatmap(df)
+
+if __name__ == '__main__':
+    main()
+</code></pre>
+<h2 id="热力图">热力图</h2>
+<p><img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/stock_indices_corr_heatmap.png" alt="pic"></p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://ce39906.github.io//post/C-DFA实现敏感词过滤" class="post-title gt-a-link">
+                    C++ DFA实现敏感词过滤
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">算法及读书杂记</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        
+    </div>
+    <div>
+        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
+                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://ce39906.github.io//atom.xml" target="_blank">RSS</a></a>
+    </div>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,373 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>Leveldb varint 解析 | Ce39906&#39;s Blog</title>
+
+<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611748236925">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://ce39906.github.io//styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<style>
+    hr {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        border: 0;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <style>
+    /* 导航栏样式 */
+    .navbar {
+        position: relative;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        -ms-flex-align: center;
+        align-items: center;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+        padding: 0.5rem 1rem;
+    }
+
+    .navbar-brand {
+        display: inline-block;
+        padding-top: 0.3125rem;
+        padding-bottom: 0.3125rem;
+        margin-right: 1rem;
+        font-size: 1.25rem;
+        line-height: inherit;
+        white-space: nowrap;
+    }
+
+    .navbar-brand:hover,
+    .navbar-brand:focus {
+        text-decoration: none;
+    }
+
+    .navbar-nav {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        padding-left: 0;
+        margin-bottom: 0;
+        list-style: none;
+    }
+
+    .navbar-collapse {
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        -ms-flex-positive: 1;
+        flex-grow: 1;
+        -ms-flex-align: center;
+        align-items: center;
+    }
+
+    .navbar-toggler {
+        padding: 0.25rem 0.75rem;
+        font-size: 1.25rem;
+        line-height: 1;
+        background-color: transparent;
+        border: 1px solid transparent;
+        border-radius: 0.25rem;
+    }
+
+    .navbar-toggler:hover,
+    .navbar-toggler:focus {
+        text-decoration: none;
+    }
+
+    @media (min-width: 992px) {
+        .navbar-expand-lg {
+            -ms-flex-flow: row nowrap;
+            flex-flow: row nowrap;
+            -ms-flex-pack: start;
+            justify-content: flex-start;
+        }
+
+        .navbar-expand-lg .navbar-nav {
+            -ms-flex-direction: row;
+            flex-direction: row;
+        }
+
+        .navbar-expand-lg .navbar-collapse {
+            display: -ms-flexbox !important;
+            display: flex !important;
+            -ms-flex-preferred-size: auto;
+            flex-basis: auto;
+        }
+
+        .navbar-expand-lg .navbar-toggler {
+            display: none;
+        }
+    }
+
+    @media (max-width: 991px) {
+        #navbarSupportedContent {
+            display: none;
+        }
+    }
+</style>
+<nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Ce39906&#39;s Blog
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1611748236925"
+                action="/search/index.html">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = function () {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    Leveldb varint 解析
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2018-04-17 ·
+                    </time>
+                    
+                        <a href="https://ce39906.github.io//tag/sKN_FIXf8-e" class="post-tags">
+                            # Leveldb
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h1 id="varint-介绍">varint 介绍</h1>
+<p>我们知道 uint32_t 类型占用4个byte，uint64_t 占用8个byte, 但是对于比较小的数字来说，使用uint32_t 或者uint64_t 存储会比较浪费，varint 的思想是根据数字所需大小使用unsigned char* 指针存储数据，节约内存。</p>
+<h1 id="leveldb-实现">leveldb 实现</h1>
+<p>leveldb 中的varint实现原理简单，每个byte 使用最高bit的 0/1值代表此整数值是否结束，用剩下的7个bit 存储实际的数值。知道最后一个byte 的最高bit 是0 表示整数结束。因此小于128的数据都可以用一个byte 来表示，大于128的，比如说300，使用varint 编码的话需要两个字节<strong>10101100 0000 0010</strong></p>
+<h2 id="leveldb-32位int变长编码实现">leveldb 32位int变长编码实现</h2>
+<p>正常情况下，32位int占用4个byte, varint 编码中每个byte 中的最高bit 用来表示该byte 是不是最后一个byte,所以针对大的数varint 编码可能需要5个byte才能表示。leveldb 实现中5个if 分支对应varint占用1到5个byte 的情况。</p>
+<pre><code>char* EncodeVarint32(char* dst, uint32_t v) {
+  // Operate on characters as unsigneds
+  unsigned char* ptr = reinterpret_cast&lt;unsigned char*&gt;(dst);
+  static const int B = 128;
+  if (v &lt; (1&lt;&lt;7)) {
+    *(ptr++) = v;
+  } else if (v &lt; (1&lt;&lt;14)) {
+    *(ptr++) = v | B;
+    *(ptr++) = v&gt;&gt;7;
+  } else if (v &lt; (1&lt;&lt;21)) {
+    *(ptr++) = v | B;
+    *(ptr++) = (v&gt;&gt;7) | B;
+    *(ptr++) = v&gt;&gt;14;
+  } else if (v &lt; (1&lt;&lt;28)) {
+    *(ptr++) = v | B;
+    *(ptr++) = (v&gt;&gt;7) | B;
+    *(ptr++) = (v&gt;&gt;14) | B;
+    *(ptr++) = v&gt;&gt;21;
+  } else {
+    *(ptr++) = v | B;
+    *(ptr++) = (v&gt;&gt;7) | B;
+    *(ptr++) = (v&gt;&gt;14) | B;
+    *(ptr++) = (v&gt;&gt;21) | B;
+    *(ptr++) = v&gt;&gt;28;
+  }
+  return reinterpret_cast&lt;char*&gt;(ptr);
+}
+</code></pre>
+<p>对应的varint 解码的思路是从低byte 到高byte遍历，直到找到最后一个表示编码结束的byte(判断条件是 <strong>byte &amp; 128 == 1</strong>)，代码如下</p>
+<pre><code>// 针对一个byte情况直接处理，大于一个byte 时，
+// 使用 GetVarint32PtrFallback 处理
+inline const char* GetVarint32Ptr(const char* p,
+                                  const char* limit,
+                                  uint32_t* value) {
+  if (p &lt; limit) {
+    uint32_t result = *(reinterpret_cast&lt;const unsigned char*&gt;(p));
+    if ((result &amp; 128) == 0) {
+      *value = result;
+      return p + 1;
+    }
+  }
+  return GetVarint32PtrFallback(p, limit, value);
+}
+
+const char* GetVarint32PtrFallback(const char* p,
+                                   const char* limit,
+                                   uint32_t* value) {
+  uint32_t result = 0;
+  for (uint32_t shift = 0; shift &lt;= 28 &amp;&amp; p &lt; limit; shift += 7) {
+    uint32_t byte = *(reinterpret_cast&lt;const unsigned char*&gt;(p));
+    p++;
+    if (byte &amp; 128) {
+      // More bytes are present
+      result |= ((byte &amp; 127) &lt;&lt; shift);
+    } else {
+      result |= (byte &lt;&lt; shift);
+      *value = result;
+      return reinterpret_cast&lt;const char*&gt;(p);
+    }
+  }
+  return NULL;
+}
+</code></pre>
+<h2 id="64位变长编码的实现">64位变长编码的实现</h2>
+<p>64位整形最多需要**(10 * 8 - 10 &gt; 64)** 10个byte 来保存，类似于32位int的编码，需要写10个if-else 分支，针对64位整形的编码，leveldb 给出了更优雅的解决方案。</p>
+<pre><code>char* EncodeVarint64(char* dst, uint64_t v) {
+  static const int B = 128;
+  unsigned char* ptr = reinterpret_cast&lt;unsigned char*&gt;(dst);
+  while (v &gt;= B) {
+    *(ptr++) = (v &amp; (B-1)) | B;
+    v &gt;&gt;= 7;
+  }
+  *(ptr++) = static_cast&lt;unsigned char&gt;(v);
+  return reinterpret_cast&lt;char*&gt;(ptr);
+}
+</code></pre>
+<p>针对64位整形的解码，leveldb 实现同样是类似的逻辑。也是从低位byte 开始向高位byte遍历判断编码是否结束。代码实现如下</p>
+<pre><code>const char* GetVarint64Ptr(const char* p, const char* limit, uint64_t* value) {
+  uint64_t result = 0;
+  for (uint32_t shift = 0; shift &lt;= 63 &amp;&amp; p &lt; limit; shift += 7) {
+    uint64_t byte = *(reinterpret_cast&lt;const unsigned char*&gt;(p));
+    p++;
+    if (byte &amp; 128) {
+      // More bytes are present
+      result |= ((byte &amp; 127) &lt;&lt; shift);
+    } else {
+      result |= (byte &lt;&lt; shift);
+      *value = result;
+      return reinterpret_cast&lt;const char*&gt;(p);
+    }
+  }
+  return NULL;
+}
+</code></pre>
+<h1 id="总结">总结</h1>
+<p>varint 的思想是针对32位或者64位整形类型来说存储的大部分数据都是多余的，因此使用每个byte的最高位来标识编码是否结束，使用一个<strong>char</strong> 型指针存储编码的结果，针对很多情况可以节约存储空间。</p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://ce39906.github.io//post/Memcached-hashtable解析" class="post-title gt-a-link">
+                    Memcached hashtable解析
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">算法及读书杂记</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        
+    </div>
+    <div>
+        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
+                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://ce39906.github.io//atom.xml" target="_blank">RSS</a></a>
+    </div>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

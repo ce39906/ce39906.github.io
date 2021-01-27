@@ -1,0 +1,753 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>Boost Spirit | Ce39906&#39;s Blog</title>
+
+<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611748236925">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://ce39906.github.io//styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<style>
+    hr {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        border: 0;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <style>
+    /* 导航栏样式 */
+    .navbar {
+        position: relative;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        -ms-flex-align: center;
+        align-items: center;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+        padding: 0.5rem 1rem;
+    }
+
+    .navbar-brand {
+        display: inline-block;
+        padding-top: 0.3125rem;
+        padding-bottom: 0.3125rem;
+        margin-right: 1rem;
+        font-size: 1.25rem;
+        line-height: inherit;
+        white-space: nowrap;
+    }
+
+    .navbar-brand:hover,
+    .navbar-brand:focus {
+        text-decoration: none;
+    }
+
+    .navbar-nav {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        padding-left: 0;
+        margin-bottom: 0;
+        list-style: none;
+    }
+
+    .navbar-collapse {
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        -ms-flex-positive: 1;
+        flex-grow: 1;
+        -ms-flex-align: center;
+        align-items: center;
+    }
+
+    .navbar-toggler {
+        padding: 0.25rem 0.75rem;
+        font-size: 1.25rem;
+        line-height: 1;
+        background-color: transparent;
+        border: 1px solid transparent;
+        border-radius: 0.25rem;
+    }
+
+    .navbar-toggler:hover,
+    .navbar-toggler:focus {
+        text-decoration: none;
+    }
+
+    @media (min-width: 992px) {
+        .navbar-expand-lg {
+            -ms-flex-flow: row nowrap;
+            flex-flow: row nowrap;
+            -ms-flex-pack: start;
+            justify-content: flex-start;
+        }
+
+        .navbar-expand-lg .navbar-nav {
+            -ms-flex-direction: row;
+            flex-direction: row;
+        }
+
+        .navbar-expand-lg .navbar-collapse {
+            display: -ms-flexbox !important;
+            display: flex !important;
+            -ms-flex-preferred-size: auto;
+            flex-basis: auto;
+        }
+
+        .navbar-expand-lg .navbar-toggler {
+            display: none;
+        }
+    }
+
+    @media (max-width: 991px) {
+        #navbarSupportedContent {
+            display: none;
+        }
+    }
+</style>
+<nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Ce39906&#39;s Blog
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1611748236925"
+                action="/search/index.html">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = function () {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    Boost Spirit
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2018-03-28 ·
+                    </time>
+                    
+                        <a href="https://ce39906.github.io//tag/KYwLFMMec0" class="post-tags">
+                            # Boost
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h1 id="what-is-boost-spirit">What is boost spirit</h1>
+<p>boost spirit is an object-oriented,recursive-descent parser and output generation library for C++.It allows you to write grammars and format descripting using a format similar to Extended Backs Naur Form(EBNF) directly in C++.</p>
+<p>The figure below shows the overall structure of Boost Spirit library.</p>
+<p><img src="http://www.boost.org/doc/libs/1_64_0/libs/spirit/doc/html/images/spiritstructure.png" alt="image"></p>
+<p>The three components Qi,Kama and Lex are designed to be used either stand alone or together. The general methodology is to use the token sequence generated by Lex as the input for a parser generated by Qi. On the opposite side of the equation,the hierarchical data structures generated by Qi are used for the output generators created using Kama.</p>
+<p>The place of Spirit.Qi and Spirit.Kama in a data transformation flow of a typical application.</p>
+<p><img src="http://www.boost.org/doc/libs/1_64_0/libs/spirit/doc/html/images/spiritkarmaflow.png" alt="image"></p>
+<h2 id="qi-writing-parsers">Qi- Writing Parsers</h2>
+<p>Spirit.Qi is designed to be a practical parsing tool. Scanf ,boost::regex or boost::tokenizer do not scale well when we need to write more elaborate parsers.</p>
+<h3 id="examples">Examples</h3>
+<h4 id="example-1-parsing-a-number">Example #1 parsing a number</h4>
+<p>Create a parser that will parse a floating-point number.</p>
+<pre><code>double_
+</code></pre>
+<h4 id="example-2-parsing-2-numbers">Example #2  parsing 2 numbers</h4>
+<p>Create a parser that will accept a line consisting of 2 floating-point numbers.</p>
+<pre><code>double_ &gt;&gt; double_
+</code></pre>
+<h4 id="example-3-parsing-zero-or-more-numbers">Example #3 parsing zero or more numbers</h4>
+<p>Create a parser that will accept zero or more floating-point numbers.</p>
+<pre><code>*double_
+</code></pre>
+<h4 id="example-4-parsing-a-comma-delimited-list-of-numbers">Example #4 parsing a comma-delimited list of numbers</h4>
+<p>This example will create a parser that accepts a comma-delimited list of numbers.</p>
+<pre><code>double_ &gt;&gt; *(char_(',') &gt;&gt; double_)
+</code></pre>
+<p>Notice char_(',') is a literal charcter parser that can recognize the comma ','.</p>
+<h4 id="lets-parse">Let's Parse</h4>
+<p>We are done with defining the parser.So the next step is invoking this parser to do its work.Here we will use <strong>phrase_parse</strong> function. One overload of this function accepts four arguments.</p>
+<ol>
+<li>iterator pointing to the start of the input.</li>
+<li>iterator pointing to the end of the input.</li>
+<li>parser object</li>
+<li>another parser called the skip parser</li>
+</ol>
+<pre><code>template&lt;typename Iterator&gt;
+bool parse_numbers(Iterator first, Iterator last)
+{
+    using qi::double_;
+    using qi::phrase_parse;
+    using ascii::space;
+    
+    bool r = pharse_parse(
+        first,
+        last,
+        double_ &gt;&gt; *(',' &gt;&gt; double_),
+        space
+    );
+    if (fisrt != last) 
+        return false;
+    return r;
+}
+</code></pre>
+<h3 id="parser-semantic-actions">Parser Semantic Actions</h3>
+<p>The previous example was very simple.It only recognized data,but did noting with it.Now we want to extract information from what was parsed.<br>
+Semantic actions may be attached to any point in the grammar specification. These functions are C++ functions or function objects that are called whenever a part of the parser successfully recognizes a portion of the input.</p>
+<h4 id="example-of-semantic-actions">Example of Semantic Actions</h4>
+<ul>
+<li>using plain function pointer</li>
+<li>using simple function object</li>
+<li>using boost.bind with a plain function</li>
+<li>using boost.bind with a member function</li>
+<li>using boost.lambda</li>
+</ul>
+<p>Such as:</p>
+<pre><code>namespace client
+{
+    namespace qi = boost::qi;
+    // A plain function
+    void print(const int&amp; i)
+    {
+        std::cout &lt;&lt; i &lt;&lt; std::endl;
+    }
+    // A member function
+    struct writer
+    {
+        void print(const int&amp; i) const
+        {
+            std::cout &lt;&lt; i &lt;&lt; std::endl;
+        }
+        
+    };
+    // A function object
+    struct print_action
+    {
+        void operator()(const int&amp; i,qi::unset_type,qi::unset_type) const
+        {
+            std::cout &lt;&lt; i &lt;&lt; std::endl;
+        }
+    };
+}
+</code></pre>
+<p>All examples parse inputs of the form:</p>
+<pre><code>&quot;{integer}&quot;
+</code></pre>
+<p>These below shows the usages</p>
+<pre><code>using boost::spirit::qi::int_;
+using boost::spirit::qi::parse;
+using client::print;
+using client::writer;
+using clinet::print_action;
+
+const char* fisrt = &quot;{43}&quot;;
+const char* last = first + std::strlen(first);
+
+// example using plain function
+parse(first,last,'{'&gt;&gt;int_[&amp;print]&gt;&gt;'}');
+// example using simple function object
+parse(first,last,'{'&gt;&gt;int_[print_action()]&gt;&gt;'}');
+// example using boost bind with a plain function
+parse(fisrt,last,'{' &gt;&gt; int_[boost::bind(&amp;print,_1)]&gt;&gt;'}');
+// example using boost bind with a member function
+parse(first,last,'{'&gt;&gt; int_[boost::bind(&amp;writer::print,&amp;w,_1)]&gt;&gt;'}');
+
+// example using boost lambda
+namespace lambda = boost::lambda;
+using lambda::_1;
+parse(first,last,'{' &gt;&gt; int_[std::cout &lt;&lt; _1 &lt;&lt; '\n'] &gt;&gt; '}');
+</code></pre>
+<h4 id="phoenix">Phoenix</h4>
+<p>Phoenix , a companion library bundled with Spirit. is sepcifically suited for binding semantic actions. It is like Boost.lambad on sterodis, with spiecial custom featrues that make it easy to  inergrate semantic action with Spirit.</p>
+<h3 id="complex-our-first-complex-parser">Complex - Our first complex parser</h3>
+<p>A parser that parses complex numbers.This time we are using Phoenix to do the semantic actions.<br>
+Here is a simple parser expression for complex numbers.</p>
+<pre><code>'(' &gt;&gt; double_ &gt;&gt; -(',' &gt;&gt; double_) &gt;&gt; ')' 
+| double_
+</code></pre>
+<p>This parser can parse complex numbers of the form:</p>
+<pre><code>(123.22,2121.21)
+(213.33)
+212.33
+</code></pre>
+<p>This below shows example of action with phoniex</p>
+<pre><code>namespace client
+{
+    template&lt;typename Iterator&gt;
+    bool parse_complex(Iterator first,Iterator last,std::complex&lt;double&gt;&amp; c)
+    {
+        using boost::spirit::qi::double_;
+        using boost::spirit::qi::_1;
+        using boost::spirit::qi::phrase_parse;
+        using boost::spirit::ascii::space;
+        using boost::phoenix::ref;
+        
+        double rN = 0.0;
+        double iN = 0.0;
+        bool r = phrase_parse(
+            first,
+            last,
+            (
+                '(' &gt;&gt; double_[ref(rN) = _1]
+                    &gt;&gt; -(',' &gt;&gt; double_[ref(iN) = _1]) &gt;&gt; ')' 
+                | double_[ref(rN) = _1]
+            ),
+            space
+        );
+        if (!r || first != last)
+            return false;
+        c = std::complex&lt;double&gt;(rN,iN);
+        return r;
+    }
+}
+</code></pre>
+<h3 id="sum-adding-numbers">Sum - adding numbers</h3>
+<p>Here is a parser that sums a comma-separated list of numbers.</p>
+<pre><code>namespace qi = boost::spirit::qi;
+namespace ascii = boost::spirit::ascii;
+namespace phoenix = boost::spirit::phoenix;
+
+using qi::double_;
+using qi::_1;
+using ascii::space;
+using phoenix::ref;
+
+template&lt;typename Iterator&gt;
+bool adder(Iterator first,Iterator last,double&amp; n)
+{
+    bool r = qi::phrase_parse(
+        first,
+        last,
+        (
+            double_[ref(n) = _1] &gt;&gt; *(',' &gt;&gt; double_[ref(n) += _1])
+        ),
+        space
+    );
+    if (fisrt != last)
+        return false;
+    return r;
+}
+</code></pre>
+<h3 id="number-list-stuffing-numbers-into-a-stdvector">Number List - stuffing numbers into a std::vector</h3>
+<p>This sample demonstrates a parser for a comma separated list of numbers. The numbers are inserted in a vector using phoenix.</p>
+<pre><code>template &lt;typename Iterator&gt;
+bool parse_numbers(Iterator fisrt,Iterator last,std::vector&lt;double&gt;&amp; v)
+{
+    using qi::double_;
+    using qi::phrase_parse;
+    using qi::_1;
+    using ascii::space;
+    using phoenix::push_back;
+    using phoenix::ref;
+    
+    bool r = phrase_parse(
+        first,
+        last,
+        (
+            double_[push_back(ref(v),_1)] &gt;&gt;
+            *(',' &gt;&gt; double_[push_back(ref(v),_1)])
+        ),
+        space
+    );
+    if(first != last)
+        return false;
+    return r;
+}
+</code></pre>
+<h3 id="number-list-redux-list-syntax">Number List Redux - list syntax</h3>
+<p>So far, we've been using the syntax:</p>
+<pre><code>double_ &gt;&gt; *(',' &gt;&gt; double_)
+</code></pre>
+<p>to parse a comma-delimited list of numbers.Such lists are common in parsing and Spirit provides a simpler shortcut for them</p>
+<pre><code>double_ % ','
+</code></pre>
+<p>reads as a list of doubles separted by ','.<br>
+The last example could be done as this:</p>
+<pre><code>template&lt;typename Iterator&gt;
+bool parse_numbers(Iterator first,Iterator last,std::vector&lt;double&gt;&amp; v)
+{
+    using qi::double_;
+    using qi::phrase_parse;
+    using qi::_1;
+    using ascii::space;
+    using phoenix::push_back;
+    using phoenix::ref;
+    
+    bool r = phrase_parse(
+        first,
+        last,
+        (
+            double_[ref(v),_1] % ','
+        ),
+        space
+    );
+    if (first != last)
+        return false;
+    return r;
+    
+}
+</code></pre>
+<h3 id="number-list-attribute-one-morewith-style">Number List Attribute - one more,with style</h3>
+<p>As we know,the <strong>double_</strong> parser has a doubel attribute. All parsers have an attribute,even complex parsers.</p>
+<p>Our parser</p>
+<pre><code>doubel_ % ','
+</code></pre>
+<p>has an attribute of std::vector<double>.<br>
+So we can simply pass in a std::vector<double> to our number of list parser.the overload of phrase_parse has five arguments:</p>
+<ol>
+<li>iterator pointing to start of the input</li>
+<li>iterator pointing to last of the input</li>
+<li>the parser object</li>
+<li>another parser called skip parser</li>
+<li>the parse's attribute</li>
+</ol>
+<pre><code>bool r = phrase_parse(
+    first,
+    last,
+    (
+        double_ % ','
+    ),
+    space,
+    v
+);
+</code></pre>
+<h3 id="roman-numerals">Roman Numerals</h3>
+<p>This example demonstrates:</p>
+<ul>
+<li>symbol table</li>
+<li>rule</li>
+<li>grammar</li>
+</ul>
+<h4 id="symbol-table">Symbol table</h4>
+<p>Each entry in a symbol table has an associated mutable data solt. In this regard, one can view the symbol table as an associative container of key-value pairs where the keys are strings.</p>
+<p>Here is a parser for roman hundreds(100..900) using the symbol table. Keep in mind that the data associated with each slot is the parser's attribute(which is passed to attached semantic actions).</p>
+<pre><code>struct hundreds_ : qi::symbols&lt;char, unsigned&gt;
+{
+    hundreds_()
+    {
+        add
+        (&quot;C&quot;,100)
+        (&quot;CC&quot;,200)
+        (&quot;CCC&quot;,300)
+        (&quot;CD&quot;,400)
+        (&quot;D&quot;, 500)
+        (&quot;DC&quot;, 600)
+        (&quot;DCC&quot;,700)
+        (&quot;DCCC&quot;,800)
+        (&quot;CM&quot;,900);
+    }
+} hundreds;
+</code></pre>
+<p>we also can define tens ones symbol table.They are all parsers.</p>
+<h4 id="rules">Rules</h4>
+<p>Up until now,we have been inlining our parser expressions, passing them directly to the <em><strong>phrase_parse</strong></em> function. The expression evalutes into a temporary,unnamed parser which is passed into the <em><strong>phrase_parse</strong></em> function, used and then destroyed. This is fine for small parsers. When the expressions get complicated, you'd want to break the expressions into smaller easier-to-understand pieces, name them, and refer to them from other expressions by name.</p>
+<p>A parser expression can be assigned to what is called a &quot;rule&quot;.Threr are various ways to declare rules.The simplest form is :</p>
+<pre><code>rule&lt;Iterator&gt; r;
+// this rule cannot used by phrase_parse function,
+// it can only be used by parse function -- a version that does not do white space skipping.
+// If you want to have it skip white spaces,you need to pass in the type skip parser.
+rule&lt;Iterator,Skipper&gt; r;
+rule&lt;string::iterator,space_type&gt; r;
+// This type of rule can be used for both
+// phrase_parse and parse.
+</code></pre>
+<p>There is one more rule form you should know about.</p>
+<pre><code>rule&lt;Iterator,Signature,Skipper&gt; r;
+</code></pre>
+<p>The Signature specifies athe attributes of the rule. Recall that the double_ parser has an attribute of double. To be precise, these are <strong>synthesized</strong> attributes.The parser &quot;synthesized&quot; the attribute value.Think of them as the function return value.</p>
+<p>There is another type of attribute called &quot;inherited&quot; attribute. You can think them as function arguments. And,rightly so, the rule signature is a function signature .</p>
+<p>After having declared a rule,you can now assign any parser expression to it. Example:</p>
+<pre><code>r = double_ &gt;&gt; *(',' &gt;&gt; double_);
+</code></pre>
+<h4 id="grammars">Grammars</h4>
+<p>A grammar encapsulates one or more rules.It has the same template parameters as the rule.You can declare a grammar by:</p>
+<ol>
+<li>deriving a struct from the grammar class template</li>
+<li>declare one or more rules as member variables</li>
+<li>initialize the base grammar class by giving it the start rule(its the first rule that gets called when the grammar starts parsing)</li>
+<li>initalize your rules in your constrctor.</li>
+</ol>
+<p>The rommon numeral grammar is a very nice and simple example of a grammar.</p>
+<pre><code>template&lt;typename Iterator&gt;
+struct roman :qi::grammar&lt;Iterator,unsigned()&gt;
+{
+    roman() : roman::base_type(start)
+    {
+        using qi::eps;
+        using qi::lit;
+        using qi::_val;
+        using qi::_1;
+        using ascii::char_;
+        
+        start = eps [_val = 0] &gt;&gt;
+            (
+                +lit('M')   [_val += 1000]
+                || hundreds [_val += _1]
+                || tens     [_val += _1]
+                || ones     [_val += _1]
+            )
+    }
+    qi::rule&lt;Iterator,unsigned()&gt;  start;
+}
+</code></pre>
+<ol>
+<li>the grammar and start rule sinature is unsigned() it has a synthesized attribute(return value) of type unsigned whith on inherited attributeds(argumnents).</li>
+<li>roman::base_type is a typedef for grammar&lt;Iterator,unsigned()&gt;</li>
+<li>_val is another Phoenix placeholder representing the rule's synthesized attribute</li>
+<li>eps is a special spirit parser that consumes no input but is always successful. We use it to initialize _val,the rule's synthesized attribute, to zero before anything else. Using eps this way is good for doing pre and post initializations.</li>
+<li>the example a || b reads, match a or b and in sequence.That is if both a and b match, it must be in sequence; this is equivalen to a &gt;&gt; -b | b,but more efficient.</li>
+</ol>
+<p>Usage</p>
+<pre><code>bool r = parse(iter,end,roman_parser,result);
+if (r &amp;&amp; iter == end)
+{
+    std::cout &lt;&lt; &quot;Parse success.\n&quot;;
+    std::cout &lt;&lt; &quot;Result = &quot; &lt;&lt; result &lt;&lt; std::endl;
+}
+</code></pre>
+<h3 id="employee-pasing-into-structs">Employee - Pasing into structs</h3>
+<p>This section shows how to parse and place the reult into a C++ struct.</p>
+<p>fisrtly, let's create a struct representing an employee.</p>
+<pre><code>struct employee
+{
+    int age;
+    std::string surname;
+    std::string forename;
+    double salary;
+};
+</code></pre>
+<p>now we will write a parser for our employee. Inputs will be of the form.</p>
+<pre><code>employee{ age,&quot;surname&quot;,&quot;forename&quot;,salary }
+</code></pre>
+<pre><code>template&lt;typename Iterator&gt;
+struct employee_parser : qi::grammar&lt;Iterator,employee(),ascii::space_type&gt;
+{
+    employee_parser():employee_parser::base_type(start)
+    {
+        using qi::int_;
+        using qi::lit;
+        using qi::double_;
+        using qi::lexeme;
+        using ascii::char_;
+        
+        quoted_string %= lexeme['&quot;' &gt;&gt; +(char_ - '&quot;') &gt;&gt; '&quot;'];
+        
+        start %= 
+            lit(&quot;employee&quot;)
+            &gt;&gt; '{'
+            &gt;&gt; int_ &gt;&gt; ','
+            &gt;&gt; quoted_string &gt;&gt; ','
+            &gt;&gt; quoted_string &gt;&gt; ','
+            &gt;&gt; double_
+            &gt;&gt; '}'
+            ;
+    }
+    qi::rule&lt;Iterator,std::string(),ascii::space_type&gt; quoted_string;
+    qi::rule&lt;Iterator,employee(),ascii::space_type&gt; start;
+};
+</code></pre>
+<h4 id="lexeme">Lexeme</h4>
+<pre><code>lexeme['&quot;' &gt;&gt;(char_ - '&quot;') &gt;&gt; '&quot;']
+</code></pre>
+<p>lexeme inhibits sapce skipping from the open brace to the closing space.The expression parses quoted strings.</p>
+<pre><code>+(char_ - '&quot;')
+</code></pre>
+<p>parses one or more chars,except the double quote. It stops when it sees a double quote.</p>
+<p>+a matches one or more,its attribute is a std::vector<A> where A is the attribute of a .</p>
+<h4 id="sequence-attribute">Sequence Attribute</h4>
+<p>now what's the attribute of</p>
+<pre><code>'&quot;' &gt;&gt; (char_ - '&quot;') &gt;&gt;'&quot;'
+</code></pre>
+<pre><code>a &gt;&gt; b &gt;&gt; c 
+fusion::vector&lt;A,B,C&gt;
+// is a tuple
+</code></pre>
+<p>Some parser,especially those very little parsers like '&quot;' do not have attributes.<br>
+Nodes without attributes are disregarded.<br>
+so, '&quot;' &gt;&gt; (char_ - '&quot;') &gt;&gt;'&quot;'  's attribue is</p>
+<pre><code>fusion::vector&lt;std::vector&lt;char&gt;&gt;
+</code></pre>
+<p>but there is one more collpase rule.if the attribute is followed by a single element fusion::vector, The element is stripped naked from its container. so the attribute come to this</p>
+<pre><code>std::vector&lt;char&gt;
+</code></pre>
+<h4 id="auto-rules">Auto Rules</h4>
+<p>it is typical to see rules like</p>
+<pre><code>r = p[_val = _1]
+</code></pre>
+<p>if you have a rule definiton such as the above,where the attribute of the right hand side of the rule is compitable with the left hand side.then you can rewrite is as:</p>
+<pre><code>r %= p;
+</code></pre>
+<p>so</p>
+<pre><code>quoted_string %= lexeme['&quot;' &gt;&gt; +( char_ -'&quot;') &gt;&gt; '&quot;'];
+</code></pre>
+<p>is simple version of</p>
+<pre><code>quoted_string = lexeme['&quot;' &gt;&gt; + (char_ - '&quot;') &gt;&gt; '&quot;'][_val = _1];
+</code></pre>
+<p>Note: r %= p and r = p are equivalent if there are no semantic actions associated with p.</p>
+<p>In case you are wondering, lit(&quot;employee&quot;) is the same as &quot;employee&quot;. We had to wrap it inside lit because immediately after it is &gt;&gt; '{'. You can't right-shift a char[] and a char - you know, C++ syntax rules.</p>
+<h2 id="karma-writing-generators">Karma - Writing Generators</h2>
+<h3 id="spiritkarma-whats-that">Spirit.Karma - what's that?</h3>
+<p>Spirit.Karma is the counterpart to spirit.qi.<br>
+Some people say it's the Yin to Spirit.Qi's Yang. Spirit.karma is generating byte sequences from internal data structures as Spirit.Qi is parsing byte sequences into those internal data structures.</p>
+<p>Why should you use a generator library for such a simple thing as output generation? Programmers have been using printf, std::stream formatting, or boost::format for quite some time. The answer is - yes, for simple output formatting tasks those familiar tools might be a quick solution. But experience shows: as soon as the formatting requirements are becoming more complex output generation is getting more and more challenging in terms of readability, maintainability, and flexibility of the code. Last, but not least, it turns out that code using Spirit.Karma runs much faster than equivalent code using either of the 'straight' methods mentioned above.</p>
+<p>In terms of development simplicity and ease in deployment, the same is true for Spirit.Karma as has been described elsewhere in this documentation for Spirit.Qi: the entire library consists of only header files, with no libraries to link against or build. Just put the spirit distribution in your include path, compile and run. Code size? Very tight, essentially comparable to hand written code.</p>
+<h3 id="examples-2">Examples</h3>
+<h4 id="trivial-example-generating-a-number">Trivial Example Generating a number</h4>
+<pre><code>double_
+</code></pre>
+<h4 id="generating-two-numbers">Generating two numbers</h4>
+<pre><code>double_ &lt;&lt; double_
+</code></pre>
+<h4 id="generating-one-or-more-numbers">Generating one or more numbers</h4>
+<pre><code>*double_
+</code></pre>
+<h4 id="generating-a-comma-delimited-list-of-numbers">Generating a comma-delimited list of numbers</h4>
+<pre><code>double_ &lt;&lt; *(lit(',')) &lt;&lt; double_
+</code></pre>
+<h4 id="lets-generate">Let's generate</h4>
+<pre><code>template&lt;typename OutputIterator&gt;
+bool generate_numbers(OutputIterator&amp; sink,std::list&lt;double&gt; const&amp; v)
+{
+    using karma::double_;
+    using karma::generate_delimited;
+    using ascii::space;
+    
+    bool r = genated_delimited(
+        sink,
+        double_ &lt;&lt; *(',' &lt;&lt; double_),
+        v
+    );
+    return r;
+}
+</code></pre>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://ce39906.github.io//post/OpenMp-Tutorial" class="post-title gt-a-link">
+                    OpenMp Tutorial
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">算法及读书杂记</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        
+    </div>
+    <div>
+        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
+                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://ce39906.github.io//atom.xml" target="_blank">RSS</a></a>
+    </div>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

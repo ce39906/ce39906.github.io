@@ -1,0 +1,586 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>OpenMp Tutorial | Ce39906&#39;s Blog</title>
+
+<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611748236925">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://ce39906.github.io//styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<style>
+    hr {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        border: 0;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <style>
+    /* 导航栏样式 */
+    .navbar {
+        position: relative;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        -ms-flex-align: center;
+        align-items: center;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+        padding: 0.5rem 1rem;
+    }
+
+    .navbar-brand {
+        display: inline-block;
+        padding-top: 0.3125rem;
+        padding-bottom: 0.3125rem;
+        margin-right: 1rem;
+        font-size: 1.25rem;
+        line-height: inherit;
+        white-space: nowrap;
+    }
+
+    .navbar-brand:hover,
+    .navbar-brand:focus {
+        text-decoration: none;
+    }
+
+    .navbar-nav {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        padding-left: 0;
+        margin-bottom: 0;
+        list-style: none;
+    }
+
+    .navbar-collapse {
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        -ms-flex-positive: 1;
+        flex-grow: 1;
+        -ms-flex-align: center;
+        align-items: center;
+    }
+
+    .navbar-toggler {
+        padding: 0.25rem 0.75rem;
+        font-size: 1.25rem;
+        line-height: 1;
+        background-color: transparent;
+        border: 1px solid transparent;
+        border-radius: 0.25rem;
+    }
+
+    .navbar-toggler:hover,
+    .navbar-toggler:focus {
+        text-decoration: none;
+    }
+
+    @media (min-width: 992px) {
+        .navbar-expand-lg {
+            -ms-flex-flow: row nowrap;
+            flex-flow: row nowrap;
+            -ms-flex-pack: start;
+            justify-content: flex-start;
+        }
+
+        .navbar-expand-lg .navbar-nav {
+            -ms-flex-direction: row;
+            flex-direction: row;
+        }
+
+        .navbar-expand-lg .navbar-collapse {
+            display: -ms-flexbox !important;
+            display: flex !important;
+            -ms-flex-preferred-size: auto;
+            flex-basis: auto;
+        }
+
+        .navbar-expand-lg .navbar-toggler {
+            display: none;
+        }
+    }
+
+    @media (max-width: 991px) {
+        #navbarSupportedContent {
+            display: none;
+        }
+    }
+</style>
+<nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Ce39906&#39;s Blog
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1611748236925"
+                action="/search/index.html">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = function () {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    OpenMp Tutorial
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2018-03-28 ·
+                    </time>
+                    
+                        <a href="https://ce39906.github.io//tag/iQP1OHn7c" class="post-tags">
+                            # OpenMP
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h1 id="what-is-openmp">What is openmp</h1>
+<p>easy multithreading programing for c++.</p>
+<p>it is a simple C/C++/Fortran complier extension that allows to add parallelism into existing source code without significantly having to rewrite it.</p>
+<h1 id="example">Example</h1>
+<p>example for init an array</p>
+<pre><code>#include&lt;iostream&gt;
+#include&lt;vector&gt;
+int main()
+{
+    vector&lt;int&gt; arr;
+    arr.reserve(1000);
+    #pargma omp parallel for
+    for(int i=0;i&lt;1000;i++)
+    {
+        arr[i] = i * 2;
+    }
+    return 0;
+}
+</code></pre>
+<p>you can compile it like this</p>
+<blockquote>
+<p>g++ tmp.cpp -fopenmp</p>
+</blockquote>
+<p>if you remove the #pragma lines,the result is still a valid C++ program that runs and dose the expected thing.<br>
+if the compiler encounters a #pragma that it dose not support,it will ignore it.</p>
+<h1 id="the-syntax">The syntax</h1>
+<h2 id="the-parallel-construct">the parallel construct</h2>
+<p>it creates a team of N threads(where N is the number of CPU cores by default) . after the statement, the threads join back into one.</p>
+<pre><code>#pragma omp parallel
+{
+    // code inside thie region runs in parallel
+    printf(&quot;Hello\n&quot;);
+}
+</code></pre>
+<h2 id="loop-construct-for">Loop construct: for</h2>
+<p>the for construct splits the for-loop so that each thread in the current team handles a different portion of the loop</p>
+<pre><code>#pragma omp for
+for(int n=0;n&lt;10;++n)
+{
+    printf(&quot; %d&quot;,n);
+}
+</code></pre>
+<p>Note:#pragma omp for onlt delegates portions of the loop for different threads in <em><strong>current team</strong></em>. a team is the group of threads excuting the program.At program start,the team only consists the main thread.<br>
+To create a new team of threads,you need to specify the parallel keyword</p>
+<pre><code>#pragma omp parallel
+{
+    #pragma omp for
+    for(int n=0;n&lt;10;n++) printf(&quot; %d&quot;,n)
+}
+</code></pre>
+<p>or use</p>
+<pre><code>#pragma omp parallel for
+</code></pre>
+<p>you can explicitly specify the number of threads to be created in the team. using <em><strong>num_threads</strong></em></p>
+<pre><code>#pragma omp parallel for num_threads(3)
+</code></pre>
+<h3 id="scheduling">scheduling</h3>
+<p>The scheduling algorithm for the for-loop can explicity controlled</p>
+<p>default</p>
+<pre><code>#pargma omp for schedule(static)
+</code></pre>
+<p>in the dynamic schedule,each thread ask the omp runtime library for an iteration number,then handles it.<br>
+the chunk size can also be specified to lessen the number of calls to the runtime library</p>
+<pre><code>#pargma omp parallel for schedule(dynamic,3)
+</code></pre>
+<h3 id="the-ordered-clause">the ordered clause</h3>
+<p>it is possible to force that certain events within the loop happen in a predicted order, using ordered clause</p>
+<pre><code>#pargma omp parallel for ordered shcedule(dynamic)
+for(int n = 0;i &lt; 100;i++)
+{
+    files[n].compress();
+    #pragma omp ordered
+    send(files[n]);
+}
+</code></pre>
+<h3 id="the-collapse-clause">the collapse clause</h3>
+<p>when you have nested loops.you can use collapse</p>
+<pre><code>#pargma omp parallel for collapse(2)
+for(int i = 0;i &lt; 10;i++)
+{
+    for(int j = 0;j &lt; 10;j++)
+    {
+        doSth();
+    }
+}
+</code></pre>
+<h2 id="section">section</h2>
+<p>sometimes,it is handy to indicate that &quot;this and this can run in parallel&quot; the sectiongs is just for that</p>
+<pre><code>#pragma omp parallel sections
+{
+    {
+        work1();
+    }
+    #pragma omp section
+    {
+        work2();
+        work3();
+    }
+    #pragma omp section
+    {
+        work4();
+    }
+}
+</code></pre>
+<p>This code indicates that any of tasks work1,work2+work3,work4 can run in parallel.</p>
+<h1 id="thread-safety">Thread-safety</h1>
+<h2 id="atomicity">Atomicity</h2>
+<pre><code>#pragma omp atomic
+couter += value;
+</code></pre>
+<p>the atomic keyword in OpenMP specifies that denoted action happens atomically.</p>
+<h3 id="atomic-read-expression">atomic read expression</h3>
+<pre><code>#pragma omp atomic read
+var = x;
+</code></pre>
+<h3 id="atomic-write-expression">atomic write expression</h3>
+<pre><code>#pragma omp atomic write
+x = expr;
+</code></pre>
+<h3 id="atomic-update-expression">atomic update expression</h3>
+<pre><code>#pragma omp atomic update
+++x;--x;x++;x--;
++=,-= ...
+</code></pre>
+<h3 id="atomic-capture-expression">atomic capture expression</h3>
+<p>capture expression combine the read and update features</p>
+<pre><code>#pragma omp atomic capture
+var = x++;
+</code></pre>
+<h2 id="the-critical-construct">the critical construct</h2>
+<p>the critical construct restricts the execution of the associated statement / block to a single thread at a time</p>
+<pre><code>#pragma omp critical
+{
+    doSth();
+}
+</code></pre>
+<p>Note:the critical section names are global to the entire program.</p>
+<h2 id="locks">locks</h2>
+<p>The openmp runtime library provides a lock type,omp_lock_t in omp.h<br>
+the lock type has five manipulator functions</p>
+<blockquote>
+<p>omp_init_lock : initializes the lock<br>
+omp_destory_lock : the lock must be unset before the call<br>
+omp_set_lock: get the lock<br>
+omp_unset_lock: release the lock<br>
+omp_test_lock: attempts to set the lock.if the lock is already set by another thread it returns 0;if it managed to set the lock,it return 1</p>
+</blockquote>
+<h2 id="the-flush-directive">the flush directive</h2>
+<p>Even when variables used by threads are supposed to be shared,the compiler may take liberties and optimize them as register variables. This can skew concurrent observations of variable. The flush directive can be used to forbid this.</p>
+<pre><code>/*first thread*/
+b=1;
+#pragma omp flush(a,b)
+if(a == 0)
+{
+    /* critical section*/
+
+}
+/*second thread*/
+a = 1;
+#pragma omp flush(a,b)
+if(b==0)
+{
+   /* critical section*/
+}
+</code></pre>
+<h1 id="controlling-which-data-to-share-between-threads">Controlling which data to share between threads</h1>
+<pre><code>int a,b =0;
+#pragma omp parallel for private(a) shared(b)
+for(a=0;a&lt;50;++a)
+{
+    #pragma omp atomic
+    b += a;
+}
+</code></pre>
+<p>a is private(each thread has their own copy of it) and b is shared(each thread accesses the same variable)</p>
+<p>the difference between private and firstprivate<br>
+private does not copy the value of the variable that was in the surrounding context.</p>
+<pre><code>#include&lt;string&gt;
+#include&lt;iostream&gt;
+int main()
+{
+    std::string a = &quot;x&quot;,b=&quot;y&quot;;
+    #pragma omp parallel private(a,c) shared(b) num_threads(2)
+    {
+        a+=&quot;k&quot;;
+        c+= 7;
+        std::cout &lt;&lt; &quot;A is &quot; &lt;&lt; a &lt;&lt;&quot;, b is &quot;&lt;&lt; b;
+    }
+
+}
+// eaquls this below
+     OpenMP_thread_fork(2);
+     {                  // Start new scope
+         std::string a; // Note: It is a new local variable.
+         int c;         // This too.
+         a += &quot;k&quot;;
+         c += 7;
+         std::cout &lt;&lt; &quot;A becomes (&quot; &lt;&lt; a &lt;&lt; &quot;), b is (&quot; &lt;&lt; b &lt;&lt; &quot;)\n&quot;;
+     }                  // End of scope for the local variables
+     OpenMP_join();
+</code></pre>
+<p>If you actually need a copy of the original value, use the firstprivate clause instead.</p>
+<pre><code>#include &lt;string&gt;
+#include &lt;iostream&gt;
+
+int main()
+{
+    std::string a = &quot;x&quot;, b = &quot;y&quot;;
+    int c = 3;
+
+    #pragma omp parallel firstprivate(a,c) shared(b) num_threads(2)
+    {
+        a += &quot;k&quot;;
+        c += 7;
+        std::cout &lt;&lt; &quot;A becomes (&quot; &lt;&lt; a &lt;&lt; &quot;), b is (&quot; &lt;&lt; b &lt;&lt; &quot;)\n&quot;;
+    }
+}
+</code></pre>
+<h1 id="execution-synchronization">Execution synchronization</h1>
+<h2 id="the-barrier-directive-and-the-nowait-clause">the barrier directive and the nowait clause</h2>
+<p>The barrier directive causes threads encoutering the barrier to wait until all the other threads in the same team have encountered the barrier.</p>
+<pre><code>#pragma omp parrllel
+{
+    // all threads execute this
+    SomeCode();
+    #pragma omp barrier
+    // all threads execute this,but not before all threads have finished executing SomeCode()
+    SomeMoreCode();
+}
+</code></pre>
+<p>Note:there is an implicit barrier at the end of each parallel block,at the end of each section for statement</p>
+<pre><code>#pragma omp parallel
+{
+    #pragma omp for
+    for(int n=0; n&lt;10; ++n) Work();
+
+    // This line is not reached before the for-loop is completely finished
+    SomeMoreCode();
+}
+
+// This line is reached only after all threads from
+// the previous parallel block are finished.
+CodeContinues();
+
+#pragma omp parallel
+{
+    #pragma omp for nowait
+    for(int n=0; n&lt;10; ++n) Work();
+
+    // This line may be reached while some threads are still executing the for-loop.
+    SomeMoreCode();
+}
+
+// This line is reached only after all threads from
+// the previous parallel block are finished.
+CodeContinues();
+</code></pre>
+<h2 id="the-single-and-master-constructs">the single and master constructs</h2>
+<p>The single construct specifies that the given statement/block is executed by only one thread. It is unspecified which thread. Other threads skip the statement/block and wait at an implicit barrier at the end of the construct.</p>
+<pre><code>#pragma omp parallel
+{
+    Work1();
+    #pragma omp single
+    {
+        Work2();
+    }
+    Work3();
+}
+</code></pre>
+<p>The master construct is similar, except that the statement/block is run by the master thread, and there is no implied barrier; other threads skip the construct without waiting.</p>
+<pre><code>static const char* FindAnyNeedle(const char* haystack, size_t size, char needle)
+{
+    const char* result = haystack+size;
+    #pragma omp parallel
+    {
+        unsigned num_iterations=0;
+        #pragma omp for
+        for(size_t p = 0; p &lt; size; ++p)
+        {
+            ++num_iterations;
+            if(haystack[p] == needle)
+            {
+                #pragma omp atomic write
+                result = haystack+p;
+                // Signal cancellation.
+                #pragma omp cancel for
+            }
+        // Check for cancellations signalled by other threads:
+        #pragma omp cancellation point for
+        }
+    // All threads reach here eventually; sooner if the cancellation was signalled.
+    printf(&quot;Thread %u: %u iterations completed\n&quot;, omp_get_thread_num(), num_iterations);
+    }
+    return result;
+}
+</code></pre>
+<h1 id="loop-nesting">Loop nesting</h1>
+<p>this code will not do the excepted thing</p>
+<pre><code>#pragma omp parallel for
+for(int y=0; y&lt;25; ++y)
+{
+    #pragma omp parallel for
+    for(int x=0; x&lt;80; ++x)
+    {
+        tick(x,y);
+    }
+}
+</code></pre>
+<p>solution</p>
+<pre><code>#pragma omp parallel for collapse(2)
+for(int y=0; y&lt;25; ++y)
+{
+    for(int x=0; x&lt;80; ++x)
+    {
+        tick(x,y);
+    }
+}
+
+</code></pre>
+<h1 id="readmore">Readmore</h1>
+<p>http://www.openmp.org/wp-content/uploads/openmp-4.5.pdf<br>
+https://en.wikipedia.org/wiki/OpenMP</p>
+
+                </div>
+            </article>
+        </div>
+
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">算法及读书杂记</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        
+    </div>
+    <div>
+        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
+                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://ce39906.github.io//atom.xml" target="_blank">RSS</a></a>
+    </div>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

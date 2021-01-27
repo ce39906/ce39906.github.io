@@ -1,0 +1,444 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>C++ Thread Pool 使用解析 | Ce39906&#39;s Blog</title>
+
+<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611748236925">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://ce39906.github.io//styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<style>
+    hr {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        border: 0;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <style>
+    /* 导航栏样式 */
+    .navbar {
+        position: relative;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        -ms-flex-align: center;
+        align-items: center;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+        padding: 0.5rem 1rem;
+    }
+
+    .navbar-brand {
+        display: inline-block;
+        padding-top: 0.3125rem;
+        padding-bottom: 0.3125rem;
+        margin-right: 1rem;
+        font-size: 1.25rem;
+        line-height: inherit;
+        white-space: nowrap;
+    }
+
+    .navbar-brand:hover,
+    .navbar-brand:focus {
+        text-decoration: none;
+    }
+
+    .navbar-nav {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        padding-left: 0;
+        margin-bottom: 0;
+        list-style: none;
+    }
+
+    .navbar-collapse {
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        -ms-flex-positive: 1;
+        flex-grow: 1;
+        -ms-flex-align: center;
+        align-items: center;
+    }
+
+    .navbar-toggler {
+        padding: 0.25rem 0.75rem;
+        font-size: 1.25rem;
+        line-height: 1;
+        background-color: transparent;
+        border: 1px solid transparent;
+        border-radius: 0.25rem;
+    }
+
+    .navbar-toggler:hover,
+    .navbar-toggler:focus {
+        text-decoration: none;
+    }
+
+    @media (min-width: 992px) {
+        .navbar-expand-lg {
+            -ms-flex-flow: row nowrap;
+            flex-flow: row nowrap;
+            -ms-flex-pack: start;
+            justify-content: flex-start;
+        }
+
+        .navbar-expand-lg .navbar-nav {
+            -ms-flex-direction: row;
+            flex-direction: row;
+        }
+
+        .navbar-expand-lg .navbar-collapse {
+            display: -ms-flexbox !important;
+            display: flex !important;
+            -ms-flex-preferred-size: auto;
+            flex-basis: auto;
+        }
+
+        .navbar-expand-lg .navbar-toggler {
+            display: none;
+        }
+    }
+
+    @media (max-width: 991px) {
+        #navbarSupportedContent {
+            display: none;
+        }
+    }
+</style>
+<nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Ce39906&#39;s Blog
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1611748236925"
+                action="/search/index.html">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = function () {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    C++ Thread Pool 使用解析
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2018-03-29 ·
+                    </time>
+                    
+                        <a href="https://ce39906.github.io//tag/_OdGJUpK1" class="post-tags">
+                            # Others
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h2 id="boostthreadpool">boost::threadpool</h2>
+<p>按照boost标准开发的第三方库。下载地址在<a href="http://threadpool.sourceforge.net/">boost::threadpool</a> 使用方法较为简单。例子如下</p>
+<pre><code>#include &lt;iostream&gt;
+#include &quot;boost/bind.hpp&quot;
+#include &quot;boost/threapool.hpp&quot;
+using namespace std;
+using namespace threadpool;
+void first_task()
+{
+    cout &lt;&lt; &quot;first task&quot; &lt;&lt; endl;
+}
+void second_task()
+{
+    cout &lt;&lt; &quot;second task&quot; &lt;&lt; endl;
+}
+void task_with_parameter(int value,string str)
+{
+    cout &lt;&lt; &quot;task with parameter,value is: &quot; &lt;&lt; value &lt;&lt;&quot;,str is: &quot; &lt;&lt; str;
+}
+int main()
+{
+    // 声明线程池
+    pool thread_pool(2);
+    // 向线程池中添加任务
+    thread_pool.schedule(&amp;first_task);
+    // 等待线程函数执行完成
+    thread_pool.wait();
+    thread_pool.schedule(&amp;second_task);
+    thread_pool.schedule(boost::bind(task_with_parameter,8,&quot;hello&quot;));
+    thread_pool.wait();
+    return 0;
+}
+</code></pre>
+<p>boost::threadpool 添加任务，同步方式都相对简单，在添加多参数的任务时候需要注意 boost::bind() 传递的参数是按照拷贝的方式传递的。如果想使用引用的方式传递的话，需要使用boost::ref() 或者boost::cref()。<em><strong>还有需要注意的是boost::bind()最多接受九个参数</strong></em><br>
+boost::threadpool 是相对比较老的一个库,在2005-2008年间更新</p>
+<h2 id="boostthread_group-以及io_service">boost::thread_group 以及io_service</h2>
+<p>例子</p>
+<pre><code>#include &lt;boost/asio/io_service.hpp&gt;
+#include &lt;boost::bind.hpp&gt;
+#include &lt;boost::thread/thread_group.hpp&gt;
+
+boost::asio::io_service ioService;
+boost::thread_group threadpool;
+/*The work class is used to inform the io_service when
+work starts and finishes. This ensures that the
+io_service object's run() function will not exit
+while work is underway, and that it does exit when
+there is no unfinished work remaining
+*/
+/* 声明一个ioService work 的原因是为了保证io service
+的run方法在这个work销毁之前不会退出
+*/
+boost::asio::io_service::work work(ioService);
+// 放在for循环中，根据线程池中线程中个数创建
+// ioService 可以理解为任务队列
+//Run the io_service object's event processing loop.
+threadpool.create_thread(boost::bind(&amp;boost::asio::ioservice::run,&amp;ioService));
+threadpool.create_thread(boost::bind(&amp;boost::asio::ioservice::run,&amp;ioService));
+// 向ioService 中提交任务
+ioService.post(boost::bind(myTask,&quot;hello world&quot;));
+ioService.post(boost::bind(myTask2,&quot;clear&quot;));
+...
+// ioService 在stop 之后，post到ioService中的task 都不会被执行
+ioService.stop();
+threadpool.join_all();
+</code></pre>
+<p>boost::ioservice 以及 boost::thread_pool 实现的thread pool没有提供wait() 方法，因此需要调用者主动判断所提交的任务有没有完成</p>
+<h2 id="基于c11-实现的线程池">基于c++11 实现的线程池</h2>
+<p>主要步骤如下：</p>
+<ul>
+<li>设定线程池中所提供的服务线程数</li>
+</ul>
+<pre><code>int threads = thread::hardware_concurrency();
+</code></pre>
+<ul>
+<li>每个线程都应该执行一个无限循环，无限循环中等待新任务到达，并执行任务</li>
+</ul>
+<pre><code>vector&lt;thread&gt; pool;
+for (int i = 0; i &lt; threads; i++)
+{
+    pool.push_back(thread(Infinite_loop_function));
+}
+</code></pre>
+<ul>
+<li>无限循环function</li>
+</ul>
+<pre><code>while(true)
+{
+    {
+        unique_lock&lt;mutex&gt; lock(queue_mutex);
+        condition.wait(lock,[]{return !Queue.empty()});
+        Task = Queue.front();
+        Queue.pop();
+    }
+    Task();
+}
+</code></pre>
+<ul>
+<li>向任务队列中添加任务</li>
+</ul>
+<pre><code>void enqueue(function&lt;void()&gt; new_task)
+{
+    {
+        unique_lock&lt;mutex&gt; lock(queue_mutex);
+        Queue.push(new_task);
+    }
+    condition.notify_one();
+}
+</code></pre>
+<p>具体实现例子</p>
+<pre><code>class ThreadPool {
+public:
+    ThreadPool(size_t threads) : stop(false)
+    {
+        for(size_t i = 0;i&lt;threads;++i)
+            workers.emplace_back(
+                [this]
+                {
+                    for(;;)
+                    {
+                        std::function&lt;void()&gt; task;
+                        {
+                            std::unique_lock&lt;std::mutex&gt; lock(this-&gt;queue_mutex);
+                            this-&gt;condition.wait(lock,
+                                [this]{ return this-&gt;stop || !this-&gt;tasks.empty(); });
+                            if(this-&gt;stop &amp;&amp; this-&gt;tasks.empty())
+                            return;
+                            task = std::move(this-&gt;tasks.front());
+                            this-&gt;tasks.pop();
+                        }
+                        task();
+                    }
+                }
+                );
+    }
+	// add new work item to the pool
+    void enqueue(std::function&lt;void()&gt;&amp; task)
+    {
+        {
+            std::unique_lock&lt;std::mutex&gt; lock(queue_mutex);
+
+        // don't allow enqueueing after stopping the pool
+            if(stop)
+                throw std::runtime_error(&quot;enqueue on stopped ThreadPool&quot;);
+
+            tasks.emplace(task);
+        }
+        condition.notify_one();
+    }
+    ~ThreadPool()
+    {
+        {
+            std::unique_lock&lt;std::mutex&gt; lock(queue_mutex);
+            stop = true;
+        }
+        condition.notify_all();
+        for(std::thread &amp;worker: workers)
+            worker.join();
+    }
+private:
+    std::vector&lt; std::thread &gt; workers;
+    // the task queue
+    std::queue&lt; std::function&lt;void()&gt; &gt; tasks;
+
+    // synchronization
+    std::mutex queue_mutex;
+    std::condition_variable condition;
+    bool stop;
+};
+</code></pre>
+<h2 id="总结">总结</h2>
+<p>从线程池的实现可以看到，线程在任务队列中获取任务以及向任务队列中提交任务都需要抢占队列的互斥锁，会造成时间损耗，尤其在***任务数多，每个任务需要的时间不是很长***的情况下，抢占任务队列互斥锁的时间损耗就显得更加明显。例如，在16核机器，线程池开启14个线程，向线程池中提交2000个task(每个task耗时1ms 左右)的情况下，向线程池提交任务所需时间约20ms。<br>
+因此，线程池的方式更适合***每个task消耗的时间比较长，任务数不是特别多的场景***</p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://ce39906.github.io//post/Boost-Spirit" class="post-title gt-a-link">
+                    Boost Spirit
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">算法及读书杂记</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        
+    </div>
+    <div>
+        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
+                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://ce39906.github.io//atom.xml" target="_blank">RSS</a></a>
+    </div>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

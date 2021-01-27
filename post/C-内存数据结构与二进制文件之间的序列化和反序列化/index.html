@@ -1,0 +1,474 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>C++ 内存数据结构与二进制文件之间的序列化和反序列化 | Ce39906&#39;s Blog</title>
+
+<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611748236925">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://ce39906.github.io//styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<style>
+    hr {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        border: 0;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <style>
+    /* 导航栏样式 */
+    .navbar {
+        position: relative;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        -ms-flex-align: center;
+        align-items: center;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+        padding: 0.5rem 1rem;
+    }
+
+    .navbar-brand {
+        display: inline-block;
+        padding-top: 0.3125rem;
+        padding-bottom: 0.3125rem;
+        margin-right: 1rem;
+        font-size: 1.25rem;
+        line-height: inherit;
+        white-space: nowrap;
+    }
+
+    .navbar-brand:hover,
+    .navbar-brand:focus {
+        text-decoration: none;
+    }
+
+    .navbar-nav {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        padding-left: 0;
+        margin-bottom: 0;
+        list-style: none;
+    }
+
+    .navbar-collapse {
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        -ms-flex-positive: 1;
+        flex-grow: 1;
+        -ms-flex-align: center;
+        align-items: center;
+    }
+
+    .navbar-toggler {
+        padding: 0.25rem 0.75rem;
+        font-size: 1.25rem;
+        line-height: 1;
+        background-color: transparent;
+        border: 1px solid transparent;
+        border-radius: 0.25rem;
+    }
+
+    .navbar-toggler:hover,
+    .navbar-toggler:focus {
+        text-decoration: none;
+    }
+
+    @media (min-width: 992px) {
+        .navbar-expand-lg {
+            -ms-flex-flow: row nowrap;
+            flex-flow: row nowrap;
+            -ms-flex-pack: start;
+            justify-content: flex-start;
+        }
+
+        .navbar-expand-lg .navbar-nav {
+            -ms-flex-direction: row;
+            flex-direction: row;
+        }
+
+        .navbar-expand-lg .navbar-collapse {
+            display: -ms-flexbox !important;
+            display: flex !important;
+            -ms-flex-preferred-size: auto;
+            flex-basis: auto;
+        }
+
+        .navbar-expand-lg .navbar-toggler {
+            display: none;
+        }
+    }
+
+    @media (max-width: 991px) {
+        #navbarSupportedContent {
+            display: none;
+        }
+    }
+</style>
+<nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Ce39906&#39;s Blog
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1611748236925"
+                action="/search/index.html">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = function () {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    C++ 内存数据结构与二进制文件之间的序列化和反序列化
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2018-04-10 ·
+                    </time>
+                    
+                        <a href="https://ce39906.github.io//tag/_OdGJUpK1" class="post-tags">
+                            # Others
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h1 id="应用场景">应用场景</h1>
+<p>许多后端检索server启动时候需要从文件加载到内存中构建索引，这个过程往往会消耗比较多的时间，这样会造成sever启动消耗比较多的时间，在存在多台服务器的时候会更加明显。<br>
+我们可以将够构建索引的过程独立成一个单独的进程，此进程实现的功能是根据原始文件构建索引结构，并将索引结构序列化到本地二进制文件，Server在启动的时候只需要读取二进制文件就可以构造出索引结构，可以大大提高启动速度。</p>
+<h1 id="示例代码">示例代码</h1>
+<p>io.hpp ,对std::ifstream 以及std::ofstream 的封装，提供从vector序列化到二进制文件和从二进制文件反序列化到vector等接口</p>
+<pre><code>#ifndef IO_HPP
+#define IO_HPP
+
+#include &lt;string&gt;
+#include &lt;vector&gt;
+#include &lt;fstream&gt;
+
+class FileReader
+{
+  public:
+    FileReader(const std::string&amp; filename)
+        : input_stream(filename,std::ios::binary)
+    {
+    }
+
+    /* Read count objects of type T into pointer dest */
+    template &lt;typename T&gt; void ReadInto(T *dest, const std::size_t count)
+    {
+        static_assert(std::is_trivially_copyable&lt;T&gt;::value,
+                      &quot;bytewise reading requires trivially copyable type&quot;);
+
+        if (count == 0)
+            return;
+
+        const auto &amp;result = input_stream.read(reinterpret_cast&lt;char *&gt;(dest), count * sizeof(T));
+        const std::size_t bytes_read = input_stream.gcount();
+
+        if (bytes_read != count * sizeof(T) &amp;&amp; !result)
+        {
+            return;
+        }
+    }
+
+    template &lt;typename T&gt; void ReadInto(std::vector&lt;T&gt; &amp;target)
+    {
+        ReadInto(target.data(), target.size());
+    }
+
+    template &lt;typename T&gt; void ReadInto(T &amp;target)
+    {
+         ReadInto(&amp;target, 1);
+    }
+
+    template &lt;typename T&gt; T ReadOne()
+    {
+        T tmp;
+        ReadInto(tmp);
+        return tmp;
+    }
+
+    std::uint32_t ReadElementCount32()
+    {
+        return ReadOne&lt;std::uint32_t&gt;();
+    }
+    std::uint64_t ReadElementCount64()
+    {
+        return ReadOne&lt;std::uint64_t&gt;();
+    }
+
+    template &lt;typename T&gt; void DeserializeVector(std::vector&lt;T&gt; &amp;data)
+    {
+        const auto count = ReadElementCount64();
+        data.resize(count);
+        ReadInto(data.data(), count);
+    }
+
+  private:
+    std::ifstream input_stream;
+};
+
+class FileWriter
+{
+  public:
+    FileWriter(const std::string&amp; filename)
+        : output_stream(filename,std::ios::binary)
+    {
+    }
+
+    /* Write count objects of type T from pointer src to output stream */
+    template &lt;typename T&gt; void WriteFrom(const T *src, const std::size_t count)
+    {
+        static_assert(std::is_trivially_copyable&lt;T&gt;::value,
+                      &quot;bytewise writing requires trivially copyable type&quot;);
+
+        if (count == 0)
+            return;
+
+        const auto &amp;result =
+            output_stream.write(reinterpret_cast&lt;const char *&gt;(src), count * sizeof(T));
+    }
+
+    template &lt;typename T&gt; void WriteFrom(const T &amp;target)
+    {
+        WriteFrom(&amp;target, 1);
+    }
+
+    template &lt;typename T&gt; void WriteOne(const T tmp)
+    {
+        WriteFrom(tmp);
+    }
+
+    void WriteElementCount32(const std::uint32_t count)
+    {
+        WriteOne&lt;std::uint32_t&gt;(count);
+    }
+    void WriteElementCount64(const std::uint64_t count)
+    {
+        WriteOne&lt;std::uint64_t&gt;(count);
+    }
+
+    template &lt;typename T&gt; void SerializeVector(const std::vector&lt;T&gt; &amp;data)
+    {
+        const auto count = data.size();
+        WriteElementCount64(count);
+        return WriteFrom(data.data(), count);
+    }
+
+  private:
+    std::ofstream output_stream;
+};
+
+#endif
+</code></pre>
+<p>binary_io.cpp</p>
+<pre><code>#include &quot;io.hpp&quot;
+#include &lt;iostream&gt;
+
+struct Data
+{
+    int a;
+    double b;
+
+    friend std::ostream&amp; operator&lt;&lt;(std::ostream&amp; out,const Data&amp; data)
+    {
+        out &lt;&lt; data.a &lt;&lt; &quot;,&quot; &lt;&lt; data.b;
+        return out;
+    }
+};
+
+template&lt;typename T&gt;
+void printData(const std::vector&lt;T&gt;&amp; data_vec)
+{
+    for (const auto data : data_vec)
+    {
+        std::cout &lt;&lt; &quot;{&quot; &lt;&lt; data &lt;&lt; &quot;} &quot;;
+    }
+    std::cout &lt;&lt; std::endl;
+}
+template&lt;typename T&gt;
+void serializeVector(const std::string&amp; filename,const std::vector&lt;T&gt;&amp; data_vec)
+{
+    FileWriter file_writer(filename);
+    file_writer.SerializeVector&lt;T&gt;(data_vec);
+}
+
+template&lt;typename T&gt;
+void deserializeVector(const std::string&amp; filename,std::vector&lt;T&gt;&amp; data_vec)
+{
+    FileReader file_reader(filename);
+    file_reader.DeserializeVector&lt;T&gt;(data_vec);
+}
+
+int main()
+{
+    std::vector&lt;Data&gt; vec1 = {{1,1.1},{2,2.2},{3,3.3},{4,4.4}};
+    std::cout &lt;&lt; &quot;before write to binary file.\n&quot;;
+    printData(vec1);
+    const std::string filename = &quot;vector_data&quot;;
+    std::cout &lt;&lt; &quot;serialize vector to binary file.\n&quot;;
+    serializeVector&lt;Data&gt;(filename,vec1);
+    std::vector&lt;Data&gt; vec2;
+    deserializeVector&lt;Data&gt;(filename,vec2);
+    std::cout &lt;&lt; &quot;vector read from binary file.\n&quot;;
+    printData(vec2);
+    return 0;
+}
+</code></pre>
+<p>编译代码</p>
+<pre><code>g++ -std=c++11 binary_io.cpp -o binary_io
+</code></pre>
+<p>执行程序</p>
+<pre><code>./binary_io
+</code></pre>
+<p>执行结果<br>
+<img src="http://img.blog.csdn.net/20171128192856855?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvY2FyYm9uMDY=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="执行结果"><br>
+程序将内存中vector 数据写入二进制文件，并从二进制文件中反序列化到一个新的vector。可以看到序列化前和序列化后的结果一致。</p>
+<h1 id="注意">注意</h1>
+<p>序列化到文件的数据结构需要满足 is_trivially_copyable。std::is_trivially_copyable 在c++11 引入，TriviallyCopyable类型对象有以下性质</p>
+<pre><code>每个拷贝构造函数是trivial 或者是deleted
+每个移动构造函数是trivial 或者是deleted
+每个拷贝赋值运算符是trivial 或者是deleted
+每个移动赋值运算符是trivial 或者是deleted
+以上至少有一个是non-deleted
+析构函数是trivial 并且non-deleted
+</code></pre>
+<p>对于is_trivially_copyable 类型对象的性质，解释如下</p>
+<p>Objects of trivially-copyable types are the only C++ objects that may be safely copied with std::memcpy or serialized to/from binary files with std::ofstream::write()/std::ifstream::read(). In general, a trivially copyable type is any type for which the underlying bytes can be copied to an array of char or unsigned char and into a new object of the same type, and the resulting object would have the same value as the original</p>
+<p>只有满足trivially-copyable的对象才可以保证序列化到二进制文件后， 从二进制文件反序列化到内存后的值保持不变。</p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://ce39906.github.io//post/LRU-Cache-解析及实现" class="post-title gt-a-link">
+                    LRU Cache 解析及实现
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">算法及读书杂记</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        
+    </div>
+    <div>
+        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
+                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://ce39906.github.io//atom.xml" target="_blank">RSS</a></a>
+    </div>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

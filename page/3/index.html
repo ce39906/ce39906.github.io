@@ -1,0 +1,740 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>Ce39906&#39;s Blog</title>
+
+<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611748236925">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://ce39906.github.io//styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<style>
+    hr {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        border: 0;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <div class="main-content">
+        <style>
+    /* 导航栏样式 */
+    .navbar {
+        position: relative;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        -ms-flex-align: center;
+        align-items: center;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+        padding: 0.5rem 1rem;
+    }
+
+    .navbar-brand {
+        display: inline-block;
+        padding-top: 0.3125rem;
+        padding-bottom: 0.3125rem;
+        margin-right: 1rem;
+        font-size: 1.25rem;
+        line-height: inherit;
+        white-space: nowrap;
+    }
+
+    .navbar-brand:hover,
+    .navbar-brand:focus {
+        text-decoration: none;
+    }
+
+    .navbar-nav {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        padding-left: 0;
+        margin-bottom: 0;
+        list-style: none;
+    }
+
+    .navbar-collapse {
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        -ms-flex-positive: 1;
+        flex-grow: 1;
+        -ms-flex-align: center;
+        align-items: center;
+    }
+
+    .navbar-toggler {
+        padding: 0.25rem 0.75rem;
+        font-size: 1.25rem;
+        line-height: 1;
+        background-color: transparent;
+        border: 1px solid transparent;
+        border-radius: 0.25rem;
+    }
+
+    .navbar-toggler:hover,
+    .navbar-toggler:focus {
+        text-decoration: none;
+    }
+
+    @media (min-width: 992px) {
+        .navbar-expand-lg {
+            -ms-flex-flow: row nowrap;
+            flex-flow: row nowrap;
+            -ms-flex-pack: start;
+            justify-content: flex-start;
+        }
+
+        .navbar-expand-lg .navbar-nav {
+            -ms-flex-direction: row;
+            flex-direction: row;
+        }
+
+        .navbar-expand-lg .navbar-collapse {
+            display: -ms-flexbox !important;
+            display: flex !important;
+            -ms-flex-preferred-size: auto;
+            flex-basis: auto;
+        }
+
+        .navbar-expand-lg .navbar-toggler {
+            display: none;
+        }
+    }
+
+    @media (max-width: 991px) {
+        #navbarSupportedContent {
+            display: none;
+        }
+    }
+</style>
+<nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Ce39906&#39;s Blog
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1611748236925"
+                action="/search/index.html">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = function () {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+
+        <div class="post-list-container">
+    <div class="post-inner">
+        
+            <div class="post gt-bg-theme-color-second">
+                <div class="post-left">
+                    <div>
+                        
+                        <a href="https://ce39906.github.io//post/读书短评-《未来简史》">
+                            <span class="post-title gt-c-content-color-first">读书短评-《未来简史》</span>
+                        </a>
+                    </div>
+                    <div class="gt-post-content post-abstract gt-c-content-color-second">
+                        
+                    </div>
+                    <div class="post-info">
+                        <time class="post-time gt-c-content-color-first">
+                            发布于 · 2018-08-25 ·
+                        </time>
+                        
+                            <a href="https://ce39906.github.io//tag/nU3k2zQBP" class="post-tag">
+                                # Reading
+                            </a>
+                        
+                    </div>
+                </div>
+                
+            </div>
+        
+            <div class="post gt-bg-theme-color-second">
+                <div class="post-left">
+                    <div>
+                        
+                        <a href="https://ce39906.github.io//post/g-warn-unused-result">
+                            <span class="post-title gt-c-content-color-first">g++ warn_unused_result</span>
+                        </a>
+                    </div>
+                    <div class="gt-post-content post-abstract gt-c-content-color-second">
+                        
+                    </div>
+                    <div class="post-info">
+                        <time class="post-time gt-c-content-color-first">
+                            发布于 · 2018-08-24 ·
+                        </time>
+                        
+                            <a href="https://ce39906.github.io//tag/_OdGJUpK1" class="post-tag">
+                                # Others
+                            </a>
+                        
+                    </div>
+                </div>
+                
+            </div>
+        
+            <div class="post gt-bg-theme-color-second">
+                <div class="post-left">
+                    <div>
+                        
+                        <a href="https://ce39906.github.io//post/C-11-智能指针">
+                            <span class="post-title gt-c-content-color-first">C++11 智能指针</span>
+                        </a>
+                    </div>
+                    <div class="gt-post-content post-abstract gt-c-content-color-second">
+                        
+                    </div>
+                    <div class="post-info">
+                        <time class="post-time gt-c-content-color-first">
+                            发布于 · 2018-08-08 ·
+                        </time>
+                        
+                            <a href="https://ce39906.github.io//tag/A4gbajWnZJ" class="post-tag">
+                                # c++11
+                            </a>
+                        
+                    </div>
+                </div>
+                
+            </div>
+        
+            <div class="post gt-bg-theme-color-second">
+                <div class="post-left">
+                    <div>
+                        
+                        <a href="https://ce39906.github.io//post/Json-library-implemented-by-boost-variant">
+                            <span class="post-title gt-c-content-color-first">Json library implemented by boost variant</span>
+                        </a>
+                    </div>
+                    <div class="gt-post-content post-abstract gt-c-content-color-second">
+                        <h2 id="boost-variant-介绍">boost variant 介绍</h2>
+<p>boost variant 是一个不同union的泛型类，它用于存储和操作不同类型但在使用时存在&lt;相同泛型&gt;的对象。variant 在实现不同类型的泛型的同时，提供对其包含的具体类型的安全访问。<br>
+基于此性质，boost variant 可以应用于创建json 这种数据结构，我们把json 中的Object, Array, String, Number, True, False, Null 统一当做同一种variant 类型。需要注意的是，json 中的Object 和 Array 类型是递归的variant 类型，在声明时需要使用 <strong>boost::recursive_wrapper</strong> 修饰。<strong>boost::recursivee_wrapper</strong>用于创建包含创建的variant类型的表达式。<br>
+在访问varint 类型时，可以使用<strong>boost::get<T></strong> 以及 <strong>boost::apply_visitor</strong> 的形式。<br>
+更多关于 boost variant 的介绍见:<br>
+https://www.boost.org/doc/libs/1_62_0/doc/html/variant/reference.html</p>
+<h2 id="json-数据结构">json 数据结构</h2>
+<p>json 的数据类型实现如下</p>
+<pre><code>/*************************************************************************
+    &gt; File Name: json_type.hpp
+    &gt; Author: ce39906
+    &gt; Mail: ce39906@163.com
+    &gt; Created Time: 2018-07-31 16:25:59
+ ************************************************************************/
+#ifndef JSON_TYPE_HPP
+#define JSON_TYPE_HPP
+
+#include &lt;boost/variant.hpp&gt;
+
+#include &lt;string&gt;
+#include &lt;unordered_map&gt;
+#include &lt;vector&gt;
+
+namespace json
+{
+
+struct Object;
+struct Array;
+
+struct String
+{
+    String() {}
+    String(const char* value) : value{value} {}
+    String(std::string value) : value{std::move(value)} {}
+    std::string value;
+};
+
+struct Number
+{
+    Number() {};
+    Number(const double value) : value{value} {}
+    double value;
+};
+
+struct True
+{
+};
+
+struct False
+{
+};
+
+struct Null
+{
+};
+
+using Value = boost::variant&lt;String,
+                             Number,
+                             boost::recursive_wrapper&lt;Object&gt;,
+                             boost::recursive_wrapper&lt;Array&gt;,
+                             True,
+                             False,
+                             Null&gt;;
+
+struct Object
+{
+    bool isMember(const std::string&amp; key) const
+    {
+        return values.count(key) != 0;
+    }
+
+    const Value&amp; at(const std::string&amp; key) const
+    {
+        return values.at(key);
+    }
+
+    const Value&amp; operator[](const std::string&amp; key) const
+    {
+        return values.at(key);
+    }
+
+    std::unordered_map&lt;std::string, Value&gt; values;
+};
+
+struct Array
+{
+    const Value&amp; at(const size_t idx) const
+    {
+        return values.at(idx);
+    }
+
+    const Value&amp; operator[](const size_t idx) const
+    {
+        return values.at(idx);
+    }
+
+    size_t size() const
+    {
+        return values.size();
+    }
+
+    const Value&amp; front() const
+    {
+        return values.front();
+    }
+
+    const Value&amp; back() const
+    {
+        return values.back();
+    }
+
+    std::vector&lt;Value&gt; values;
+};
+} // ns json
+#endif
+</code></pre>
+<h2 id="json-数据访问">json 数据访问</h2>
+<p>本节只介绍使用<strong>boost::get<T></strong> 访问varint数据。<strong>boost::apply_visitor</strong> 的方式在序列化的部分介绍<br>
+代码示例如下</p>
+<pre><code>namespace access
+{
+
+inline const Object&amp; asObject(const Value&amp; value)
+{
+    return boost::get&lt;Object&gt;(value);
+}
+
+inline const Array&amp; asArray(const Value&amp; value)
+{
+    return boost::get&lt;Array&gt;(value);
+}
+
+inline const String&amp; asString(const Value&amp; value)
+{
+    return boost::get&lt;String&gt;(value);
+}
+
+inline const Number&amp; asNumber(const Value&amp; value)
+{
+    return boost::get&lt;Number&gt;(value);
+}
+
+inline const True&amp; asTrue(const Value&amp; value)
+{
+    return boost::get&lt;True&gt;(value);
+}
+
+inline const False&amp; asFalse(const Value&amp; value)
+{
+    return boost::get&lt;False&gt;(value);
+}
+
+inline const Null&amp; asNull(const Value&amp; value)
+{
+    return boost::get&lt;Null&gt;(value);
+}
+
+} // ns access
+</code></pre>
+
+                    </div>
+                    <div class="post-info">
+                        <time class="post-time gt-c-content-color-first">
+                            发布于 · 2018-08-01 ·
+                        </time>
+                        
+                            <a href="https://ce39906.github.io//tag/KYwLFMMec0" class="post-tag">
+                                # Boost
+                            </a>
+                        
+                    </div>
+                </div>
+                
+            </div>
+        
+            <div class="post gt-bg-theme-color-second">
+                <div class="post-left">
+                    <div>
+                        
+                        <a href="https://ce39906.github.io//post/c-11-右值引用-移动构造函数-emplace-back-解析">
+                            <span class="post-title gt-c-content-color-first">c++11 右值引用,移动构造函数,emplace_back 解析</span>
+                        </a>
+                    </div>
+                    <div class="gt-post-content post-abstract gt-c-content-color-second">
+                        
+                    </div>
+                    <div class="post-info">
+                        <time class="post-time gt-c-content-color-first">
+                            发布于 · 2018-07-26 ·
+                        </time>
+                        
+                            <a href="https://ce39906.github.io//tag/A4gbajWnZJ" class="post-tag">
+                                # c++11
+                            </a>
+                        
+                    </div>
+                </div>
+                
+            </div>
+        
+            <div class="post gt-bg-theme-color-second">
+                <div class="post-left">
+                    <div>
+                        
+                        <a href="https://ce39906.github.io//post/Trie-C-实现与解析">
+                            <span class="post-title gt-c-content-color-first">Trie C++ 实现与解析</span>
+                        </a>
+                    </div>
+                    <div class="gt-post-content post-abstract gt-c-content-color-second">
+                        <h2 id="trie-tree-介绍">Trie tree 介绍</h2>
+<p>trie 源自 <strong>retrieval</strong> ,中文称为前缀树或字典树。具体介绍见wiki <a href="https://zh.wikipedia.org/wiki/Trie">trie</a></p>
+<h2 id="c-实现">C++ 实现</h2>
+<p>以下trie实现支持任何语言(Chinese,English,Janpanse...)。主要包括以下三个接口</p>
+<pre><code>// 使用一组词初始化trie.
+void Init(const std::vector&lt;std::string&gt;&amp; dict);
+// 在trie 中查找word是否存在.
+bool Lookup(const std::string&amp; word);
+// 返回在trie中所有以word为前缀的词.
+std::vector&lt;std::string&gt; Suggest(const std::string&amp; word);
+</code></pre>
+<p>具体代码实现如下<br>
+trie.hpp</p>
+<pre><code>/*************************************************************************
+    &gt; File Name: trie.hpp
+    &gt; Author: ce39906
+    &gt; Mail: ce39906@163.com
+    &gt; Created Time: 2018-07-19 11:12:09
+ ************************************************************************/
+#ifndef TRIE_HPP
+#define TRIE_HPP
+
+#include &lt;vector&gt;
+#include &lt;string&gt;
+
+namespace trie
+{
+
+class Trie
+{
+    static constexpr size_t kAsciiCount = 256;
+    struct TrieNode
+    {
+        TrieNode(const char val)
+          : val(val), is_end(false), childrens(kAsciiCount, nullptr)
+        {
+        }
+
+        char val;
+        bool is_end;
+        std::vector&lt;TrieNode*&gt; childrens;
+    };
+
+  public:
+    Trie()
+    {
+        root = new TrieNode('0');
+    }
+
+    ~Trie()
+    {
+        ReleaseTrie(root);
+    }
+
+    Trie(const Trie&amp;) = delete;
+    Trie&amp; operator = (const Trie&amp;) = delete;
+
+    void Init(const std::vector&lt;std::string&gt;&amp; dict);
+
+    bool Lookup(const std::string&amp; word) const;
+
+    std::vector&lt;std::string&gt; Suggest(const std::string&amp; word) const;
+
+    void PrintSuggs(const std::string&amp; word) const;
+
+  private:
+
+    void Insert(const std::string&amp; word);
+
+    bool Search(const TrieNode* parent, const std::string&amp; word, const size_t idx) const;
+
+    void Dfs(const TrieNode* cur, std::string&amp; word, std::vector&lt;std::string&gt;&amp; suggs) const;
+
+    void ReleaseTrie(const TrieNode* root);
+
+    TrieNode* root;
+};
+} // ns trie
+#endif
+</code></pre>
+
+                    </div>
+                    <div class="post-info">
+                        <time class="post-time gt-c-content-color-first">
+                            发布于 · 2018-07-20 ·
+                        </time>
+                        
+                            <a href="https://ce39906.github.io//tag/MAcF0JZFDs" class="post-tag">
+                                # Algorithm
+                            </a>
+                        
+                    </div>
+                </div>
+                
+            </div>
+        
+            <div class="post gt-bg-theme-color-second">
+                <div class="post-left">
+                    <div>
+                        
+                        <a href="https://ce39906.github.io//post/C-将git提交信息编译到可执行文件">
+                            <span class="post-title gt-c-content-color-first">C++ 将git提交信息编译到可执行文件</span>
+                        </a>
+                    </div>
+                    <div class="gt-post-content post-abstract gt-c-content-color-second">
+                        
+                    </div>
+                    <div class="post-info">
+                        <time class="post-time gt-c-content-color-first">
+                            发布于 · 2018-07-12 ·
+                        </time>
+                        
+                            <a href="https://ce39906.github.io//tag/_OdGJUpK1" class="post-tag">
+                                # Others
+                            </a>
+                        
+                    </div>
+                </div>
+                
+            </div>
+        
+            <div class="post gt-bg-theme-color-second">
+                <div class="post-left">
+                    <div>
+                        
+                        <a href="https://ce39906.github.io//post/rundeck-CentOS-部署以及配置">
+                            <span class="post-title gt-c-content-color-first">rundeck CentOS 部署以及配置</span>
+                        </a>
+                    </div>
+                    <div class="gt-post-content post-abstract gt-c-content-color-second">
+                        
+                    </div>
+                    <div class="post-info">
+                        <time class="post-time gt-c-content-color-first">
+                            发布于 · 2018-07-11 ·
+                        </time>
+                        
+                            <a href="https://ce39906.github.io//tag/_OdGJUpK1" class="post-tag">
+                                # Others
+                            </a>
+                        
+                    </div>
+                </div>
+                
+            </div>
+        
+            <div class="post gt-bg-theme-color-second">
+                <div class="post-left">
+                    <div>
+                        
+                        <a href="https://ce39906.github.io//post/C-cout打印uint8-t的正确方式">
+                            <span class="post-title gt-c-content-color-first">C++ cout打印uint8_t的正确方式</span>
+                        </a>
+                    </div>
+                    <div class="gt-post-content post-abstract gt-c-content-color-second">
+                        
+                    </div>
+                    <div class="post-info">
+                        <time class="post-time gt-c-content-color-first">
+                            发布于 · 2018-06-29 ·
+                        </time>
+                        
+                            <a href="https://ce39906.github.io//tag/_OdGJUpK1" class="post-tag">
+                                # Others
+                            </a>
+                        
+                    </div>
+                </div>
+                
+            </div>
+        
+            <div class="post gt-bg-theme-color-second">
+                <div class="post-left">
+                    <div>
+                        
+                        <a href="https://ce39906.github.io//post/C-利用宏实现统计运行时间工具">
+                            <span class="post-title gt-c-content-color-first">C++利用宏实现统计运行时间工具</span>
+                        </a>
+                    </div>
+                    <div class="gt-post-content post-abstract gt-c-content-color-second">
+                        
+                    </div>
+                    <div class="post-info">
+                        <time class="post-time gt-c-content-color-first">
+                            发布于 · 2018-06-05 ·
+                        </time>
+                        
+                            <a href="https://ce39906.github.io//tag/_OdGJUpK1" class="post-tag">
+                                # Others
+                            </a>
+                        
+                    </div>
+                </div>
+                
+            </div>
+        
+    </div>
+</div>
+
+        <div class="pagination-container">
+    
+        <a href="https://ce39906.github.io//page/2/" class="prev-page gt-a-link">上一页</a>
+    
+    
+        <a href="https://ce39906.github.io//page/4/" class="prev-page gt-a-link">下一页</a>
+    
+</div>
+
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">算法及读书杂记</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        
+    </div>
+    <div>
+        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
+                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://ce39906.github.io//atom.xml" target="_blank">RSS</a></a>
+    </div>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

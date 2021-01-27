@@ -1,0 +1,414 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>Tensorflow 编译及应用C++动态库 | Ce39906&#39;s Blog</title>
+
+<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611748236925">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://ce39906.github.io//styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<style>
+    hr {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        border: 0;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <style>
+    /* 导航栏样式 */
+    .navbar {
+        position: relative;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        -ms-flex-align: center;
+        align-items: center;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+        padding: 0.5rem 1rem;
+    }
+
+    .navbar-brand {
+        display: inline-block;
+        padding-top: 0.3125rem;
+        padding-bottom: 0.3125rem;
+        margin-right: 1rem;
+        font-size: 1.25rem;
+        line-height: inherit;
+        white-space: nowrap;
+    }
+
+    .navbar-brand:hover,
+    .navbar-brand:focus {
+        text-decoration: none;
+    }
+
+    .navbar-nav {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        padding-left: 0;
+        margin-bottom: 0;
+        list-style: none;
+    }
+
+    .navbar-collapse {
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        -ms-flex-positive: 1;
+        flex-grow: 1;
+        -ms-flex-align: center;
+        align-items: center;
+    }
+
+    .navbar-toggler {
+        padding: 0.25rem 0.75rem;
+        font-size: 1.25rem;
+        line-height: 1;
+        background-color: transparent;
+        border: 1px solid transparent;
+        border-radius: 0.25rem;
+    }
+
+    .navbar-toggler:hover,
+    .navbar-toggler:focus {
+        text-decoration: none;
+    }
+
+    @media (min-width: 992px) {
+        .navbar-expand-lg {
+            -ms-flex-flow: row nowrap;
+            flex-flow: row nowrap;
+            -ms-flex-pack: start;
+            justify-content: flex-start;
+        }
+
+        .navbar-expand-lg .navbar-nav {
+            -ms-flex-direction: row;
+            flex-direction: row;
+        }
+
+        .navbar-expand-lg .navbar-collapse {
+            display: -ms-flexbox !important;
+            display: flex !important;
+            -ms-flex-preferred-size: auto;
+            flex-basis: auto;
+        }
+
+        .navbar-expand-lg .navbar-toggler {
+            display: none;
+        }
+    }
+
+    @media (max-width: 991px) {
+        #navbarSupportedContent {
+            display: none;
+        }
+    }
+</style>
+<nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Ce39906&#39;s Blog
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1611748236925"
+                action="/search/index.html">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = function () {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    Tensorflow 编译及应用C++动态库
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2018-09-10 ·
+                    </time>
+                    
+                        <a href="https://ce39906.github.io//tag/J2BpTA3Sgg" class="post-tags">
+                            # Tensorflow
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h2 id="背景">背景</h2>
+<p>Tensorflow 是google开源的目前最流行的深度学习框架。<br>
+TensorFlow 源码基于c++ 开发，提供了java, c, c++, python等主流编程语言支持。目前业界主流的应用方式是使用Tensorflow python构建以及训练模型，模型训练完成后使用c++ 或者java将模型应用到生产环境。<br>
+本文主要介绍如何将Tensorflow编译成动态库以便于其他工程使用头文件以及动态库的方式引入Tensorflow进行<strong>模型训练</strong>或者<strong>应用训练好的模型</strong>。<br>
+本文的测试环境基于MacOS，Linux环境也可以按照相同步骤安装依赖，编译TensorFlow 动态库。</p>
+<h2 id="依赖">依赖</h2>
+<h3 id="java">java</h3>
+<pre><code>java --vesrion
+java 9.0.1
+</code></pre>
+<h3 id="bazel">bazel</h3>
+<p><a href="https://www.bazel.build/">bazel</a> 是google 开源的工程构建工具。</p>
+<pre><code>brew install bazel
+</code></pre>
+<h3 id="eigen">eigen</h3>
+<p>eigen 是一个C++矩阵运算库</p>
+<pre><code>brew install eigen
+</code></pre>
+<h3 id="automake">automake</h3>
+<pre><code>brew install automake
+</code></pre>
+<h3 id="libtool">libtool</h3>
+<pre><code>brew install libtool
+</code></pre>
+<h3 id="protobuf">protobuf</h3>
+<pre><code>brew install protobuf
+</code></pre>
+<h2 id="编译">编译</h2>
+<p>首先我们将整个Tensorflow clone到本地</p>
+<pre><code>git clone https://github.com/tensorflow/tensorflow
+cd tensorflow
+</code></pre>
+<p>编译tensorflow 动态链接库</p>
+<pre><code>bazel build //tensorflow:libtensorflow_cc.so
+bazel build //tensorflow:libtensorflow_framework.so
+</code></pre>
+<p>编译的过程耗时约30mins<br>
+编译完成后，可以看到tensorflow路径下多了<strong>bazel-out</strong>, <strong>bazel-tensorflow</strong>,<strong>bazel-bin</strong>, <strong>bazel-testlogs</strong>,<strong>bazel-genfiles</strong> 这几个路径</p>
+<!--more-->
+<h2 id="整理头文件及库文件">整理头文件及库文件</h2>
+<p>这一步，我们将编译好动态库以及Tensorflow 头文件拷贝到系统路径以方便其他c++工程引用。<br>
+头文件</p>
+<pre><code>sudo mkdir /usr/local/include/tf/tensorflow
+# 拷贝tensorflow项目本身生成的头文件
+sudo cp -r tensorflow/core /usr/local/include/tf/tensorflow/
+sudo cp -r tensorflow/cc /usr/local/include/tf/tensorflow/
+# 拷贝bazel 编译的文件
+sudo cp -r bazel-genfiles/ /usr/local/include/tf/
+# 拷贝tensorflow依赖的第三方文件
+sudo cp -r third_party /usr/local/include/tf/
+</code></pre>
+<p>动态链接库文件</p>
+<pre><code>sudo cp -r bazel-bin/tensorflow/libtensorflow_cc.so /usr/local/lib/
+sudo cp -r bazel-bin/tensorflow/libtensorflow_framework.so /usr/local/lib/
+</code></pre>
+<h2 id="示例以及编译">示例以及编译</h2>
+<p>我们使用Tensorflow 官网https://www.tensorflow.org/api_guides/cc/guide提供的示例使用动态链接库编译测试。<br>
+示例代码如下</p>
+<pre><code>// tensorflow/cc/example/example.cc
+
+#include &quot;tensorflow/cc/client/client_session.h&quot;
+#include &quot;tensorflow/cc/ops/standard_ops.h&quot;
+#include &quot;tensorflow/core/framework/tensor.h&quot;
+
+int main() {
+  using namespace tensorflow;
+  using namespace tensorflow::ops;
+  Scope root = Scope::NewRootScope();
+  // Matrix A = [3 2; -1 0]
+  auto A = Const(root, { {3.f, 2.f}, {-1.f, 0.f} });
+  // Vector b = [3 5]
+  auto b = Const(root, { {3.f, 5.f} });
+  // v = Ab^T
+  auto v = MatMul(root.WithOpName(&quot;v&quot;), A, b, MatMul::TransposeB(true));
+  std::vector&lt;Tensor&gt; outputs;
+  ClientSession session(root);
+  // Run and fetch v
+  TF_CHECK_OK(session.Run({v}, &amp;outputs));
+  // Expect outputs[0] == [19; -3]
+  LOG(INFO) &lt;&lt; outputs[0].matrix&lt;float&gt;();
+  return 0;
+}
+</code></pre>
+<p>使用CMake 编译，<strong>CMakeLists.txt</strong> 如下</p>
+<pre><code>CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+
+SET(TENSORFLOW_INCLUDE_PATH /usr/local/include/tf)
+SET(TENSORFLOW_LIBARY /usr/local/lib/libtensorflow_cc.so)
+SET(TENSORFLOW_FRAMEWORK_LIBARY /usr/local/lib/libtensorflow_framework.so)
+MESSAGE(STATUS &quot;TENSORFLOW_INCLUDE_PATH ${TENSORFLOW_INCLUDE_PATH}&quot;)
+MESSAGE(STATUS &quot;TENSORFLOW_LIBARY ${TENSORFLOW_LIBARY}&quot;)
+MESSAGE(STATUS &quot;TENSORFLOW_FRAMEWORK_LIBARY ${TENSORFLOW_FRAMEWORK_LIBARY}&quot;)
+SET(EIGEN_INCLUDE_PATH /usr/local/include/eigen3)
+SET(ABSL_INCLUDE_PATH /usr/local/include/tf/absl)
+MESSAGE(STATUS &quot;ABSL_INCLUDE_PATH&quot; ${ABSL_INCLUDE_PATH})
+
+INCLUDE(FindProtobuf)
+FIND_PACKAGE(Protobuf REQUIRED)
+
+INCLUDE_DIRECTORIES(${PROTOBUF_INCLUDE_DIR})
+INCLUDE_DIRECTORIES(${TENSORFLOW_INCLUDE_PATH})
+INCLUDE_DIRECTORIES(${EIGEN_INCLUDE_PATH})
+INCLUDE_DIRECTORIES(${ABSL_INCLUDE_PATH})
+
+SET(EXAMPLE_LIBRARIES
+    ${PROTOBUF_LIBRARY}
+    ${TENSORFLOW_FRAMEWORK_LIBARY}
+    ${TENSORFLOW_LIBARY})
+
+ADD_EXECUTABLE(example example.cpp)
+
+SET(LDFLAGS &quot;-std=c++11 -O3 -ggdb -Wall&quot;)
+SET(CMAKE_CXX_FLAGS &quot;${CMAKE_CXX_FLAGS}${LDFLAGS}&quot;)
+
+MESSAGE(STATUS &quot;CMAKE_CXX_COMPILER: ${CMAKE_CXX_COMPILER}&quot;)
+MESSAGE(STATUS &quot;CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}&quot;)
+TARGET_LINK_LIBRARIES(example ${EXAMPLE_LIBRARIES} ${CMAKE_CXX_FLAGS})
+</code></pre>
+<p>需要注意的是，除了以上提到的头文件之外，<strong>CMakeLists.txt</strong>中引入了<strong>ABSL_INCLUDE_PATH</strong>, 引入的原因是在编译过程中报以下错误</p>
+<pre><code>/usr/local/include/tf/tensorflow/core/lib/gtl/array_slice.h:19:10: fatal error: 'absl/types/span.h' file not found
+</code></pre>
+<p>回到TensorFlow工程下，查找span.h</p>
+<pre><code>find . -name span.h
+# 输出如下
+./tensorflow/contrib/makefile/downloads/absl/absl/types/span.h
+</code></pre>
+<p>我们将absl 头文件拷贝到系统目录下，然后在<strong>CMakeLists.txt</strong> 文件引入该路径。</p>
+<pre><code>cd ./tensorflow/contrib/makefile/downloads/
+cp -r absl /usr/local/include/tf/
+</code></pre>
+<h3 id="编译-2">编译</h3>
+<pre><code>mkdir -p build &amp;&amp; cd build
+cmake ..
+make
+</code></pre>
+<h3 id="执行">执行</h3>
+<p><img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/tensorflow-dynamic-link-example.png" alt="pic"><br>
+可以看到执行结果同预期一致。</p>
+<h2 id="后记">后记</h2>
+<p>编译及应用Tensorflow 动态库的思路是安装好Tensorflow所需依赖，然后使用google开源bazel进行编译。<br>
+MacOS 依赖于强大的包管理工具<strong>brew</strong>可以很方便的安装各种依赖。到Linux环境下需要使用各发行版提供的包管理工具安装，如果不能安装成功需要自己进行手动编译。<br>
+在编译好Tensorflow 动态库后，使用Tensorflow的时候仍然有可能出现有头文件没找到或者依赖库缺少的情况，这时候我们可以首先执行Tensorflow 工程提供的 <strong>tensorflow/contrib/makefile/download_dependencies.sh</strong> 脚本下载Tensorflow 依赖，然后到 downloads 路径下查找缺少的头文件或者库文件，然后将缺少的头文件或库文件拷贝到系统路径。<br>
+Tensorflow 工程下 <strong>tensorflow/contrib/makefile/</strong> 提供了分别在Andorid, iOS, linux, docker环境下部署应用Tensorflow 的脚本，运行相应脚本后，我们可以得到编译好的Tensorflow静态库文件以及所需的头文件。使用编译好的静态库以及头文件部署到相应平台可以运行训练好的模型。需要注意的是，这些静态库以及头文件只包括应用训练好的模型的相关功能，不具备训练模型的相关功能(毕竟我们不想也不可能到Andorid, iOS平台下去训练模型。) 。下一篇博客会详细介绍编译Tensorflow静态库以及应用Tensorflow静态库的整体过程。</p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://ce39906.github.io//post/读书短评-《未来简史》" class="post-title gt-a-link">
+                    读书短评-《未来简史》
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">算法及读书杂记</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        
+    </div>
+    <div>
+        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
+                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://ce39906.github.io//atom.xml" target="_blank">RSS</a></a>
+    </div>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+</script>
+
+    </div>
+</div>
+</body>
+</html>

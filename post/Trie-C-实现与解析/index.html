@@ -1,0 +1,626 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>Trie C++ 实现与解析 | Ce39906&#39;s Blog</title>
+
+<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1611748236925">
+
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://ce39906.github.io//styles/main.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"> -->
+
+<style>
+    hr {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        border: 0;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dockerfile.min.js"></script>
+<script src="https://cdn.bootcss.com/highlight.js/9.15.10/languages/dart.min.js"></script>
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script> -->
+<!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"></script> -->
+<!-- DEMO JS -->
+<!--<script src="media/scripts/index.js"></script>-->
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
+</head>
+<body>
+<div class="main gt-bg-theme-color-first">
+    <style>
+    /* 导航栏样式 */
+    .navbar {
+        position: relative;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        -ms-flex-align: center;
+        align-items: center;
+        -ms-flex-pack: justify;
+        justify-content: space-between;
+        padding: 0.5rem 1rem;
+    }
+
+    .navbar-brand {
+        display: inline-block;
+        padding-top: 0.3125rem;
+        padding-bottom: 0.3125rem;
+        margin-right: 1rem;
+        font-size: 1.25rem;
+        line-height: inherit;
+        white-space: nowrap;
+    }
+
+    .navbar-brand:hover,
+    .navbar-brand:focus {
+        text-decoration: none;
+    }
+
+    .navbar-nav {
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        padding-left: 0;
+        margin-bottom: 0;
+        list-style: none;
+    }
+
+    .navbar-collapse {
+        -ms-flex-preferred-size: 100%;
+        flex-basis: 100%;
+        -ms-flex-positive: 1;
+        flex-grow: 1;
+        -ms-flex-align: center;
+        align-items: center;
+    }
+
+    .navbar-toggler {
+        padding: 0.25rem 0.75rem;
+        font-size: 1.25rem;
+        line-height: 1;
+        background-color: transparent;
+        border: 1px solid transparent;
+        border-radius: 0.25rem;
+    }
+
+    .navbar-toggler:hover,
+    .navbar-toggler:focus {
+        text-decoration: none;
+    }
+
+    @media (min-width: 992px) {
+        .navbar-expand-lg {
+            -ms-flex-flow: row nowrap;
+            flex-flow: row nowrap;
+            -ms-flex-pack: start;
+            justify-content: flex-start;
+        }
+
+        .navbar-expand-lg .navbar-nav {
+            -ms-flex-direction: row;
+            flex-direction: row;
+        }
+
+        .navbar-expand-lg .navbar-collapse {
+            display: -ms-flexbox !important;
+            display: flex !important;
+            -ms-flex-preferred-size: auto;
+            flex-basis: auto;
+        }
+
+        .navbar-expand-lg .navbar-toggler {
+            display: none;
+        }
+    }
+
+    @media (max-width: 991px) {
+        #navbarSupportedContent {
+            display: none;
+        }
+    }
+</style>
+<nav class="navbar navbar-expand-lg">
+    <div class="navbar-brand">
+        <img class="user-avatar" src="/images/avatar.png" alt="头像">
+        <div class="site-name gt-c-content-color-first">
+            Ce39906&#39;s Blog
+        </div>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="navbar-nav mr-auto" style="text-align: center">
+            
+            <div class="nav-item">
+                
+                <a href="/" class="menu gt-a-link">
+                    首页
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/archives" class="menu gt-a-link">
+                    归档
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/tags" class="menu gt-a-link">
+                    标签
+                </a>
+                
+            </div>
+            
+            <div class="nav-item">
+                
+                <a href="/post/about" class="menu gt-a-link">
+                    关于
+                </a>
+                
+            </div>
+            
+        </div>
+        <div style="text-align: center">
+            <form id="gridea-search-form" style="position: relative" data-update="1611748236925"
+                action="/search/index.html">
+                <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
+                <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
+            </form>
+        </div>
+    </div>
+</nav>
+<script>
+    /* 移动端导航栏展开/收起切换 */
+    document.getElementById('changeNavbar').onclick = function () {
+        var element = document.getElementById('navbarSupportedContent');
+        if (element.style.display === 'none' || element.style.display === '') {
+            element.style.display = 'block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+</script>
+    <div class="post-container">
+        <div class="post-detail gt-bg-theme-color-second">
+            <article class="gt-post-content">
+                <h2 class="post-title">
+                    Trie C++ 实现与解析
+                </h2>
+                <div class="post-info">
+                    <time class="post-time gt-c-content-color-first">
+                        · 2018-07-20 ·
+                    </time>
+                    
+                        <a href="https://ce39906.github.io//tag/MAcF0JZFDs" class="post-tags">
+                            # Algorithm
+                        </a>
+                    
+                </div>
+                <div class="post-content">
+                    <h2 id="trie-tree-介绍">Trie tree 介绍</h2>
+<p>trie 源自 <strong>retrieval</strong> ,中文称为前缀树或字典树。具体介绍见wiki <a href="https://zh.wikipedia.org/wiki/Trie">trie</a></p>
+<h2 id="c-实现">C++ 实现</h2>
+<p>以下trie实现支持任何语言(Chinese,English,Janpanse...)。主要包括以下三个接口</p>
+<pre><code>// 使用一组词初始化trie.
+void Init(const std::vector&lt;std::string&gt;&amp; dict);
+// 在trie 中查找word是否存在.
+bool Lookup(const std::string&amp; word);
+// 返回在trie中所有以word为前缀的词.
+std::vector&lt;std::string&gt; Suggest(const std::string&amp; word);
+</code></pre>
+<p>具体代码实现如下<br>
+trie.hpp</p>
+<pre><code>/*************************************************************************
+    &gt; File Name: trie.hpp
+    &gt; Author: ce39906
+    &gt; Mail: ce39906@163.com
+    &gt; Created Time: 2018-07-19 11:12:09
+ ************************************************************************/
+#ifndef TRIE_HPP
+#define TRIE_HPP
+
+#include &lt;vector&gt;
+#include &lt;string&gt;
+
+namespace trie
+{
+
+class Trie
+{
+    static constexpr size_t kAsciiCount = 256;
+    struct TrieNode
+    {
+        TrieNode(const char val)
+          : val(val), is_end(false), childrens(kAsciiCount, nullptr)
+        {
+        }
+
+        char val;
+        bool is_end;
+        std::vector&lt;TrieNode*&gt; childrens;
+    };
+
+  public:
+    Trie()
+    {
+        root = new TrieNode('0');
+    }
+
+    ~Trie()
+    {
+        ReleaseTrie(root);
+    }
+
+    Trie(const Trie&amp;) = delete;
+    Trie&amp; operator = (const Trie&amp;) = delete;
+
+    void Init(const std::vector&lt;std::string&gt;&amp; dict);
+
+    bool Lookup(const std::string&amp; word) const;
+
+    std::vector&lt;std::string&gt; Suggest(const std::string&amp; word) const;
+
+    void PrintSuggs(const std::string&amp; word) const;
+
+  private:
+
+    void Insert(const std::string&amp; word);
+
+    bool Search(const TrieNode* parent, const std::string&amp; word, const size_t idx) const;
+
+    void Dfs(const TrieNode* cur, std::string&amp; word, std::vector&lt;std::string&gt;&amp; suggs) const;
+
+    void ReleaseTrie(const TrieNode* root);
+
+    TrieNode* root;
+};
+} // ns trie
+#endif
+</code></pre>
+<!--more-->
+<p>trie.cpp</p>
+<pre><code>/*************************************************************************
+    &gt; File Name: trie.cpp
+    &gt; Author: ce39906
+    &gt; Mail: ce39906@163.com
+    &gt; Created Time: 2018-07-19 14:04:15
+ ************************************************************************/
+#include &quot;trie.hpp&quot;
+#include &lt;iostream&gt;
+
+namespace trie
+{
+
+void Trie::Init(const std::vector&lt;std::string&gt;&amp; dict)
+{
+    for (const std::string&amp; word : dict)
+    {
+        Insert(word);
+    }
+}
+
+bool Trie::Lookup(const std::string&amp; word) const
+{
+    return Search(root, word, 0);
+}
+
+std::vector&lt;std::string&gt; Trie::Suggest(const std::string&amp; word) const
+{
+    std::vector&lt;std::string&gt; suggs;
+    if (word.empty())
+    {
+        return suggs;
+    }
+    // find prefix
+    TrieNode* cur = root;
+    // unsigned char range : 0 ~ 255
+    for (const unsigned char c : word)
+    {
+        const std::vector&lt;TrieNode*&gt;&amp; childrens = cur-&gt;childrens;
+        if (!childrens[c])
+        {
+            return suggs;
+        }
+        cur = childrens[c];
+    }
+
+    if (!cur)
+    {
+        return suggs;
+    }
+
+    std::string prefix(word.begin(), word.end() - 1);
+    Dfs(cur, prefix, suggs);
+    return suggs;
+}
+
+void Trie::Insert(const std::string&amp; word)
+{
+    if (word.empty())
+        return;
+
+    TrieNode* cur = root;
+    // unsigned char range : 0 ~ 255
+    for (const unsigned char c : word)
+    {
+        if (!cur-&gt;childrens[c])
+        {
+            cur-&gt;childrens[c] = new TrieNode(c);
+        }
+        cur = cur-&gt;childrens[c];
+    }
+    cur-&gt;is_end = true;
+}
+
+bool Trie::Search(const TrieNode* parent, const std::string&amp; word, const size_t idx) const
+{
+    if (word.empty())
+    {
+        return false;
+    }
+    const std::vector&lt;TrieNode*&gt;&amp; childrens = parent-&gt;childrens;
+    // explicitly cast to unsigned char is needed
+    const unsigned char c = word[idx];
+    TrieNode* cur = childrens[c];
+    if (!cur)
+    {
+        return false;
+    }
+    if (idx == word.size() - 1)
+    {
+        return cur-&gt;is_end;
+    }
+    return Search(cur, word, idx + 1);
+}
+
+void Trie::Dfs(const TrieNode* cur, std::string&amp; word, std::vector&lt;std::string&gt;&amp; suggs) const
+{
+    if (cur-&gt;is_end)
+    {
+        suggs.emplace_back(word + cur-&gt;val);
+    }
+    word.push_back(cur-&gt;val);
+    const std::vector&lt;TrieNode*&gt;&amp; childrens = cur-&gt;childrens;
+    for (const TrieNode* children : childrens)
+    {
+        if (children)
+        {
+            Dfs(children, word, suggs);
+        }
+    }
+    word.pop_back();
+}
+
+void Trie::ReleaseTrie(const TrieNode* root)
+{
+    if (!root) return;
+    bool no_children = true;
+    const std::vector&lt;TrieNode*&gt;&amp; childrens = root-&gt;childrens;
+    for (const TrieNode* children : childrens)
+    {
+        if (children)
+        {
+            no_children = false;
+            ReleaseTrie(children);
+        }
+    }
+
+    if (no_children)
+    {
+        delete root;
+    }
+}
+
+void Trie::PrintSuggs(const std::string&amp; word) const
+{
+    const auto quoted_string = [] (const std::string str)
+    {
+        return &quot;\&quot;&quot; + str + &quot;\&quot;&quot;;
+    };
+
+    const std::vector&lt;std::string&gt;&amp; suggs = Suggest(word);
+    if (suggs.empty())
+    {
+        std::cout &lt;&lt; &quot;No suggs for &quot; &lt;&lt; quoted_string(word) &lt;&lt; std::endl;
+        return;
+    }
+
+    std::cout &lt;&lt; &quot;Suggs for &quot; &lt;&lt; quoted_string(word) &lt;&lt; &quot; are :\n&quot;;
+    for (const std::string&amp; sugg : suggs)
+    {
+        std::cout &lt;&lt; quoted_string(sugg) &lt;&lt; &quot; &quot;;
+    }
+    std::cout &lt;&lt; std::endl;
+}
+
+} // ns trie
+</code></pre>
+<h2 id="测试">测试</h2>
+<h3 id="测试数据">测试数据</h3>
+<p>测试数据如下，本例中存储在文件trie_data</p>
+<blockquote>
+<p>中国人民<br>
+中午<br>
+中国人<br>
+中国梦<br>
+伟大复兴<br>
+2020中国制造<br>
+中国制造2020<br>
+军工etf<br>
+北京<br>
+北京天安门<br>
+天气<br>
+天气预报<br>
+北京天气预报<br>
+beijing<br>
+beijing tiananmen<br>
+汉语<br>
+韩国人<br>
+韩国<br>
+韩范<br>
+美国热<br>
+东京热<br>
+苍井空<br>
+苍老师<br>
+机器学习<br>
+机器人<br>
+机器猫<br>
+机器狗<br>
+美团网<br>
+美团外卖<br>
+美团平台<br>
+美团地图<br>
+美团酒旅<br>
+美团生鲜<br>
+美团大象<br>
+美团liuce<br>
+美团ce39906<br>
+be搜搜</p>
+</blockquote>
+<h3 id="测试代码">测试代码</h3>
+<p>test_trie.cpp</p>
+<pre><code>/*************************************************************************
+    &gt; File Name: test_trie.cpp
+    &gt; Author: ce39906
+    &gt; Mail: ce39906@163.com
+    &gt; Created Time: 2018-07-19 19:53:22
+ ************************************************************************/
+#include &quot;trie.hpp&quot;
+
+#include &lt;iostream&gt;
+#include &lt;fstream&gt;
+#include &lt;cstdlib&gt;
+#define NDEBUG
+#include &lt;cassert&gt;
+
+using namespace trie;
+
+void usage(const char* bin)
+{
+    std::cout &lt;&lt; bin &lt;&lt; &quot; : Need a filename as a parameter.\n&quot;;
+    std::exit(EXIT_FAILURE);
+}
+
+void readFile2Vector(const std::string&amp; file, std::vector&lt;std::string&gt;&amp; vec)
+{
+    std::fstream infile(file, std::ios_base::in);
+    std::string line;
+    while(getline(infile, line, '\n'))
+    {
+        vec.emplace_back(line);
+    }
+}
+
+int main(int argc, char* argv[])
+{
+    if (argc &lt; 2)
+    {
+        usage(argv[0]);
+    }
+
+    const std::string data_file(argv[1]);
+    std::vector&lt;std::string&gt; dict;
+    readFile2Vector(data_file, dict);
+
+    Trie trie;
+    trie.Init(dict);
+    // test trie lookup function
+    for (const std::string&amp; word : dict)
+    {
+        (void) word;
+        assert(trie.Lookup(word) == true);
+    }
+
+    trie.PrintSuggs(&quot;美&quot;);
+    trie.PrintSuggs(&quot;be&quot;);
+    trie.PrintSuggs(&quot;中&quot;);
+    trie.PrintSuggs(&quot;苍&quot;);
+    trie.PrintSuggs(&quot;null&quot;);
+
+    return 0;
+}
+</code></pre>
+<h3 id="编译">编译</h3>
+<blockquote>
+<p>g++ --std=c++11 -O2 trie.cpp test_trie.cpp -o trie</p>
+</blockquote>
+<h3 id="测试结果">测试结果</h3>
+<p>执行</p>
+<blockquote>
+<p>./trie trie_data</p>
+</blockquote>
+<p><img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/trie.jpg" alt="pic"></p>
+<h2 id="github-地址">github 地址</h2>
+<p>https://github.com/ce39906/self-practices/tree/master/cppcode/trie</p>
+
+                </div>
+            </article>
+        </div>
+
+        
+            <div class="next-post">
+                <div class="next gt-c-content-color-first">下一篇</div>
+                <a href="https://ce39906.github.io//post/C-将git提交信息编译到可执行文件" class="post-title gt-a-link">
+                    C++ 将git提交信息编译到可执行文件
+                </a>
+            </div>
+        
+
+        
+
+        
+
+        
+
+        <div class="site-footer gt-c-content-color-first">
+    <div class="slogan gt-c-content-color-first">算法及读书杂记</div>
+    <div class="social-container">
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+    </div>
+    <div class="footer-info">
+        
+    </div>
+    <div>
+        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
+                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://ce39906.github.io//atom.xml" target="_blank">RSS</a></a>
+    </div>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+</script>
+
+    </div>
+</div>
+</body>
+</html>
