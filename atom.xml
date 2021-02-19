@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://ce39906.github.io/</id>
     <title>Ce39906&apos;s Blog</title>
-    <updated>2021-01-28T03:04:23.251Z</updated>
+    <updated>2021-02-19T07:22:54.748Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://ce39906.github.io/"/>
     <link rel="self" href="https://ce39906.github.io//atom.xml"/>
@@ -10,6 +10,17 @@
     <logo>https://ce39906.github.io//images/avatar.png</logo>
     <icon>https://ce39906.github.io//favicon.ico</icon>
     <rights>All rights reserved 2021, Ce39906&apos;s Blog</rights>
+    <entry>
+        <title type="html"><![CDATA[2021新年Flag]]></title>
+        <id>https://ce39906.github.io//post/2021-xin-nian-flag</id>
+        <link href="https://ce39906.github.io//post/2021-xin-nian-flag">
+        </link>
+        <updated>2021-02-19T07:13:17.000Z</updated>
+        <summary type="html"><![CDATA[<p>步入而立之年，立下一些Flag</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>步入而立之年，立下一些Flag</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[程序员应该拒绝使用baidu]]></title>
         <id>https://ce39906.github.io//post/程序员应该拒绝使用baidu</id>
@@ -107,17 +118,6 @@
         <summary type="html"><![CDATA[<p>深度学习也可以用来搞艺术</p>
 ]]></summary>
         <content type="html"><![CDATA[<p>深度学习也可以用来搞艺术</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[抓取北邮人论坛招聘版及跳槽版每日帖数]]></title>
-        <id>https://ce39906.github.io//post/抓取北邮人论坛招聘版及跳槽版每日帖数</id>
-        <link href="https://ce39906.github.io//post/抓取北邮人论坛招聘版及跳槽版每日帖数">
-        </link>
-        <updated>2019-04-15T08:14:57.000Z</updated>
-        <summary type="html"><![CDATA[<p>互联网寒冬下的暗中观察</p>
-]]></summary>
-        <content type="html"><![CDATA[<p>互联网寒冬下的暗中观察</p>
 ]]></content>
     </entry>
 </feed>
