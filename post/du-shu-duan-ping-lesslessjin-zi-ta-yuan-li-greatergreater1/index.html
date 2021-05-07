@@ -4,7 +4,7 @@
 <meta name="description" content="" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<title>Leveldb BloomFilter 解析 | Ce39906&#39;s Blog</title>
+<title>读书短评-《金字塔原理》 | Ce39906&#39;s Blog</title>
 
 <link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1620391430250">
 
@@ -214,138 +214,31 @@
         <div class="post-detail gt-bg-theme-color-second">
             <article class="gt-post-content">
                 <h2 class="post-title">
-                    Leveldb BloomFilter 解析
+                    读书短评-《金字塔原理》
                 </h2>
                 <div class="post-info">
                     <time class="post-time gt-c-content-color-first">
-                        · 2018-04-28 ·
+                        · 2021-05-07 ·
                     </time>
                     
-                        <a href="https://ce39906.github.io//tag/sKN_FIXf8-e" class="post-tags">
-                            # Leveldb
+                        <a href="https://ce39906.github.io//tag/nU3k2zQBP" class="post-tags">
+                            # Reading
                         </a>
                     
                 </div>
                 <div class="post-content">
-                    <p>一个设计的非常巧妙的数据结构</p>
+                    <p>结论先行，上下对应，分类清楚，逻辑递进</p>
 <!-- more -->
-<h2 id="bloomfilter-原理">BloomFilter 原理</h2>
-<p>布隆过滤器由巴顿布隆于1970年提出，由一个很长的bit数组以及一系列hash函数组成。bloomfilter可以用于检索一个元素是否出现在一个集合中，bloomfilter的优点是相比hash表拥有极大的空间效率，缺点是会出现一定的错误概率(False positive,一个不在集合中的元素被误认为处于集合中）。<br>
-bloomfilter 的原理是，当一个元素在加入集合时，通过k个hash 函数映射到bit数组的k个位置，并将相应的位置置1。在查找一个元素是否存在于集合中时，使用相同的k个hash 函数查看bit数组中的位置是否为全为1，如果出现一个0，则该key 一定不存在集合中，否则有可能出现在集合中。</p>
-<h3 id="优点">优点</h3>
-<p>Bloomfilter 可以使用较少的空间存储大量数据的全集，并且存储的不是每个元素的原本的数值，只是设置对应的bit位，一定程度上实现了加密的效果。除空间效率之外，bloomfilter的时间效率都是常数级别O(k),其中k 代表使用的hash 函数个数，由于k个hash 函数式相互独立的性质，在进行k个hash 计算时可以并行计算进一步加速插入查找。</p>
-<h3 id="缺点">缺点</h3>
-<p>Bloomfilter 的缺点是会出现False positive 的误判率，而且随着元素的增加，误算率也随之增加。因此尽可能降低误判率需要一些额外工作。</p>
-<h3 id="bloomfilter参数选择">BloomFilter参数选择</h3>
-<p>以下均参考wikipedia <a href="https://en.wikipedia.org/wiki/Bloom_filter">bloomfilter</a> 中关于误差率的计算章节。直接说结论，当k(hash 函数个数)，m(bit数组大小)，n(插入元素个数)满足下式的时候，可以保证最低的误差率。$$k=\cfrac{m}{n}ln2$$下图(摘自wikipedia) 表示在最优hash函数个数的情况下，不同m,n之间误差率关系。</p>
-<p><img src="https://upload.wikimedia.org/wikipedia/commons/e/ef/Bloom_filter_fp_probability.svg" width=450 height=360/>从上图可以看到当存储10亿个元素时使用4GB的存储空间可以保证不到1e-06的错误率。可以看到bloomfilter在实现高空间利用率的同时可以保证较低误差率。</p>
-<h2 id="leveldb-实现">Leveldb 实现</h2>
-<p>leveldb bloomfilter 实现在util/bloom.cc</p>
-<h3 id="成员变量以及构造函数">成员变量以及构造函数</h3>
-<pre><code>class BloomFilterPolicy : public FilterPolicy {
- private:
-  // 平均每个key拥有的bit 数目
-  size_t bits_per_key_;
-  // hash function 的个数
-  size_t k_;
-
- public:
-  explicit BloomFilterPolicy(int bits_per_key)
-      : bits_per_key_(bits_per_key) {
-    // We intentionally round down to reduce probing cost a little bit
-    // 按照上面的公式设定hash函数的个数
-    k_ = static_cast&lt;size_t&gt;(bits_per_key * 0.69);  // 0.69 =~ ln(2)
-    if (k_ &lt; 1) k_ = 1;
-    if (k_ &gt; 30) k_ = 30;
-  }
- };
-</code></pre>
-<h3 id="createfilter">CreateFilter</h3>
-<p>将传入的n个key 存储到bloomfilter 中，bloomfilter结果使用string存储。</p>
-<pre><code>virtual void CreateFilter(const Slice* keys, int n, std::string* dst) const {
-    // Compute bloom filter size (in both bits and bytes)
-    // bloomfilter 需要多少bit
-    size_t bits = n * bits_per_key_;
-
-    // For small n, we can see a very high false positive rate.  Fix it
-    // by enforcing a minimum bloom filter length.
-    if (bits &lt; 64) bits = 64;
-    // 对齐,方便内存读写以及后续位置索引
-    size_t bytes = (bits + 7) / 8;
-    bits = bytes * 8;
-	// 在string 中分配空间
-    const size_t init_size = dst-&gt;size();
-    dst-&gt;resize(init_size + bytes, 0);
-    // string 的最后一个byte存储使用的hash 函数的个数
-    dst-&gt;push_back(static_cast&lt;char&gt;(k_));  // Remember # of probes in filter
-    // 获得string内部的char 型数组
-    char* array = &amp;(*dst)[init_size];
-    // 逐个将每个key 写入bloom fliter
-    for (int i = 0; i &lt; n; i++) {
-      // Use double-hashing to generate a sequence of hash values.
-      // See analysis in [Kirsch,Mitzenmacher 2006].
-      // leveldb 使用一个hash 函数，每次对hash值向右循环移位17个bit来模拟实现多个hash 函数的效果
-      uint32_t h = BloomHash(keys[i]);
-      // 每次向右循环移位17个bit
-      const uint32_t delta = (h &gt;&gt; 17) | (h &lt;&lt; 15);  // Rotate right 17 bits
-      for (size_t j = 0; j &lt; k_; j++) {
-        // 在整个bit 数组的位置
-        const uint32_t bitpos = h % bits;
-        // 在char型数组的位置
-        array[bitpos/8] |= (1 &lt;&lt; (bitpos % 8));
-        // 更新获得一个新的hash 数值
-        h += delta;
-      }
-    }
-  }
-</code></pre>
-<h3 id="keymaymatch">KeyMayMatch</h3>
-<p>判断一个 key 在bloomfilter中是否存在。</p>
-<pre><code> virtual bool KeyMayMatch(const Slice&amp; key, const Slice&amp; bloom_filter) const {
-    const size_t len = bloom_filter.size();
-    if (len &lt; 2) return false;
-
-    const char* array = bloom_filter.data();
-    // 最后一个byte数值代表使用了多少hash函数
-    // 除最后一个byte之外代表bit数组
-    const size_t bits = (len - 1) * 8;
-
-    // Use the encoded k so that we can read filters generated by
-    // bloom filters created using different parameters.
-    const size_t k = array[len-1];
-    if (k &gt; 30) {
-      // Reserved for potentially new encodings for short bloom filters.
-      // Consider it a match.
-      return true;
-    }
-	// 使用相同的方法模拟多个hash函数计算的hash值
-    uint32_t h = BloomHash(key);
-    const uint32_t delta = (h &gt;&gt; 17) | (h &lt;&lt; 15);  // Rotate right 17 bits
-    for (size_t j = 0; j &lt; k; j++) {
-      const uint32_t bitpos = h % bits;
-      // 找到一个bit位置不匹配，提前返回false
-      // 在bit数组中位置的索引和设置时的方法一致
-      if ((array[bitpos/8] &amp; (1 &lt;&lt; (bitpos % 8))) == 0) return false;
-      // 更新获得下一个hash value
-      h += delta;
-    }
-    // 全部匹配return true
-    return true;
-  }
-</code></pre>
-<h2 id="bloomfilter-应用场景">BloomFilter 应用场景</h2>
-<p>由于其高效的空间效率，bloomfilter 可以应用于以下场景：</p>
-<ul>
-<li>爬虫系统记录以经爬取过的url</li>
-<li>垃圾邮件过滤</li>
-<li>p2p 网络中查找资源操作: 使用一个bloomfilter 保存拥有此资源的网络通路</li>
-<li>广播信息时检查某个ip是否发包</li>
-<li>字典纠错：将所有单词存储到bloomfilter中，如果不存在则认为是一个错误拼写</li>
-<li>CDN 代理缓存: 每个cache 服务器上使用bloomfilter 存储兄弟cache 服务器上是否有缓存关键字，如果没有则可以避免一次查找</li>
-</ul>
-<h2 id="总结">总结</h2>
-<p>Bloomfilter 是一种设计巧妙的数据结构，由于其良好的空间效率，可以用于判断一个元素是否包含于海量元素集合的场景。<br>
-Leveldb 的实现的bloomfilter 可以灵活配置hash 函数的个数，使用一个hash 函数模拟任意多个hash 函数的场景，并将使用hash函数的个数存储到bloomfilter编码结果中。除此之外，leveldb bloomfilter 实现bit数组个数，hash函数个数以及存储元素个数的最优配置，保证最低的误差率。</p>
+<p><img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/pyramid_theory.jpeg" alt="pic"></p>
+<p align="right">此图摘自 https://zhuanlan.zhihu.com/p/129970972 </p>
+<p>这本书将几个观点整理成了一套理论体系，但是本身描述的内容存在很多冗余啰嗦的地方，读起来并不是很好读。<br>
+但是不得不承认，书中几个观点确实在工作中的文档或PPT中都很实用，可以提升工作效率。比如:</p>
+<ol>
+<li>结论先行：因为老板的时间非常宝贵，没时间看你的文档罗里吧嗦在说什么东西。</li>
+<li>上下对应：论据要在论点下展开，不然读者不清楚论据是在说明什么</li>
+<li>分类清楚：论点之间要做到互斥原则，不然就会产生冗余信息</li>
+<li>逻辑递进：可以按照时间逻辑、结构逻辑、重要性逻辑推进</li>
+</ol>
 
                 </div>
             </article>
@@ -354,8 +247,8 @@ Leveldb 的实现的bloomfilter 可以灵活配置hash 函数的个数，使用�
         
             <div class="next-post">
                 <div class="next gt-c-content-color-first">下一篇</div>
-                <a href="https://ce39906.github.io//post/Leveldb-skiplist-实现以及解析" class="post-title gt-a-link">
-                    Leveldb skiplist 实现以及解析
+                <a href="https://ce39906.github.io//post/2021-xin-nian-flag" class="post-title gt-a-link">
+                    2021新年Flag
                 </a>
             </div>
         
