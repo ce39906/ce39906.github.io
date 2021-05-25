@@ -1,10 +1,12 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+
 <head>
     <meta charset="utf-8" />
 <meta name="description" content="" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<title>Others | Ce39906&#39;s Blog</title>
+<title>搜索 | Ce39906&#39;s Blog</title>
 
 <link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1621935454102">
 
@@ -45,10 +47,20 @@
     gtag('config', 'UA-188349426-1');
 </script>
 
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.0/dist/fuse.basic.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ejs@3.1.3/ejs.min.js"></script>
+    <script src="https://ce39906.github.io//media/gridea-search/gridea-search.js"></script>
+    <script src="https://ce39906.github.io//media/gridea-search/result-template.ejs" type="text/ejs"></script>
 </head>
+
 <body>
-<div class="main gt-bg-theme-color-first">
-    <div class="main-content">
+    <style>
+        .searched-keyword {
+            background-color: yellow;
+            color: red;
+        }
+    </style>
+    <div class="main gt-bg-theme-color-first">
         <nav class="navbar navbar-expand-lg">
     <div class="navbar-brand">
         <img class="user-avatar" src="/images/avatar.png" alt="头像">
@@ -116,127 +128,16 @@
         }
     }
 </script>
-        <div class="current-tag-container">
-            <h2 class="title gt-c-content-color-first">
-                #Others
-            </h2>
+        <div id="gridea-search-result" data-update="1621935454102">
+            <div class="searching" style="font-size: 18px; margin-top: 50px;">
+                <i class="fa fa-sync-alt fa-spin"></i>&nbsp;&nbsp;搜索中......
+                <br><br>
+                <span style="font-size: 65%; color: #aaa">第一次搜索可能需要耗费较长时间构建索引，请耐心等待...</span>
+            </div>
+            <div class="no-result" style="display:none; font-size: 20px; margin-top: 50px;">
+                <i class="fa fa-exclamation-triangle"></i>&nbsp;&nbsp;未搜索到相关文章，请更换关键词
+            </div>
         </div>
-        <div class="post-list-container">
-    <div class="post-inner">
-        
-            <div class="post gt-bg-theme-color-second">
-                <div class="post-left">
-                    <div>
-                        
-                        <a href="https://ce39906.github.io/post/GCC-buildin-except-解析/">
-                            <span class="post-title gt-c-content-color-first">GCC __buildin_except 解析</span>
-                        </a>
-                    </div>
-                    <div class="gt-post-content post-abstract gt-c-content-color-second">
-                        追求极致的性能
-
-                    </div>
-                    <div class="post-info">
-                        <time class="post-time gt-c-content-color-first">
-                            发布于 · 2018-05-10 ·
-                        </time>
-                        
-                            <a href="https://ce39906.github.io/tag/_OdGJUpK1/" class="post-tag">
-                                # Others
-                            </a>
-                        
-                    </div>
-                </div>
-                
-            </div>
-        
-            <div class="post gt-bg-theme-color-second">
-                <div class="post-left">
-                    <div>
-                        
-                        <a href="https://ce39906.github.io/post/C-拼接长字符串/">
-                            <span class="post-title gt-c-content-color-first">C++ 拼接长字符串</span>
-                        </a>
-                    </div>
-                    <div class="gt-post-content post-abstract gt-c-content-color-second">
-                        如何拼接字符串效率最高
-
-                    </div>
-                    <div class="post-info">
-                        <time class="post-time gt-c-content-color-first">
-                            发布于 · 2018-04-26 ·
-                        </time>
-                        
-                            <a href="https://ce39906.github.io/tag/_OdGJUpK1/" class="post-tag">
-                                # Others
-                            </a>
-                        
-                    </div>
-                </div>
-                
-            </div>
-        
-            <div class="post gt-bg-theme-color-second">
-                <div class="post-left">
-                    <div>
-                        
-                        <a href="https://ce39906.github.io/post/C-内存数据结构与二进制文件之间的序列化和反序列化/">
-                            <span class="post-title gt-c-content-color-first">C++ 内存数据结构与二进制文件之间的序列化和反序列化</span>
-                        </a>
-                    </div>
-                    <div class="gt-post-content post-abstract gt-c-content-color-second">
-                        二进制读写效率高
-
-                    </div>
-                    <div class="post-info">
-                        <time class="post-time gt-c-content-color-first">
-                            发布于 · 2018-04-10 ·
-                        </time>
-                        
-                            <a href="https://ce39906.github.io/tag/_OdGJUpK1/" class="post-tag">
-                                # Others
-                            </a>
-                        
-                    </div>
-                </div>
-                
-            </div>
-        
-            <div class="post gt-bg-theme-color-second">
-                <div class="post-left">
-                    <div>
-                        
-                        <a href="https://ce39906.github.io/post/C-Thread-Pool-使用解析/">
-                            <span class="post-title gt-c-content-color-first">C++ Thread Pool 使用解析</span>
-                        </a>
-                    </div>
-                    <div class="gt-post-content post-abstract gt-c-content-color-second">
-                        各种线程池实现
-
-                    </div>
-                    <div class="post-info">
-                        <time class="post-time gt-c-content-color-first">
-                            发布于 · 2018-03-29 ·
-                        </time>
-                        
-                            <a href="https://ce39906.github.io/tag/_OdGJUpK1/" class="post-tag">
-                                # Others
-                            </a>
-                        
-                    </div>
-                </div>
-                
-            </div>
-        
-    </div>
-</div>
-        <div class="pagination-container">
-    
-        <a href="https://ce39906.github.io/tag/_OdGJUpK1" class="prev-page gt-a-link">上一页</a>
-    
-    
-</div>
-
         <div class="site-footer gt-c-content-color-first">
     <div class="slogan gt-c-content-color-first">算法及读书杂记</div>
     <div class="social-container">
@@ -272,6 +173,6 @@
 </script>
 
     </div>
-</div>
 </body>
+
 </html>

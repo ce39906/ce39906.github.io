@@ -6,7 +6,7 @@
 
 <title>Leveldb skiplist 实现以及解析 | Ce39906&#39;s Blog</title>
 
-<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1621933777401">
+<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1621935454102">
 
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://ce39906.github.io//styles/main.css">
@@ -49,101 +49,7 @@
 </head>
 <body>
 <div class="main gt-bg-theme-color-first">
-    <style>
-    /* 导航栏样式 */
-    .navbar {
-        position: relative;
-        display: -ms-flexbox;
-        display: flex;
-        -ms-flex-wrap: wrap;
-        flex-wrap: wrap;
-        -ms-flex-align: center;
-        align-items: center;
-        -ms-flex-pack: justify;
-        justify-content: space-between;
-        padding: 0.5rem 1rem;
-    }
-
-    .navbar-brand {
-        display: inline-block;
-        padding-top: 0.3125rem;
-        padding-bottom: 0.3125rem;
-        margin-right: 1rem;
-        font-size: 1.25rem;
-        line-height: inherit;
-        white-space: nowrap;
-    }
-
-    .navbar-brand:hover,
-    .navbar-brand:focus {
-        text-decoration: none;
-    }
-
-    .navbar-nav {
-        display: -ms-flexbox;
-        display: flex;
-        -ms-flex-direction: column;
-        flex-direction: column;
-        padding-left: 0;
-        margin-bottom: 0;
-        list-style: none;
-    }
-
-    .navbar-collapse {
-        -ms-flex-preferred-size: 100%;
-        flex-basis: 100%;
-        -ms-flex-positive: 1;
-        flex-grow: 1;
-        -ms-flex-align: center;
-        align-items: center;
-    }
-
-    .navbar-toggler {
-        padding: 0.25rem 0.75rem;
-        font-size: 1.25rem;
-        line-height: 1;
-        background-color: transparent;
-        border: 1px solid transparent;
-        border-radius: 0.25rem;
-    }
-
-    .navbar-toggler:hover,
-    .navbar-toggler:focus {
-        text-decoration: none;
-    }
-
-    @media (min-width: 992px) {
-        .navbar-expand-lg {
-            -ms-flex-flow: row nowrap;
-            flex-flow: row nowrap;
-            -ms-flex-pack: start;
-            justify-content: flex-start;
-        }
-
-        .navbar-expand-lg .navbar-nav {
-            -ms-flex-direction: row;
-            flex-direction: row;
-        }
-
-        .navbar-expand-lg .navbar-collapse {
-            display: -ms-flexbox !important;
-            display: flex !important;
-            -ms-flex-preferred-size: auto;
-            flex-basis: auto;
-        }
-
-        .navbar-expand-lg .navbar-toggler {
-            display: none;
-        }
-    }
-
-    @media (max-width: 991px) {
-        #navbarSupportedContent {
-            display: none;
-        }
-    }
-</style>
-<nav class="navbar navbar-expand-lg">
+    <nav class="navbar navbar-expand-lg">
     <div class="navbar-brand">
         <img class="user-avatar" src="/images/avatar.png" alt="头像">
         <div class="site-name gt-c-content-color-first">
@@ -151,7 +57,7 @@
         </div>
     </div>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
         <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -191,8 +97,8 @@
             
         </div>
         <div style="text-align: center">
-            <form id="gridea-search-form" style="position: relative" data-update="1621933777401"
-                action="/search/index.html">
+            <form id="gridea-search-form" style="position: relative" data-update="1621935454102"
+                action="/search/">
                 <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
                 <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
             </form>
@@ -201,7 +107,7 @@
 </nav>
 <script>
     /* 移动端导航栏展开/收起切换 */
-    document.getElementById('changeNavbar').onclick = function () {
+    document.getElementById('changeNavbar').onclick = () => {
         var element = document.getElementById('navbarSupportedContent');
         if (element.style.display === 'none' || element.style.display === '') {
             element.style.display = 'block';
@@ -221,7 +127,7 @@
                         · 2018-04-27 ·
                     </time>
                     
-                        <a href="https://ce39906.github.io//tag/sKN_FIXf8-e" class="post-tags">
+                        <a href="https://ce39906.github.io/tag/sKN_FIXf8-e/" class="post-tags">
                             # Leveldb
                         </a>
                     
@@ -232,10 +138,10 @@
 <h2 id="skiplist-原理介绍">skiplist 原理介绍</h2>
 <p>skiplist 由William Pugh 在论文<a href="http://www.cl.cam.ac.uk/teaching/0506/Algorithms/skiplists.pdf">Skip Lists: A Probabilistic Alternative to Balanced Trees</a> 中提出的一种数据结构，skiplist 是一种随机化存储的多层线性链表结构，插入，查找，删除的都是对数级别的时间复杂度。skiplist 和平衡树有相同的时间复杂度，但相比平衡树，skip实现起来更简单。</p>
 <p>下图是wikipedia 上一个一个高度为4的skiplist</p>
-<p><img src="https://upload.wikimedia.org/wikipedia/commons/8/86/Skip_list.svg" alt="avatar"><br>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/8/86/Skip_list.svg" alt="avatar" loading="lazy"><br>
 从垂直角度看，skiplist 的第0层以单链表的形式按照从小到大的顺序存储全部数据，越高层的链表的节点数越少，这样的特点实现了skiplist 在定位某个位置时，通过在高层较少的节点中查找就可以确定需要定位的位置处于哪个区间，从高层到低层不断缩小查找区间。以上图为例，比如我们需要在skiplist中查找2，查找过程如下，首先在最高层确定到2只可能处于1-&gt;NULL 这个区间，然后在第三层查找确定 2 只可能处于 1-&gt;4 这个区间，继续在第二层查找确定2 只可能处于1-3 这区间，最后在最底层1-&gt;3 这个区间查找可以确定2 是否存在于skiplist之中。<br>
 下图是wikipedia上提供的表示skiplist插入过程的一张gif,此图形象的说明了skiplist 定位以及插入节点的过程。<br>
-<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/Skip_list_add_element-en.gif" alt="skiplist insert"><br>
+<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/Skip_list_add_element-en.gif" alt="skiplist insert" loading="lazy"><br>
 从水平角度来看，skiplist实现在链表开始的时候设置名为head 的哨兵节点，每一层链表的结束为止全部指向NULL。</p>
 <h2 id="leveldb-实现">leveldb 实现</h2>
 <p>leveldb 实现的skiplist位于db/skiplist.h。</p>
@@ -436,7 +342,7 @@ SkipList&lt;Key,Comparator&gt;::FindLessThan(const Key&amp; key) const {
         
             <div class="next-post">
                 <div class="next gt-c-content-color-first">下一篇</div>
-                <a href="https://ce39906.github.io//post/C-拼接长字符串" class="post-title gt-a-link">
+                <a href="https://ce39906.github.io/post/C-拼接长字符串/" class="post-title gt-a-link">
                     C++ 拼接长字符串
                 </a>
             </div>
@@ -521,11 +427,13 @@ SkipList&lt;Key,Comparator&gt;::FindLessThan(const Key&amp; key) const {
         
     </div>
     <div>
+        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
+                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://ce39906.github.io//atom.xml" target="_blank">RSS</a></a>
     </div>
 </div>
 
 <script>
-  hljs.initHighlightingOnLoad()
+  hljs.highlightAll()
 </script>
 
     </div>

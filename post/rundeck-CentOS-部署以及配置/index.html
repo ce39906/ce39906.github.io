@@ -6,7 +6,7 @@
 
 <title>rundeck CentOS 部署以及配置 | Ce39906&#39;s Blog</title>
 
-<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1621933777401">
+<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1621935454102">
 
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://ce39906.github.io//styles/main.css">
@@ -49,101 +49,7 @@
 </head>
 <body>
 <div class="main gt-bg-theme-color-first">
-    <style>
-    /* 导航栏样式 */
-    .navbar {
-        position: relative;
-        display: -ms-flexbox;
-        display: flex;
-        -ms-flex-wrap: wrap;
-        flex-wrap: wrap;
-        -ms-flex-align: center;
-        align-items: center;
-        -ms-flex-pack: justify;
-        justify-content: space-between;
-        padding: 0.5rem 1rem;
-    }
-
-    .navbar-brand {
-        display: inline-block;
-        padding-top: 0.3125rem;
-        padding-bottom: 0.3125rem;
-        margin-right: 1rem;
-        font-size: 1.25rem;
-        line-height: inherit;
-        white-space: nowrap;
-    }
-
-    .navbar-brand:hover,
-    .navbar-brand:focus {
-        text-decoration: none;
-    }
-
-    .navbar-nav {
-        display: -ms-flexbox;
-        display: flex;
-        -ms-flex-direction: column;
-        flex-direction: column;
-        padding-left: 0;
-        margin-bottom: 0;
-        list-style: none;
-    }
-
-    .navbar-collapse {
-        -ms-flex-preferred-size: 100%;
-        flex-basis: 100%;
-        -ms-flex-positive: 1;
-        flex-grow: 1;
-        -ms-flex-align: center;
-        align-items: center;
-    }
-
-    .navbar-toggler {
-        padding: 0.25rem 0.75rem;
-        font-size: 1.25rem;
-        line-height: 1;
-        background-color: transparent;
-        border: 1px solid transparent;
-        border-radius: 0.25rem;
-    }
-
-    .navbar-toggler:hover,
-    .navbar-toggler:focus {
-        text-decoration: none;
-    }
-
-    @media (min-width: 992px) {
-        .navbar-expand-lg {
-            -ms-flex-flow: row nowrap;
-            flex-flow: row nowrap;
-            -ms-flex-pack: start;
-            justify-content: flex-start;
-        }
-
-        .navbar-expand-lg .navbar-nav {
-            -ms-flex-direction: row;
-            flex-direction: row;
-        }
-
-        .navbar-expand-lg .navbar-collapse {
-            display: -ms-flexbox !important;
-            display: flex !important;
-            -ms-flex-preferred-size: auto;
-            flex-basis: auto;
-        }
-
-        .navbar-expand-lg .navbar-toggler {
-            display: none;
-        }
-    }
-
-    @media (max-width: 991px) {
-        #navbarSupportedContent {
-            display: none;
-        }
-    }
-</style>
-<nav class="navbar navbar-expand-lg">
+    <nav class="navbar navbar-expand-lg">
     <div class="navbar-brand">
         <img class="user-avatar" src="/images/avatar.png" alt="头像">
         <div class="site-name gt-c-content-color-first">
@@ -151,7 +57,7 @@
         </div>
     </div>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation" id="changeNavbar">
         <i class="fas fa-bars gt-c-content-color-first" style="font-size: 18px"></i>
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -191,8 +97,8 @@
             
         </div>
         <div style="text-align: center">
-            <form id="gridea-search-form" style="position: relative" data-update="1621933777401"
-                action="/search/index.html">
+            <form id="gridea-search-form" style="position: relative" data-update="1621935454102"
+                action="/search/">
                 <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
                 <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
             </form>
@@ -201,7 +107,7 @@
 </nav>
 <script>
     /* 移动端导航栏展开/收起切换 */
-    document.getElementById('changeNavbar').onclick = function () {
+    document.getElementById('changeNavbar').onclick = () => {
         var element = document.getElementById('navbarSupportedContent');
         if (element.style.display === 'none' || element.style.display === '') {
             element.style.display = 'block';
@@ -221,7 +127,7 @@
                         · 2018-07-11 ·
                     </time>
                     
-                        <a href="https://ce39906.github.io//tag/_OdGJUpK1" class="post-tags">
+                        <a href="https://ce39906.github.io/tag/_OdGJUpK1/" class="post-tags">
                             # Others
                         </a>
                     
@@ -281,15 +187,15 @@ vim /etc/rundeck/framework.properties
 <p>在下面示例中展示</p>
 <h2 id="示例">示例</h2>
 <p>在浏览器中输入rundeck 地址，以我部署的服务为例http://10.4.227.26:4440/<br>
-<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_login.jpg" alt="这里写图片描述"><br>
+<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_login.jpg" alt="这里写图片描述" loading="lazy"><br>
 默认输入 admin admin 登录, 登录后新建一个project<br>
-<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_newproject.jpg" alt="这里写图片描述"><br>
+<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_newproject.jpg" alt="这里写图片描述" loading="lazy"><br>
 输入新建project 的名称以及描述其他按照默认选择，以test 为例，滚动到页面最后点击<strong>create</strong> 创建<br>
-<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_project1.jpg" alt="这里写图片描述"><br>
-<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_project2.jpg" alt="avatar"><br>
+<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_project1.jpg" alt="这里写图片描述" loading="lazy"><br>
+<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_project2.jpg" alt="avatar" loading="lazy"><br>
 下一步继续按照默认配置保存<br>
 新建工程后，我们查看工程下的node 节点<br>
-<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_nodes.jpg" alt="avatar"><br>
+<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_nodes.jpg" alt="avatar" loading="lazy"><br>
 可以看到默认情况工程下只有server node 节点。为了添加其他节点,我们进入到 /var/rundeck/projects/test/etc 路径，编辑resources.xml 文件，默认情况resources.xml 下只有server node， 如下图</p>
 <pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
 
@@ -307,28 +213,28 @@ vim /etc/rundeck/framework.properties
 </code></pre>
 <p>新增的hostname username 需要配置正确。<br>
 完成配置后，刷新web 界面，可以看到新增的10.4.227.21<br>
-<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_nodes1.jpg" alt="avatar"><br>
+<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_nodes1.jpg" alt="avatar" loading="lazy"><br>
 仅仅在rundeck server 添加如下配置不能实现rundeck server 到client 的无密码连接。因此，我们登录到rundeck client机器(10.4.227.21)，将 rundeck server(10.4.227.26) /var/lib/rundeck/.ssh/id_rsa.pub 的内容追加到 client 机器中的 ~/.ssh/authorized_keys<br>
 以上就完成rundeck node 节点的添加。下面我们测试通过web 界面配置在指定的node 节点上执行命令<br>
-<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_commands.jpg" alt="avatar"><br>
+<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_commands.jpg" alt="avatar" loading="lazy"><br>
 选择所有节点后，我们以执行 <strong>ls /tmp</strong> 为例<br>
-<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_commands1.jpg" alt="avatar"><br>
+<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_commands1.jpg" alt="avatar" loading="lazy"><br>
 点击右上角的执行，执行结果如下<br>
-<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_commands2.jpg" alt="avatar"><br>
+<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_commands2.jpg" alt="avatar" loading="lazy"><br>
 除了简单的命令，rundeck job 支持实现更加复杂的任务。我们以执行脚本为例进行说明。首先新建一个job<br>
-<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_job.jpg" alt="avatar"><br>
+<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_job.jpg" alt="avatar" loading="lazy"><br>
 配置job 的名称以及描述<br>
-<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_job1.jpg" alt="avatar"><br>
+<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_job1.jpg" alt="avatar" loading="lazy"><br>
 在step 中选择执行脚本任务<br>
-<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_job2.jpg" alt="avatar"><br>
+<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_job2.jpg" alt="avatar" loading="lazy"><br>
 点击后编辑脚本并保存<br>
-<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_job3.jpg" alt="avatar"><br>
+<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_job3.jpg" alt="avatar" loading="lazy"><br>
 选择执行job 的node, 这里我们选择client node(10.4.227.21) 执行<br>
-<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_job4.jpg" alt="avatar"><br>
+<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_job4.jpg" alt="avatar" loading="lazy"><br>
 其他使用默认配置，点击创建，创建完成后执行job<br>
-<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_job5.jpg" alt="avatar"><br>
+<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_job5.jpg" alt="avatar" loading="lazy"><br>
 执行结果如下<br>
-<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_job6.jpg" alt="avatar"><br>
+<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_job6.jpg" alt="avatar" loading="lazy"><br>
 可以看到在rundeck client 上执行了job 指定的脚本(执行 whoami 以及 ifconfig)</p>
 <h2 id="思考">思考</h2>
 <p>rundeck 在完成初始配置后可以很方便用于在一组机器上执行各种任务，这种场景在生产环境以及日常运维中非常常见，类似的工具还有jenkins<br>
@@ -341,7 +247,7 @@ vim /etc/rundeck/framework.properties
         
             <div class="next-post">
                 <div class="next gt-c-content-color-first">下一篇</div>
-                <a href="https://ce39906.github.io//post/C-cout打印uint8-t的正确方式" class="post-title gt-a-link">
+                <a href="https://ce39906.github.io/post/C-cout打印uint8-t的正确方式/" class="post-title gt-a-link">
                     C++ cout打印uint8_t的正确方式
                 </a>
             </div>
@@ -426,11 +332,13 @@ vim /etc/rundeck/framework.properties
         
     </div>
     <div>
+        Theme by <a href="https://imhanjie.com/" target="_blank">imhanjie</a>, Powered by <a
+                href="https://github.com/getgridea/gridea" target="_blank">Gridea | <a href="https://ce39906.github.io//atom.xml" target="_blank">RSS</a></a>
     </div>
 </div>
 
 <script>
-  hljs.initHighlightingOnLoad()
+  hljs.highlightAll()
 </script>
 
     </div>

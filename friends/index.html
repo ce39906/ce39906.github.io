@@ -1,10 +1,11 @@
 <html>
+
 <head>
     <meta charset="utf-8" />
 <meta name="description" content="" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<title>抓取北邮人论坛招聘版及跳槽版每日帖数 | Ce39906&#39;s Blog</title>
+<title>友情链接 | Ce39906&#39;s Blog</title>
 
 <link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1621935454102">
 
@@ -45,11 +46,12 @@
     gtag('config', 'UA-188349426-1');
 </script>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.css">
 </head>
+
 <body>
 <div class="main gt-bg-theme-color-first">
-    <nav class="navbar navbar-expand-lg">
+        <div class="main-content">
+            <nav class="navbar navbar-expand-lg">
     <div class="navbar-brand">
         <img class="user-avatar" src="/images/avatar.png" alt="头像">
         <div class="site-name gt-c-content-color-first">
@@ -116,193 +118,25 @@
         }
     }
 </script>
-    <div class="post-container">
-        <div class="post-detail gt-bg-theme-color-second">
-            <article class="gt-post-content">
-                <h2 class="post-title">
-                    抓取北邮人论坛招聘版及跳槽版每日帖数
-                </h2>
-                <div class="post-info">
-                    <time class="post-time gt-c-content-color-first">
-                        · 2019-04-15 ·
-                    </time>
-                    
-                        <a href="https://ce39906.github.io/tag/_OdGJUpK1/" class="post-tags">
-                            # Others
-                        </a>
-                    
+            <div class="post-container">
+                <div class="post-detail">
+                    <article>
+                        <!-- <div class="post-content-wrapper"> -->
+                            <div class="post-content">
+                                <div class="friends-desc">
+                                    
+                                </div>
+                                <h3 id="linklist">友链列表</h3>
+                                
+                                    
+                                
+                            </div>
+                        <!-- </div> -->
+                    </article>
                 </div>
-                <div class="post-content">
-                    <p>互联网寒冬下的暗中观察</p>
-<!-- more -->
-<h2 id="前两周趋势图">前两周趋势图</h2>
-<p><img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/Jump.png" alt="pic" loading="lazy"><br>
-<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/JobInfo.png" alt="pic" loading="lazy"></p>
-<h2 id="模拟登陆">模拟登陆</h2>
-<pre><code class="language-python">headers = {'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-           'Accept-Encoding': 'gzip, deflate, compress',
-           'Accept-Language': 'en-us;q=0.5,en;q=0.3',
-           'Cache-Control': 'max-age=0',
-           'Connection': 'keep-alive',
-           'X-Requested-With': 'XMLHttpRequest',
-           'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 Safari/537.36' }
-
-def login():
-    url = 'https://bbs.byr.cn/user/ajax_login.json'
-    login_data = {'id': '****', 'passwd': '******'}
-    session = requests.Session()
-    req = session.post(url, data=login_data, headers=headers)
-    return session
-</code></pre>
-<h2 id="解析页面">解析页面</h2>
-<p>使用BeautifulSoup快速定位html标签地址</p>
-<pre><code class="language-python">def parse_page(content):
-    soup = BeautifulSoup(content, features=&quot;lxml&quot;)
-    spans = soup.findAll('span', {'class' : 'n-left'})
-    text = str(spans[0])
-    cur_user_prefix = &quot;共有&quot;
-    cur_user_suffix = &quot;人&quot;
-    prefix_idx = text.find(cur_user_prefix)
-    suffix_idx = text.find(cur_user_suffix, prefix_idx)
-    cur_user_num = text[prefix_idx + len(cur_user_prefix) : suffix_idx]
-
-    max_user_prefix = &quot;最高&quot;
-    max_user_suffix = &quot;人&quot;
-    prefix_idx = text.find(max_user_prefix, suffix_idx)
-    suffix_idx = text.find(max_user_suffix, prefix_idx)
-    max_user_num = text[prefix_idx + len(max_user_prefix) : suffix_idx]
-
-    cur_post_prefix = &quot;帖数&quot;
-    cur_post_suffix = &quot;&lt;&quot;
-    prefix_idx = text.find(cur_post_prefix, suffix_idx)
-    suffix_idx = text.find(cur_post_suffix, prefix_idx)
-    post_num = text[prefix_idx + len(cur_post_prefix) : suffix_idx]
-
-    return int(cur_user_num), int(max_user_num), int(post_num)
-
-</code></pre>
-<h2 id="存储至mysql">存储至mysql</h2>
-<pre><code class="language-python">#-*- coding: utf-8 -*-
-&quot;&quot;&quot;
-File Name: hire_info_db.py
-Author: ce39906
-Mail: ce39906@163.com
-Created Time: 2019-04-13 07:46:29
-&quot;&quot;&quot;
-from db import DB
-
-class HireInfo:
-    def __init__(self, board, date, cur_user_num, max_user_num, cur_post_num):
-        self.board = board
-        self.date = date
-        self.cur_user_num = cur_user_num
-        self.max_user_num = max_user_num
-        self.cur_post_num = cur_post_num
-
-
-class HireInfoDB(DB):
-    def __init__(self):
-        DB.__init__(self)
-        self.table = 'hire_info'
-
-    def insert(self, hire_info):
-        query = (&quot;insert into %s&quot;
-                &quot;(board,date,cur_user_num,max_user_num,cur_post_num)&quot;
-                &quot;values('%s','%s',%d, %d, %d)&quot;
-                ) % (self.table,hire_info.board, hire_info.date, hire_info.cur_user_num,
-                hire_info.max_user_num, hire_info.cur_post_num)
-
-        self.execute(query)
-
-    def select_by_board(self, board, days):
-        query = (&quot;select * from %s &quot;
-                 &quot;where board = '%s' and to_days(now()) - to_days(date) &lt;= %d &quot;
-                ) % (self.table, board, days)
-        res = self.execute(query)
-        
-        return res
-</code></pre>
-<h2 id="绘制折线图">绘制折线图</h2>
-<pre><code class="language-python">def plot(data, board):
-    dates = [str(x[2]) for x in data]
-    cur_user_nums = [x[3] for x in data]
-    cur_post_nums = [x[5] for x in data]
-    d = {'dates' : dates, 
-         'cur_user_num' : cur_user_nums,
-         'cur_post_num' : cur_post_nums}
-    
-    df = pd.DataFrame(d)
-    plt.cla()
-    ax = plt.gca()
-    df.plot(title=board,
-            kind='line',
-            x='dates', 
-            y='cur_user_num', 
-            color='red',
-            marker='o',
-            label='online_user_num',
-            ax=ax)
-    df.plot(kind='line',
-            x='dates',
-            y='cur_post_num',
-            color='green', 
-            marker='x',
-            label='post_num',
-            ax=ax)
-
-    plt.savefig(board + '.png')
-</code></pre>
-<h2 id="上传至腾讯云">上传至腾讯云</h2>
-<pre><code class="language-python">#-*- coding: utf-8 -*-
-&quot;&quot;&quot;
-File Name: cos_client.py
-Author: ce39906
-Mail: ce39906@163.com
-Created Time: 2019-04-12 15:54:31
-&quot;&quot;&quot;
-from qcloud_cos import CosConfig
-from qcloud_cos import CosS3Client
-import sys
-import logging
-
-class TencentCloudClient:
-    def __init__(self):
-        secret_id = '***************************'
-        secret_key = '*****************'
-        region = 'ap-beijing'
-        token = None
-        scheme = 'https'
-        config = CosConfig(Region=region, SecretId=secret_id, SecretKey=secret_key, Token=token, Scheme=scheme)
-        self.client = CosS3Client(config)
-        self.url_prefix = 'https://myblog-********.cos.ap-beijing.myqcloud.com/'
-
-    def upload_file(self, filename):
-        self.client.put_object_from_local_file(Bucket='myblog-*******',
-                                               LocalFilePath=filename,
-                                               Key=filename,
-                                               EnableMD5=False)
-</code></pre>
-<h2 id="完整代码">完整代码</h2>
-<p>https://github.com/ce39906/self-practices/tree/master/pycode/crawl_byr_forum</p>
-
-                </div>
-            </article>
-        </div>
-
-        
-            <div class="next-post">
-                <div class="next gt-c-content-color-first">下一篇</div>
-                <a href="https://ce39906.github.io/post/读书短评-《动物农场》/" class="post-title gt-a-link">
-                    读书短评-《动物农场》
-                </a>
-            </div>
-        
-
-        
-
-        
-            
-                <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css">
+                
+                    
+                        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css">
 <script src="https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js"></script>
 <script>
     // md5.min.js
@@ -345,14 +179,15 @@ class TencentCloudClient:
 
 </script>
 
-            
+                    
 
-            
-        
+                    
+                
+            </div>
 
-        
 
-        <div class="site-footer gt-c-content-color-first">
+
+            <div class="site-footer gt-c-content-color-first">
     <div class="slogan gt-c-content-color-first">算法及读书杂记</div>
     <div class="social-container">
         
@@ -386,7 +221,8 @@ class TencentCloudClient:
   hljs.highlightAll()
 </script>
 
+        </div>
     </div>
-</div>
 </body>
+
 </html>
