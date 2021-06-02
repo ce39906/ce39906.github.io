@@ -6,7 +6,7 @@
 
 <title>Spark collect_list 保留空值 | Ce39906&#39;s Blog</title>
 
-<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1621935768165">
+<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1622617737087">
 
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://ce39906.github.io//styles/main.css">
@@ -97,7 +97,7 @@
             
         </div>
         <div style="text-align: center">
-            <form id="gridea-search-form" style="position: relative" data-update="1621935768165"
+            <form id="gridea-search-form" style="position: relative" data-update="1622617737087"
                 action="/search/">
                 <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
                 <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
@@ -143,33 +143,39 @@
 <tr>
 <th>name</th>
 <th>sex</th>
+<th>age</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>John</td>
 <td>male</td>
+<td>18</td>
 </tr>
 <tr>
 <td>null</td>
 <td>male</td>
+<td>19</td>
 </tr>
 <tr>
 <td>Lily</td>
 <td>female</td>
+<td>null</td>
 </tr>
 <tr>
 <td>null</td>
 <td>female</td>
+<td>20</td>
 </tr>
 <tr>
 <td>Tom</td>
 <td>male</td>
+<td>35</td>
 </tr>
 </tbody>
 </table>
 <p>根据sex字段 group</p>
-<pre><code class="language-python">df.groupby(&quot;sex&quot;).agg(collect_list(&quot;name&quot;)).alias(&quot;names&quot;)
+<pre><code class="language-java">df.groupBy(&quot;sex&quot;).agg(collect_list(&quot;name&quot;).alias(&quot;names&quot;), collect_list(&quot;age&quot;).alias(&quot;ages&quot;))
 </code></pre>
 <p>会得到以下结果:</p>
 <table>
@@ -177,23 +183,40 @@
 <tr>
 <th>sex</th>
 <th>names</th>
+<th>ages</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>male</td>
 <td>[&quot;John&quot;, &quot;Tom&quot;]</td>
+<td>[18, 35, 19]</td>
 </tr>
 <tr>
 <td>female</td>
 <td>[&quot;Lily&quot;]</td>
+<td>[20]</td>
 </tr>
 </tbody>
 </table>
 <p>也就是说，spark 在collect_list 的时候把空值过滤掉。</p>
 <h2 id="解决方案">解决方案</h2>
-<p>解决方案比较简单粗暴，就是将dataframe 里面的空值替换为非空值。</p>
-<pre><code class="language-python">df = df.na.fill(&quot;#&quot;)
+<p>解决方案比较简单粗暴，就是将dataframe 里面的空值替换为非空值。<br>
+最简单的方法是使用下面的语句，但是直接使用na.fill 只能将schemaType 和fill 传入参数类型一致的列空值替换，schemaType不一致的null 值无法生效。</p>
+<pre><code class="language-java">df = df.na.fill(&quot;#&quot;)
+</code></pre>
+<p>正确的做法是针对每一个不同的列类型指定替换后的数值</p>
+<pre><code class="language-java">val typeMap = df.dtypes.map(column =&gt; 
+    column._2 match {
+        case &quot;IntegerType&quot; =&gt; (column._1 -&gt; 0)
+        case &quot;StringType&quot; =&gt; (column._1 -&gt; &quot;&quot;)
+        case &quot;DoubleType&quot; =&gt; (column._1 -&gt; 0.0)
+    }).toMap
+df  = df.na.fill(typeMap)
+</code></pre>
+<p>使用以下语句检查df 中是否存在空值</p>
+<pre><code class="language-java">val filtered = df.filter(row =&gt; !row.anyNull)
+assert(filtered.count() == df.count())
 </code></pre>
 <p>再次group 之后，会得到以下结果:</p>
 <table>
@@ -201,16 +224,19 @@
 <tr>
 <th>sex</th>
 <th>names</th>
+<th>ages</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>male</td>
 <td>[&quot;John&quot;, &quot;Tom&quot;, &quot;#&quot;]</td>
+<td>[18, 35, 19]</td>
 </tr>
 <tr>
 <td>female</td>
 <td>[&quot;Lily&quot;,&quot;#&quot;]</td>
+<td>[0, 20]</td>
 </tr>
 </tbody>
 </table>
