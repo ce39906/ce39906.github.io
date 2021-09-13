@@ -6,7 +6,7 @@
 
 <title>配置jupyter web server | Ce39906&#39;s Blog</title>
 
-<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1622617737087">
+<link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1631522274321">
 
 <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://ce39906.github.io//styles/main.css">
@@ -97,7 +97,7 @@
             
         </div>
         <div style="text-align: center">
-            <form id="gridea-search-form" style="position: relative" data-update="1622617737087"
+            <form id="gridea-search-form" style="position: relative" data-update="1631522274321"
                 action="/search/">
                 <input class="search-input" autocomplete="off" spellcheck="false" name="q" placeholder="搜索文章" />
                 <i class="fas fa-search gt-c-content-color-first" style="position: absolute; top: 9px; left: 10px;"></i>
@@ -162,6 +162,15 @@ c.NotebookApp.open_browser = False
 </code></pre>
 <p>从本地浏览器登录jupyter<br>
 <img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/jupyter.png" alt="pic" loading="lazy"></p>
+<h2 id="安装插件">安装插件</h2>
+<p>安装<a href="https://github.com/codota/jupyter-tabnine">jupyter-tabnine</a>插件实现jupyter notebook 自动补全</p>
+<pre><code class="language-bash">pip3 install jupyter-tabnine
+jupyter nbextension install --py jupyter_tabnine
+jupyter nbextension enable --py jupyter_tabnine
+jupyter serverextension enable --py jupyter_tabnine
+</code></pre>
+<p>结果如下:<br>
+<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/notebook_autocomplete.gif" alt="pic" loading="lazy"></p>
 
                 </div>
             </article>
