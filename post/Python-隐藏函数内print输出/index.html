@@ -4,7 +4,7 @@
 <meta name="description" content="" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<title>2021新年Flag | Ce39906&#39;s Blog</title>
+<title>Python 隐藏函数内print输出 | Ce39906&#39;s Blog</title>
 
 <link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1632483814908">
 
@@ -120,11 +120,11 @@
         <div class="post-detail gt-bg-theme-color-second">
             <article class="gt-post-content">
                 <h2 class="post-title">
-                    2021新年Flag
+                    Python 隐藏函数内print输出
                 </h2>
                 <div class="post-info">
                     <time class="post-time gt-c-content-color-first">
-                        · 2021-02-19 ·
+                        · 2021-09-24 ·
                     </time>
                     
                         <a href="https://ce39906.github.io/tag/_OdGJUpK1/" class="post-tags">
@@ -133,22 +133,38 @@
                     
                 </div>
                 <div class="post-content">
-                    <p>步入而立之年，立下一些Flag</p>
-<!-- more --> 
-<h3 id="待读图书">待读图书</h3>
-<h2 id="金字塔原理">《金字塔原理》</h2>
-<p>完成进度 100%</p>
-<h2 id="高效能人士的七个习惯">《高效能人士的七个习惯》</h2>
-<p>完成进度 50%</p>
-<h2 id="学会提问">《学会提问》</h2>
-<p>完成进度 0%</p>
-<h2 id="用图表说活">《用图表说活》</h2>
-<p>完成进度 0%</p>
-<h2 id="基因传">《基因传》</h2>
-<p>完成进度 1%</p>
-<h3 id="个人">个人</h3>
-<p>体重恢复到70kg以内，拒绝油腻<br>
-完成进度 -3%</p>
+                    <p>让python 程序清爽一些</p>
+<!-- more -->
+<h2 id="背景">背景</h2>
+<p>在使用一些第三方python 库时,偶尔会出现一些不需要的信息打印到终端。更改第三方代码能暂时解决问题，但是在第三方库更新之后可能又会出现。</p>
+<h2 id="方法">方法</h2>
+<p>利用<strong>with</strong>方法将在<strong>with</strong>作用域内的所有函数的<strong>stdout</strong>都指向到<strong>devnull</strong>, 离开<strong>with</strong>作用域后将<strong>stdout</strong>恢复。<br>
+定义如下类：</p>
+<pre><code class="language-python">class HiddenPrints:
+    def __enter__(self):
+        self._original_stdout = sys.stdout
+        sys.stdout = open(os.devnull, 'w')
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        sys.stdout.close()
+        sys.stdout = self._original_stdout
+</code></pre>
+<p>定义一个测试方法：</p>
+<pre><code class="language-python">class StaticCls():
+    call_cnt = 0
+    def test_print(self):
+        StaticCls.call_cnt += 1
+        print(&quot;This function has been called %s times&quot; % StaticCls.call_cnt)
+
+with HiddenPrints():
+    cls = StaticCls()
+    cls.test_print()
+
+cls = StaticCls()
+cls.test_print()
+</code></pre>
+<p>运行结果如下:<br>
+<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/hidden_prints.png" alt="pic" loading="lazy">可见虽然<code>test_print()</code> 被执行两次，但是我们在终端只看到第二次调用的输出。</p>
 
                 </div>
             </article>
@@ -157,8 +173,8 @@
         
             <div class="next-post">
                 <div class="next gt-c-content-color-first">下一篇</div>
-                <a href="https://ce39906.github.io/post/程序员应该拒绝使用baidu/" class="post-title gt-a-link">
-                    程序员应该拒绝使用baidu
+                <a href="https://ce39906.github.io/post/du-shu-duan-ping-lesslessjin-zi-ta-yuan-li-greatergreater1/" class="post-title gt-a-link">
+                    读书短评-《金字塔原理》
                 </a>
             </div>
         
