@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://ce39906.github.io/</id>
     <title>Ce39906&apos;s Blog</title>
-    <updated>2021-09-24T11:43:42.627Z</updated>
+    <updated>2021-10-11T10:55:53.489Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://ce39906.github.io/"/>
     <link rel="self" href="https://ce39906.github.io/atom.xml"/>
@@ -10,6 +10,17 @@
     <logo>https://ce39906.github.io/images/avatar.png</logo>
     <icon>https://ce39906.github.io/favicon.ico</icon>
     <rights>All rights reserved 2021, Ce39906&apos;s Blog</rights>
+    <entry>
+        <title type="html"><![CDATA[Sedona 示例]]></title>
+        <id>https://ce39906.github.io/post/Sedona-示例/</id>
+        <link href="https://ce39906.github.io/post/Sedona-示例/">
+        </link>
+        <updated>2021-10-11T08:13:50.000Z</updated>
+        <summary type="html"><![CDATA[<p>Sedona 尝鲜</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>Sedona 尝鲜</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Python 隐藏函数内print输出]]></title>
         <id>https://ce39906.github.io/post/Python-隐藏函数内print输出/</id>
@@ -107,17 +118,6 @@
         <summary type="html"><![CDATA[<p>经典路径规划算法之一</p>
 ]]></summary>
         <content type="html"><![CDATA[<p>经典路径规划算法之一</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[配置jupyter web server]]></title>
-        <id>https://ce39906.github.io/post/pei-zhi-jupyter-web-server/</id>
-        <link href="https://ce39906.github.io/post/pei-zhi-jupyter-web-server/">
-        </link>
-        <updated>2019-05-15T09:54:19.000Z</updated>
-        <summary type="html"><![CDATA[<p>流行的在线notebook工具</p>
-]]></summary>
-        <content type="html"><![CDATA[<p>流行的在线notebook工具</p>
 ]]></content>
     </entry>
 </feed>

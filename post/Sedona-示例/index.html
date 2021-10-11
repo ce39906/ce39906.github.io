@@ -4,7 +4,7 @@
 <meta name="description" content="" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<title>rundeck CentOS 部署以及配置 | Ce39906&#39;s Blog</title>
+<title>Sedona 示例 | Ce39906&#39;s Blog</title>
 
 <link rel="shortcut icon" href="https://ce39906.github.io//favicon.ico?v=1633949540090">
 
@@ -120,125 +120,217 @@
         <div class="post-detail gt-bg-theme-color-second">
             <article class="gt-post-content">
                 <h2 class="post-title">
-                    rundeck CentOS 部署以及配置
+                    Sedona 示例
                 </h2>
                 <div class="post-info">
                     <time class="post-time gt-c-content-color-first">
-                        · 2018-07-11 ·
+                        · 2021-10-11 ·
                     </time>
                     
-                        <a href="https://ce39906.github.io/tag/_OdGJUpK1/" class="post-tags">
-                            # Others
+                        <a href="https://ce39906.github.io/tag/ozJKrY_la/" class="post-tags">
+                            # Sedona
+                        </a>
+                    
+                        <a href="https://ce39906.github.io/tag/uZZUP5ZH2/" class="post-tags">
+                            # Spark
                         </a>
                     
                 </div>
                 <div class="post-content">
-                    <p>一个运维组件</p>
+                    <p>Sedona 尝鲜</p>
 <!-- more -->
-<h2 id="简介">简介</h2>
-<p>rundeck 是一个在多机器环境下实现自动化执行以及调度任务的开源工具。rundeck 提供了web 界面，用户可以通过web 界面定制任务，调度，观察节点的执行情况。</p>
-<h2 id="安装与配置">安装与配置</h2>
-<h3 id="安装">安装</h3>
-<p>rundeck 的官网位置<a href="https://www.rundeck.com/open-source">rundeck</a><br>
-rundeck 运行依赖于java，因此需要首先安装并配置java</p>
-<pre><code>yum install java-1.8.0-openjdk java-1.8.0-openjdk-devel -y
+<h2 id="背景">背景</h2>
+<p>Sedona 是一个正在Apache孵化中的用于处理海量空间数据项目，在加入Apache前，Sedona名为Geospark。</p>
+<p>Sedona可以利用Maven,SBT构建Java,Scala 项目，同时提供了Python及R语言API。</p>
+<p>Sedona架构如下:</p>
+<figure data-type="image" tabindex="1"><img src="https://sedona.apache.org/image/architecture.jpeg" alt="pic" loading="lazy"></figure>
+<h2 id="示例程序">示例程序</h2>
+<p>利用Sedona搜索距离最近的十个公交站。</p>
+<details>
+<summary>主要pom.xml配置如下：</summary>
+<pre><code class="language-xml"> &lt;properties&gt;
+    &lt;spark.version&gt;3.0.0&lt;/spark.version&gt;
+    &lt;gt-geometry.version&gt; 20.1 &lt;/gt-geometry.version&gt;
+    &lt;scala.tools.version&gt;2.13&lt;/scala.tools.version&gt;
+    &lt;scala.version&gt;2.12.10&lt;/scala.version&gt;
+&lt;/properties&gt;
+&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.apache.spark&lt;/groupId&gt;
+        &lt;artifactId&gt;spark-core_2.12&lt;/artifactId&gt;
+        &lt;version&gt;${spark.version}&lt;/version&gt;
+        &lt;scope&gt;provided&lt;/scope&gt;
+        &lt;exclusions&gt;
+            &lt;exclusion&gt;
+                &lt;groupId&gt;org.scala-lang&lt;/groupId&gt;
+                &lt;artifactId&gt;scala-library&lt;/artifactId&gt;
+            &lt;/exclusion&gt;
+        &lt;/exclusions&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.apache.spark&lt;/groupId&gt;
+        &lt;artifactId&gt;spark-hive_2.12&lt;/artifactId&gt;
+        &lt;version&gt;${spark.version}&lt;/version&gt;
+        &lt;scope&gt;provided&lt;/scope&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.apache.spark&lt;/groupId&gt;
+        &lt;artifactId&gt;spark-sql_2.12&lt;/artifactId&gt;
+        &lt;version&gt;${spark.version}&lt;/version&gt;
+        &lt;scope&gt;provided&lt;/scope&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.scala-lang&lt;/groupId&gt;
+        &lt;artifactId&gt;scala-library&lt;/artifactId&gt;
+        &lt;version&gt;${scala.version}&lt;/version&gt;
+        &lt;scope&gt;provided&lt;/scope&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.locationtech.jts&lt;/groupId&gt;
+        &lt;artifactId&gt;jts-core&lt;/artifactId&gt;
+        &lt;version&gt;1.16.0&lt;/version&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.geotools&lt;/groupId&gt;
+        &lt;artifactId&gt;gt-geometry&lt;/artifactId&gt;
+        &lt;version&gt;${gt-geometry.version}&lt;/version&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.geotools&lt;/groupId&gt;
+        &lt;artifactId&gt;gt-epsg-hsql&lt;/artifactId&gt;
+        &lt;version&gt;${gt-geometry.version}&lt;/version&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.geotools&lt;/groupId&gt;
+        &lt;artifactId&gt;gt-referencing&lt;/artifactId&gt;
+        &lt;version&gt;${gt-geometry.version}&lt;/version&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;junit&lt;/groupId&gt;
+        &lt;artifactId&gt;junit&lt;/artifactId&gt;
+        &lt;version&gt;4.4&lt;/version&gt;
+        &lt;scope&gt;test&lt;/scope&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.scalatest&lt;/groupId&gt;
+        &lt;artifactId&gt;scalatest_${scala.tools.version}&lt;/artifactId&gt;
+        &lt;version&gt;3.2.9&lt;/version&gt;
+        &lt;scope&gt;test&lt;/scope&gt;
+        &lt;exclusions&gt;
+            &lt;exclusion&gt;
+                &lt;groupId&gt;org.scala-lang&lt;/groupId&gt;
+                &lt;artifactId&gt;scala-library&lt;/artifactId&gt;
+            &lt;/exclusion&gt;
+        &lt;/exclusions&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.apache.sedona&lt;/groupId&gt;
+        &lt;artifactId&gt;sedona-python-adapter-3.0_2.12&lt;/artifactId&gt;
+        &lt;version&gt;1.0.1-incubating&lt;/version&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.apache.sedona&lt;/groupId&gt;
+        &lt;artifactId&gt;sedona-viz-3.0_2.12&lt;/artifactId&gt;
+        &lt;version&gt;1.0.1-incubating&lt;/version&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
 </code></pre>
-<p>在 /etc/profile.d 目录下创建 java.sh， 在java.sh 中写入</p>
-<pre><code>#!/bin/bash
-JAVA_HOME=/usr/bin/java
-PATH=$JAVA_HOME/bin:$PATH
-export PATH JAVA_HOME
-export CLASSPATH=.
-</code></pre>
-<p>为java.sh 添加执行权限</p>
-<pre><code>chmod +x /etc/profile.d/java.sh
-</code></pre>
-<p>使java环境变量生效</p>
-<pre><code>source /etc/profile.d/java.sh
-</code></pre>
-<p>使用yum 安装rundeck</p>
-<pre><code>rpm -Uvh http://repo.rundeck.org/latest.rpm
-yum install rundeck
-</code></pre>
-<p>如果使用yum 安装失败，可以使用rpm 的方式安装。</p>
-<pre><code>wget http://download.rundeck.org/rpm/rundeck-2.11.5-1.56.GA.noarch.rpm
-wget http://download.rundeck.org/rpm/rundeck-config-2.11.5-1.56.GA.noarch.rpm
-rpm -i rundeck-2.11.5-1.56.GA.noarch.rpm rundeck-config-2.11.5-1.56.GA.noarch.rpm
-</code></pre>
-<p>启动rundeck 服务</p>
-<pre><code>/etc/init.d/rundeckd start
-</code></pre>
-<p>检查rundeck 是否启动</p>
-<pre><code>ps -ef | grep rundeck
-netstat -anp | grep 4440
-</code></pre>
-<h3 id="配置">配置</h3>
-<h4 id="更改默认用户名密码">更改默认用户名密码</h4>
-<p>rundeck 默认用户名密码都是admin，可以更改/etc/rundeck/realm.properties 文件中相应位置。更改后重启rundeck 服务</p>
-<pre><code>service rundeckd restart
-</code></pre>
-<h4 id="更改根url设置">更改根url设置</h4>
-<p>如果只在部署rundeck的机器访问rundeck web界面则不需要</p>
-<pre><code>vim /etc/rundeck/rundeck-config.properties
-vim /etc/rundeck/framework.properties
-</code></pre>
-<p>把这两个文件中所有的<strong>localhost</strong> 更改为本机的ip地址然后保存</p>
-<h4 id="添加node节点">添加node节点</h4>
-<p>在下面示例中展示</p>
-<h2 id="示例">示例</h2>
-<p>在浏览器中输入rundeck 地址，以我部署的服务为例http://10.4.227.26:4440/<br>
-<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_login.jpg" alt="这里写图片描述" loading="lazy"><br>
-默认输入 admin admin 登录, 登录后新建一个project<br>
-<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_newproject.jpg" alt="这里写图片描述" loading="lazy"><br>
-输入新建project 的名称以及描述其他按照默认选择，以test 为例，滚动到页面最后点击<strong>create</strong> 创建<br>
-<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_project1.jpg" alt="这里写图片描述" loading="lazy"><br>
-<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_project2.jpg" alt="avatar" loading="lazy"><br>
-下一步继续按照默认配置保存<br>
-新建工程后，我们查看工程下的node 节点<br>
-<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_nodes.jpg" alt="avatar" loading="lazy"><br>
-可以看到默认情况工程下只有server node 节点。为了添加其他节点,我们进入到 /var/rundeck/projects/test/etc 路径，编辑resources.xml 文件，默认情况resources.xml 下只有server node， 如下图</p>
-<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+</details>
+<details>
+<summary>主要代码如下：</summary>
+<pre><code class="language-java">import org.apache.sedona.core.serde.SedonaKryoRegistrator
+import org.apache.sedona.core.spatialOperator.KNNQuery
+import org.apache.spark.serializer.KryoSerializer
+import org.apache.spark.sql.SparkSession
+import org.apache.sedona.sql.utils.{Adapter, SedonaSQLRegistrator}
+import org.apache.spark.sql.types.StringType
+import org.apache.spark.sql.functions.{col, udf}
 
-&lt;project&gt;
-  &lt;node name=&quot;10.4.227.26&quot; description=&quot;Rundeck server node&quot; tags=&quot;&quot; hostname=&quot;10.4.227.26&quot; osArch=&quot;amd64&quot; osFamily=&quot;unix&quot; osName=&quot;Linux&quot; osVersion=&quot;3.10.0-123.el7.x86_64&quot; username=&quot;rundeck&quot;/&gt;
-&lt;/project&gt;
-</code></pre>
-<p>以10.4.227.21为例，添加node节点，添加client node 节点后配置如下</p>
-<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+/**
+  * @time 9/15/21 5:25 PM
+  * @author ce39906
+  * @email ce39906@163.com
+  */
+object GeoSparkDemo {
+  def main(args: Array[String]): Unit = {
+    val sparkSession = SparkSession.builder()
+      .enableHiveSupport()
+      .config(&quot;spark.serializer&quot;, classOf[KryoSerializer].getName) // org.apache.spark.serializer.KryoSerializer
+      .config(&quot;spark.kryo.registrator&quot;, classOf[SedonaKryoRegistrator].getName)
+      .getOrCreate()
 
-&lt;project&gt;
-  &lt;node name=&quot;10.4.227.26&quot; description=&quot;Rundeck server node&quot; tags=&quot;&quot; hostname=&quot;10.4.227.26&quot; osArch=&quot;amd64&quot; osFamily=&quot;unix&quot; osName=&quot;Linux&quot; osVersion=&quot;3.10.0-123.el7.x86_64&quot; username=&quot;rundeck&quot;/&gt;
-  &lt;node name=&quot;10.4.227.21&quot; description=&quot;Rundeck client node&quot; tags=&quot;&quot; hostname=&quot;10.4.227.21&quot; osArch=&quot;amd64&quot; osFamily=&quot;unix&quot; osName=&quot;Linux&quot; osVersion=&quot;3.10.0-123.el7.x86_64&quot; username=&quot;ce39906&quot;/&gt;
-&lt;/project&gt;
+    import sparkSession.implicits._
+    sparkSession.sql(&quot;set hive.exec.dynamic.partition=true&quot;)
+    sparkSession.sql(&quot;set hive.exec.dynamic.partition.mode=nonstrick&quot;)
+    SedonaSQLRegistrator.registerAll(sparkSession)
+
+    val table = &quot;test_database.test_table&quot;
+    val sql =
+      &quot;&quot;&quot;select city_id, name, location from
+        |%s where dt = '20210630'
+      &quot;&quot;&quot;.stripMargin.format(table)
+
+    var platformDf = sparkSession.sql(sql)
+    def locationValid(location: String) : Int = {
+      val latlon = location.split(&quot;,&quot;)
+      if (latlon.length != 2) {
+        return 0
+      }
+      val lat = latlon(0).toDouble
+      val lon = latlon(1).toDouble
+      val res = lon &gt; -180.0 &amp;&amp; lon &lt; 180.0 &amp;&amp; lat &gt; -90.0 &amp;&amp; lat &lt; 90.0
+
+      if (res) 1 else 0
+    }
+
+    val UDFLocationValid = udf(locationValid _)
+    platformDf = platformDf.withColumn(&quot;valid&quot;, UDFLocationValid(col(&quot;location&quot;)))
+        .where(&quot;valid == 1&quot;)
+
+    def createWktPoint(latlon: String) : String = {
+      val latlonArr = latlon.split(&quot;,&quot;)
+      val lat = latlonArr(0)
+      val lon = latlonArr(1)
+      val lonlat = lon + &quot;,&quot; + lat
+      GeoUtils.createWKTPoint(latlon)
+    }
+
+    val UDFCreateWktPoint = udf(createWktPoint _)
+    val df = platformDf.withColumn(&quot;wkt_point&quot;, UDFCreateWktPoint(col(&quot;location&quot;)))
+
+    df.createOrReplaceTempView(&quot;rawdf&quot;)
+
+    val spatialDf = sparkSession.sql(
+      &quot;&quot;&quot;select ST_Transform(ST_GeomFromWKT(wkt_point), &quot;epsg:4326&quot;, &quot;epsg:3857&quot;) as platform_location,
+        | name, city_id from rawdf
+      &quot;&quot;&quot;.stripMargin
+    )
+
+    spatialDf.createOrReplaceTempView(&quot;spatialdf&quot;)
+
+    val targetPlatform = &quot;POINT (40.04004494170224 116.42194976190544)&quot;
+    val knnSql =
+      &quot;&quot;&quot;select name,
+        |ST_Distance(ST_Transform(ST_GeomFromWKT(&quot;%s&quot;), &quot;epsg:4326&quot;, &quot;epsg:3857&quot;), platform_location) as distance
+        |from spatialdf
+        |order by distance
+        |limit 10
+      &quot;&quot;&quot;.stripMargin.format(targetPlatform)
+    val knnDf = sparkSession.sql(knnSql)
+    knnDf.show(10, truncate = false)
+  }
+}
 </code></pre>
-<p>新增的hostname username 需要配置正确。<br>
-完成配置后，刷新web 界面，可以看到新增的10.4.227.21<br>
-<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_nodes1.jpg" alt="avatar" loading="lazy"><br>
-仅仅在rundeck server 添加如下配置不能实现rundeck server 到client 的无密码连接。因此，我们登录到rundeck client机器(10.4.227.21)，将 rundeck server(10.4.227.26) /var/lib/rundeck/.ssh/id_rsa.pub 的内容追加到 client 机器中的 ~/.ssh/authorized_keys<br>
-以上就完成rundeck node 节点的添加。下面我们测试通过web 界面配置在指定的node 节点上执行命令<br>
-<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_commands.jpg" alt="avatar" loading="lazy"><br>
-选择所有节点后，我们以执行 <strong>ls /tmp</strong> 为例<br>
-<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_commands1.jpg" alt="avatar" loading="lazy"><br>
-点击右上角的执行，执行结果如下<br>
-<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_commands2.jpg" alt="avatar" loading="lazy"><br>
-除了简单的命令，rundeck job 支持实现更加复杂的任务。我们以执行脚本为例进行说明。首先新建一个job<br>
-<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_job.jpg" alt="avatar" loading="lazy"><br>
-配置job 的名称以及描述<br>
-<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_job1.jpg" alt="avatar" loading="lazy"><br>
-在step 中选择执行脚本任务<br>
-<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_job2.jpg" alt="avatar" loading="lazy"><br>
-点击后编辑脚本并保存<br>
-<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_job3.jpg" alt="avatar" loading="lazy"><br>
-选择执行job 的node, 这里我们选择client node(10.4.227.21) 执行<br>
-<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_job4.jpg" alt="avatar" loading="lazy"><br>
-其他使用默认配置，点击创建，创建完成后执行job<br>
-<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_job5.jpg" alt="avatar" loading="lazy"><br>
-执行结果如下<br>
-<img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/rundeck_job6.jpg" alt="avatar" loading="lazy"><br>
-可以看到在rundeck client 上执行了job 指定的脚本(执行 whoami 以及 ifconfig)</p>
-<h2 id="思考">思考</h2>
-<p>rundeck 在完成初始配置后可以很方便用于在一组机器上执行各种任务，这种场景在生产环境以及日常运维中非常常见，类似的工具还有jenkins<br>
-前段时间公司部门要求开发自动部署工具，全套使用脚本+ ssh 的方式，健壮性和稳定性都存在不少问题。类似的自动部署的功能完全可以使用rundeck 配置job 的方式执行而不需要重新造轮子再搞一套鸡肋的东西。</p>
+</details>
+<br/>
+需要注意的是，Sedona计算点间距离是基于平面坐标系的，如果是GCJ02坐标的话需要首先转为WGS84坐标，然后将WGS84坐标转为平面坐标，关于坐标系介绍见<a href= https://epsg.io/>epsg</a>
+<p>上述代码段中<code>ST_GeomFromWKT(&quot;%s&quot;), &quot;epsg:4326&quot;, &quot;epsg:3857&quot;)</code>的作用就是将WGS84坐标转为平面坐标。</p>
+<p><span style="color:red">⚠️ Sedona在处理经纬度坐标的格式是先纬度后经度</span></p>
+<p>执行结果如下:</p>
+<figure data-type="image" tabindex="2"><img src="https://myblog-1256683296.cos.ap-beijing.myqcloud.com/sedona_demo.png" alt="pic" loading="lazy"></figure>
+<h2 id="参考资料">参考资料</h2>
+<p>https://sedona.apache.org/</p>
+<p>https://epsg.io/</p>
 
                 </div>
             </article>
@@ -247,8 +339,8 @@ vim /etc/rundeck/framework.properties
         
             <div class="next-post">
                 <div class="next gt-c-content-color-first">下一篇</div>
-                <a href="https://ce39906.github.io/post/C-cout打印uint8-t的正确方式/" class="post-title gt-a-link">
-                    C++ cout打印uint8_t的正确方式
+                <a href="https://ce39906.github.io/post/Python-隐藏函数内print输出/" class="post-title gt-a-link">
+                    Python 隐藏函数内print输出
                 </a>
             </div>
         
